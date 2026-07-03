@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
@@ -1659,6 +1659,8 @@
       </div>
 
       <div class="lavagna-wrap" id="lavagnaWrap">
+        <!-- Draw overlay - active only in draw mode -->
+        <div id="drawOverlay" style="position:absolute;inset:0;z-index:20;display:none;touch-action:none;cursor:crosshair"></div>
         <!-- CSS Field -->
         <div class="css-field" id="cssField">
           <div class="field-inner">
@@ -1676,7 +1678,7 @@
           </div>
         </div>
         <!-- SVG draw overlay -->
-        <svg id="lavagnaLines" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible"></svg>
+        <svg id="lavagnaLines" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:15;pointer-events:none;overflow:visible"></svg>
         <!-- Tokens container -->
         <div id="lavagnaTokens" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6"></div>
       </div>
@@ -2844,30 +2846,25 @@
     }
 
     function setupLavDraw(wrap) {
+      const overlay = document.getElementById('drawOverlay');
       let currentPath = null;
       let points = [];
 
       const getPos = (e) => {
         const r = wrap.getBoundingClientRect();
         const src = e.touches ? e.touches[0] : e;
-        return {
-          x: src.clientX - r.left,
-          y: src.clientY - r.top
-        };
+        return { x: src.clientX - r.left, y: src.clientY - r.top };
       };
 
       const startDraw = (e) => {
-        if (!lavDrawMode) return;
         e.preventDefault(); e.stopPropagation();
         lavIsDrawing = true;
         const p = getPos(e);
-        lavLastX = p.x; lavLastY = p.y;
         points = [p];
-        // Create new SVG path
         const svg = document.getElementById('lavagnaLines');
         currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         currentPath.setAttribute('stroke', '#ffeb3b');
-        currentPath.setAttribute('stroke-width', '3');
+        currentPath.setAttribute('stroke-width', '4');
         currentPath.setAttribute('stroke-linecap', 'round');
         currentPath.setAttribute('stroke-linejoin', 'round');
         currentPath.setAttribute('fill', 'none');
@@ -2876,11 +2873,10 @@
       };
 
       const doDraw = (e) => {
-        if (!lavIsDrawing || !lavDrawMode || !currentPath) return;
+        if (!lavIsDrawing || !currentPath) return;
         e.preventDefault();
         const p = getPos(e);
         points.push(p);
-        // Build smooth path
         let d = 'M ' + points[0].x + ' ' + points[0].y;
         for (let i = 1; i < points.length; i++) {
           d += ' L ' + points[i].x + ' ' + points[i].y;
@@ -2894,12 +2890,13 @@
         points = [];
       };
 
-      wrap.addEventListener('touchstart', startDraw, { passive: false });
-      wrap.addEventListener('touchmove', doDraw, { passive: false });
-      wrap.addEventListener('touchend', stopDraw);
-      wrap.addEventListener('mousedown', startDraw);
-      wrap.addEventListener('mousemove', doDraw);
-      wrap.addEventListener('mouseup', stopDraw);
+      // Attach to overlay div — completely independent from tokens
+      overlay.addEventListener('touchstart', startDraw, { passive: false });
+      overlay.addEventListener('touchmove', doDraw, { passive: false });
+      overlay.addEventListener('touchend', stopDraw);
+      overlay.addEventListener('mousedown', startDraw);
+      overlay.addEventListener('mousemove', doDraw);
+      overlay.addEventListener('mouseup', stopDraw);
     }
 
     function setSquadra(tipo) {
@@ -2932,10 +2929,12 @@
     function lavToggleDraw() {
       lavDrawMode = !lavDrawMode;
       const btn = document.getElementById('btnDraw');
+      const overlay = document.getElementById('drawOverlay');
       const tokens = document.getElementById('lavagnaTokens');
       btn.style.background = lavDrawMode ? '#f0c040' : '#243347';
       btn.style.borderColor = lavDrawMode ? '#f0c040' : '#344d66';
       btn.style.color = lavDrawMode ? '#1a1a1a' : '#f0f4f8';
+      if (overlay) overlay.style.display = lavDrawMode ? 'block' : 'none';
       if (tokens) tokens.style.pointerEvents = lavDrawMode ? 'none' : 'auto';
     }
 
