@@ -1101,6 +1101,7 @@
       color: #8a9bb0;
     }
 
+
     /* ── LAVAGNA ── */
     .lavagna-toolbar {
       display: flex;
@@ -1114,6 +1115,7 @@
     .lav-row {
       display: flex;
       gap: 6px;
+      align-items: center;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -1132,169 +1134,114 @@
       flex-shrink: 0;
     }
 
+    .color-dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .color-dot.active { border-color: #fff; }
+
     .lavagna-wrap {
       position: relative;
       width: 100%;
       flex: 1;
       overflow: hidden;
       touch-action: none;
-      -webkit-touch-callout: none;
       -webkit-user-select: none;
+      user-select: none;
     }
 
-    /* CSS Field */
     .css-field {
       position: absolute;
       inset: 0;
       background: #2d7a3e;
-      z-index: 1;
     }
-
     .field-inner {
       position: absolute;
       inset: 14px;
       border: 2px solid rgba(255,255,255,0.7);
     }
-
     .field-line-mid {
-      position: absolute;
-      left: 0; right: 0;
-      top: 50%;
-      height: 2px;
-      background: rgba(255,255,255,0.7);
-      transform: translateY(-50%);
+      position: absolute; left:0; right:0; top:50%;
+      height:2px; background:rgba(255,255,255,0.7);
+      transform:translateY(-50%);
     }
-
     .field-circle-center {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 18%;
-      padding-top: 18%;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.7);
-      transform: translate(-50%, -50%);
+      position:absolute; left:50%; top:50%;
+      width:18%; padding-top:18%;
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,0.7);
+      transform:translate(-50%,-50%);
     }
-
     .field-dot-center {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 6px; height: 6px;
-      background: rgba(255,255,255,0.8);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
+      position:absolute; left:50%; top:50%;
+      width:6px; height:6px;
+      background:rgba(255,255,255,0.8);
+      border-radius:50%;
+      transform:translate(-50%,-50%);
+      z-index:2;
     }
-
     .field-area-top-big {
-      position: absolute;
-      left: 20%; right: 20%;
-      top: 0; height: 16%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-top: none;
+      position:absolute; left:20%; right:20%; top:0; height:16%;
+      border:2px solid rgba(255,255,255,0.7); border-top:none;
     }
-
     .field-area-top-small {
-      position: absolute;
-      left: 33%; right: 33%;
-      top: 0; height: 7%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-top: none;
+      position:absolute; left:33%; right:33%; top:0; height:7%;
+      border:2px solid rgba(255,255,255,0.7); border-top:none;
     }
-
     .field-area-bot-big {
-      position: absolute;
-      left: 20%; right: 20%;
-      bottom: 0; height: 16%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-bottom: none;
+      position:absolute; left:20%; right:20%; bottom:0; height:16%;
+      border:2px solid rgba(255,255,255,0.7); border-bottom:none;
     }
-
     .field-area-bot-small {
-      position: absolute;
-      left: 33%; right: 33%;
-      bottom: 0; height: 7%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-bottom: none;
+      position:absolute; left:33%; right:33%; bottom:0; height:7%;
+      border:2px solid rgba(255,255,255,0.7); border-bottom:none;
     }
-
-    .field-corner {
-      position: absolute;
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-radius: 0;
-    }
-    .field-corner-tl { top: -2px; left: -2px; border-radius: 0 0 100% 0; border-top: none; border-left: none; }
-    .field-corner-tr { top: -2px; right: -2px; border-radius: 0 0 0 100%; border-top: none; border-right: none; }
-    .field-corner-bl { bottom: -2px; left: -2px; border-radius: 0 100% 0 0; border-bottom: none; border-left: none; }
-    .field-corner-br { bottom: -2px; right: -2px; border-radius: 100% 0 0 0; border-bottom: none; border-right: none; }
-
-    .lavagna-bottom {
-      padding: 8px 12px;
-      background: #182233;
-      border-top: 1px solid #344d66;
-      flex-shrink: 0;
-    }
-
-    .lav-formation-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .field-corner { position:absolute; width:14px; height:14px; }
+    .field-corner-tl { top:-2px;left:-2px; border-right:2px solid rgba(255,255,255,0.7); border-bottom:2px solid rgba(255,255,255,0.7); border-radius:0 0 100% 0; }
+    .field-corner-tr { top:-2px;right:-2px; border-left:2px solid rgba(255,255,255,0.7); border-bottom:2px solid rgba(255,255,255,0.7); border-radius:0 0 0 100%; }
+    .field-corner-bl { bottom:-2px;left:-2px; border-right:2px solid rgba(255,255,255,0.7); border-top:2px solid rgba(255,255,255,0.7); border-radius:0 100% 0 0; }
+    .field-corner-br { bottom:-2px;right:-2px; border-left:2px solid rgba(255,255,255,0.7); border-top:2px solid rgba(255,255,255,0.7); border-radius:100% 0 0 0; }
 
     .lav-select {
-      flex: 1;
-      background: #243347;
-      border: 1px solid #344d66;
-      color: #f0f4f8;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 13px;
-      -webkit-appearance: none;
-      outline: none;
+      background:#243347; border:1px solid #344d66;
+      color:#f0f4f8; border-radius:8px;
+      padding:6px 10px; font-size:13px;
+      -webkit-appearance:none; outline:none;
     }
 
     .lav-token {
-      position: absolute;
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: #fff;
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      border: 2px solid rgba(255,255,255,0.4);
-      z-index: 10;
+      position:absolute;
+      width:36px; height:36px;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:800; color:#fff;
+      transform:translate(-50%,-50%);
+      box-shadow:0 2px 8px rgba(0,0,0,0.5);
+      border:2px solid rgba(255,255,255,0.4);
+      z-index:10;
+      touch-action:none;
+      user-select:none;
+      -webkit-user-select:none;
     }
-
     .lav-token-sub {
-      position: absolute;
-      bottom: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 9px;
-      font-weight: 700;
-      color: #fff;
-      white-space: nowrap;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-      pointer-events: none;
+      position:absolute; bottom:-14px; left:50%;
+      transform:translateX(-50%);
+      font-size:9px; font-weight:700; color:#fff;
+      white-space:nowrap;
+      text-shadow:0 1px 3px rgba(0,0,0,0.9);
+      pointer-events:none;
     }
 
     #screen-lavagna {
-      display: none;
-      flex-direction: column;
-      position: fixed;
-      top: 52px;
-      left: 0; right: 0;
-      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-      overflow: hidden;
+      display:none; flex-direction:column;
+      position:fixed; top:52px; left:0; right:0;
+      bottom:calc(64px + env(safe-area-inset-bottom,0px));
+      overflow:hidden;
     }
-    #screen-lavagna.active { display: flex; }
+    #screen-lavagna.active { display:flex; }
 
     /* ── PICK GIOCATORE LAVAGNA ── */
     .lav-pick-btn {
@@ -1476,6 +1423,329 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL PICK GIOCATORE LAVAGNA -->
+    <div class="modal-overlay" id="modalPickGiocatore" onclick="closeModalOutside(event,'modalPickGiocatore')">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">Aggiungi pedina</span>
+          <button class="modal-close" onclick="closeModal('modalPickGiocatore')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button class="lav-pick-btn active" id="pickBtnRosa" onclick="switchPickTab('rosa')">👥 Dalla rosa</button>
+            <button class="lav-pick-btn" id="pickBtnCustom" onclick="switchPickTab('custom')">✏️ Personalizzata</button>
+          </div>
+          <!-- Rosa tab -->
+          <div id="pickTabRosa">
+            <div id="pickGiocatoriList"></div>
+          </div>
+          <!-- Custom tab -->
+          <div id="pickTabCustom" style="display:none">
+            <div class="form-group">
+              <label class="form-label">Testo pedina</label>
+              <input type="text" class="form-input" id="pickCustomLabel" placeholder="Es. 10, CAP, ?" maxlength="4"/>
+            </div>
+            <button class="btn-confirm" style="width:100%;margin-top:8px" onclick="addCustomToken()">Aggiungi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DETTAGLIO GIOCATORE -->
+    <div class="modal-overlay" id="modalGiocatoreDetail" onclick="closeModalOutside(event,'modalGiocatoreDetail')">
+      <div class="modal" style="max-height:90vh">
+        <div class="modal-header">
+          <span class="modal-title" id="gdTitle">Giocatore</span>
+          <button class="modal-close" onclick="closeModal('modalGiocatoreDetail')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="gdInfo" style="margin-bottom:16px"></div>
+
+          <!-- RADAR CHART -->
+          <div class="radar-container">
+            <canvas id="radarCanvas" width="280" height="280"></canvas>
+          </div>
+
+          <!-- VALUTAZIONI SLIDERS -->
+          <div id="valSliders"></div>
+        </div>
+        <div class="modal-footer" style="flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;width:100%">
+            <button class="btn-cancel" style="flex:1" onclick="openEditFromDetail()">✏️ Modifica</button>
+            <button class="btn-confirm" style="flex:2" onclick="salvaValutazione()">Salva valutazione</button>
+          </div>
+          <button class="btn-cancel" style="width:100%;color:#e05252" onclick="closeModal('modalGiocatoreDetail');askDeleteGiocatore(currentGiocatoreId,'')">🗑 Elimina giocatore</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CONFIRM DELETE -->
+    <div class="modal-overlay" id="modalDeleteGiocatore" onclick="closeModalOutside(event, 'modalDeleteGiocatore')">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <span class="modal-title">Elimina giocatore</span>
+          <button class="modal-close" onclick="closeModal('modalDeleteGiocatore')">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteGiocatoreNome"></strong> dalla rosa?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="closeModal('modalDeleteGiocatore')">Annulla</button>
+          <button class="btn-danger" onclick="confirmDeleteGiocatore()">Elimina</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <section class="screen" id="screen-calendario">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <span class="cal-month-label" id="calMonthLabel"></span>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+      </div>
+
+      <div class="cal-grid">
+        <div class="cal-dow">Lu</div><div class="cal-dow">Ma</div>
+        <div class="cal-dow">Me</div><div class="cal-dow">Gi</div>
+        <div class="cal-dow">Ve</div><div class="cal-dow">Sa</div>
+        <div class="cal-dow">Do</div>
+        <div id="calDays"></div>
+      </div>
+
+      <div class="cal-legend">
+        <span class="legend-dot" style="background:#5b9bd5"></span><span>Allenamento</span>
+        <span class="legend-dot" style="background:#e05252;margin-left:12px"></span><span>Partita</span>
+      </div>
+
+      <div class="cal-events-header">
+        <span id="calEventsTitle">Eventi del mese</span>
+        <button class="btn-add" onclick="openModalEvento(null)" style="padding:7px 14px;font-size:13px">+ Aggiungi</button>
+      </div>
+      <div id="calEventsList"></div>
+    </section>
+
+    <!-- MODAL EVENTO -->
+    <div class="modal-overlay" id="modalEvento" onclick="closeModalOutside(event,'modalEvento')">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title" id="modalEventoTitle">Nuovo Evento</span>
+          <button class="modal-close" onclick="closeModal('modalEvento')">✕</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="eId" />
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tipo</label>
+              <select class="form-input" id="eTipo" onchange="toggleAvversario()">
+                <option value="allenamento">🏃 Allenamento</option>
+                <option value="partita">⚽ Partita</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Data</label>
+              <input type="date" class="form-input" id="eData" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ora inizio</label>
+              <input type="time" class="form-input" id="eOra" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Durata (min)</label>
+              <input type="number" class="form-input" id="eDurata" placeholder="90" min="15" max="300" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Titolo / Luogo</label>
+            <input type="text" class="form-input" id="eTitolo" placeholder="Campo Sportivo..." />
+          </div>
+          <div class="form-group" id="avversarioGroup">
+            <label class="form-label">Avversario</label>
+            <input type="text" class="form-input" id="eAvversario" placeholder="Nome squadra avversaria" />
+          </div>
+          <div class="form-group" id="casaTrasfertaGroup">
+            <label class="form-label">Casa / Trasferta</label>
+            <div style="display:flex;gap:8px">
+              <button class="toggle-btn active" id="btnCasa" onclick="setCasaTrasferta('casa')">🏠 Casa</button>
+              <button class="toggle-btn" id="btnTrasferta" onclick="setCasaTrasferta('trasferta')">🚌 Trasferta</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Note</label>
+            <input type="text" class="form-input" id="eNote" placeholder="Note aggiuntive..." />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="closeModal('modalEvento')">Annulla</button>
+          <button class="btn-confirm" onclick="salvaEvento()">Salva</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DETTAGLIO EVENTO + PRESENZE -->
+    <div class="modal-overlay" id="modalEventoDetail" onclick="closeModalOutside(event,'modalEventoDetail')">
+      <div class="modal" style="max-height:88vh">
+        <div class="modal-header">
+          <span class="modal-title" id="detailTitle">Dettaglio Evento</span>
+          <button class="modal-close" onclick="closeModal('modalEventoDetail')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="detailInfo" style="margin-bottom:16px"></div>
+          <div class="presenze-section">
+            <div class="presenze-header">
+              <span class="form-label" style="margin:0">Presenze</span>
+              <div style="display:flex;gap:8px">
+                <button class="presenze-quick-btn" onclick="selectAllPresenze(true)">Tutti ✓</button>
+                <button class="presenze-quick-btn" onclick="selectAllPresenze(false)">Nessuno ✗</button>
+              </div>
+            </div>
+            <div id="presenzeList"></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;width:100%">
+            <button class="btn-cancel" style="flex:1" onclick="closeModal('modalEventoDetail')">Chiudi</button>
+            <button class="btn-confirm" style="flex:2" onclick="salvaPresenze()">Salva presenze</button>
+          </div>
+          <button class="btn-whatsapp" onclick="apriConvocazione()">
+            <span>📲</span> Invia convocazione WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CONVOCAZIONE WHATSAPP -->
+    <div class="modal-overlay" id="modalConvocazione" onclick="closeModalOutside(event,'modalConvocazione')">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">📲 Convocazione WhatsApp</span>
+          <button class="modal-close" onclick="closeModal('modalConvocazione')">✕</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label class="form-label">Giocatori convocati</label>
+            <div id="convGiocatoriList"></div>
+          </div>
+
+          <div class="form-group" style="margin-top:8px">
+            <label class="form-label">Anteprima messaggio</label>
+            <textarea id="convMessaggio" class="form-input"
+              style="height:180px;resize:none;font-size:13px;line-height:1.5"
+              oninput=""></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Numero WhatsApp gruppo (opzionale)</label>
+            <input type="tel" class="form-input" id="convNumero" placeholder="+39 333 123 4567" />
+            <div style="font-size:11px;color:#8a9bb0;margin-top:4px">Lascia vuoto per aprire WhatsApp senza numero</div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="closeModal('modalConvocazione')">Annulla</button>
+          <button class="btn-whatsapp" onclick="inviaWhatsApp()">
+            <span>📲</span> Apri WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DELETE EVENTO -->
+    <div class="modal-overlay" id="modalDeleteEvento" onclick="closeModalOutside(event,'modalDeleteEvento')">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <span class="modal-title">Elimina evento</span>
+          <button class="modal-close" onclick="closeModal('modalDeleteEvento')">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteEventoNome"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="closeModal('modalDeleteEvento')">Annulla</button>
+          <button class="btn-danger" onclick="confirmDeleteEvento()">Elimina</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAVAGNA -->
+    <section class="screen" id="screen-lavagna" style="padding:0">
+
+      <!-- Row 1: mode selector + color picker -->
+      <div class="lavagna-toolbar">
+        <div class="lav-row">
+          <button class="lav-btn" id="btnMove" onclick="lavSetMode('move')">✋ Muovi</button>
+          <button class="lav-btn" id="btnDraw" onclick="lavSetMode('draw')">✏️ Disegna</button>
+          <button class="lav-btn" onclick="lavUndo()">↩</button>
+          <button class="lav-btn" onclick="lavClearAll()" style="color:#e05252">🗑</button>
+        </div>
+        <div class="lav-row" id="colorRow" style="display:none">
+          <span style="font-size:12px;color:#8a9bb0;font-weight:600;align-self:center">Colore:</span>
+          <div class="color-dot active" style="background:#ffeb3b" onclick="lavSetColor('#ffeb3b',this)"></div>
+          <div class="color-dot" style="background:#ff8c00" onclick="lavSetColor('#ff8c00',this)"></div>
+          <div class="color-dot" style="background:#ffffff" onclick="lavSetColor('#ffffff',this)"></div>
+          <div class="color-dot" style="background:#e05252" onclick="lavSetColor('#e05252',this)"></div>
+        </div>
+      </div>
+
+      <!-- Row 2: squadra + modulo -->
+      <div class="lavagna-toolbar" style="padding:6px 12px">
+        <div class="lav-row">
+          <button class="lav-btn" id="btnCasaLav" onclick="setSquadra('casa')">
+            <span id="dotCasa" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a7c3e;margin-right:5px;vertical-align:middle"></span>Casa
+          </button>
+          <button class="lav-btn" id="btnOspiteLav" onclick="setSquadra('ospite')">
+            <span id="dotOspite" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0c040;margin-right:5px;vertical-align:middle"></span>Ospite
+          </button>
+          <button class="lav-btn" onclick="lavAddToken()">＋ Pedina</button>
+          <button class="lav-btn" onclick="lavAddPallone()">⚽</button>
+          <select class="lav-select" style="flex:1" onchange="applyFormation(this.value)">
+            <option value="">Modulo...</option>
+            <option value="4-3-3">4-3-3</option>
+            <option value="4-4-2">4-4-2</option>
+            <option value="4-2-3-1">4-2-3-1</option>
+            <option value="3-5-2">3-5-2</option>
+            <option value="3-4-3">3-4-3</option>
+            <option value="5-3-2">5-3-2</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Field: captures ALL touch events -->
+      <div class="lavagna-wrap" id="lavagnaWrap"
+        ontouchstart="lavFieldTouchStart(event)"
+        ontouchmove="lavFieldTouchMove(event)"
+        ontouchend="lavFieldTouchEnd(event)"
+        onmousedown="lavFieldMouseDown(event)"
+        onmousemove="lavFieldMouseMove(event)"
+        onmouseup="lavFieldMouseUp(event)">
+
+        <!-- CSS Field -->
+        <div class="css-field">
+          <div class="field-inner">
+            <div class="field-line-mid"></div>
+            <div class="field-circle-center"></div>
+            <div class="field-dot-center"></div>
+            <div class="field-area field-area-top-big"></div>
+            <div class="field-area field-area-top-small"></div>
+            <div class="field-area field-area-bot-big"></div>
+            <div class="field-area field-area-bot-small"></div>
+            <div class="field-corner field-corner-tl"></div>
+            <div class="field-corner field-corner-tr"></div>
+            <div class="field-corner field-corner-bl"></div>
+            <div class="field-corner field-corner-br"></div>
+          </div>
+        </div>
+
+        <!-- SVG for drawing — pointer-events:none, always -->
+        <svg id="lavagnaLines" style="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible"></svg>
+
+        <!-- Tokens container -->
+        <div id="lavagnaTokens" style="position:absolute;inset:0;z-index:10"></div>
+      </div>
+    </section>
 
     <!-- MODAL PICK GIOCATORE LAVAGNA -->
     <div class="modal-overlay" id="modalPickGiocatore" onclick="closeModalOutside(event,'modalPickGiocatore')">
@@ -2897,134 +3167,159 @@
 
 
     // ── LAVAGNA MODULE ──
+    // Inspired by React Native PanResponder approach:
+    // Field itself captures ALL touch events. In draw mode tokens are disabled.
+    // In move mode, tokens handle their own drag via pointerdown/move/up.
+
+    let lavMode = 'move';       // 'move' | 'draw'
+    let lavColor = '#ffeb3b';
+    let lavCurrentPath = '';
+    let lavDrawing = false;
+    let lavLines = [];          // saved paths for undo
+    let lavReady = false;
     let lavCurrentSquadra = 'casa';
-    let lavDrawMode = false;
-    let lavIsDrawing = false;
-    let lavLastX = 0, lavLastY = 0;
     let lavDragToken = null;
     let lavDragOffX = 0, lavDragOffY = 0;
-    let lavReady = false;
 
     function initLavagna() {
       const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const W = wrap.offsetWidth;
-      const H = wrap.offsetHeight;
-      if (W < 10 || H < 10) { setTimeout(initLavagna, 100); return; }
-
-      setupLavDraw();
-
-      // Prevent page scroll on wrap touch
-      wrap.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-      }, { passive: false });
-
+      if (!wrap || (wrap.offsetWidth < 10)) { setTimeout(initLavagna, 100); return; }
       if (!lavReady) {
         lavReady = true;
         setSquadra('casa');
+        lavSetMode('move');
         applyFormation('4-3-3');
       }
     }
 
-    function setupLavDraw() {
-      const overlay = document.getElementById('drawOverlay');
-      const wrap    = document.getElementById('lavagnaWrap');
-      if (!overlay || !wrap) return;
+    // ── MODE ──
+    function lavSetMode(mode) {
+      lavMode = mode;
+      const btnMove = document.getElementById('btnMove');
+      const btnDraw = document.getElementById('btnDraw');
+      const tokens  = document.getElementById('lavagnaTokens');
+      const colorRow = document.getElementById('colorRow');
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
 
-      let lastX = 0, lastY = 0;
+      btnMove.style.background = mode === 'move' ? cfg.colorPrimary : '#243347';
+      btnMove.style.color = mode === 'move' ? '#fff' : '#f0f4f8';
+      btnDraw.style.background = mode === 'draw' ? '#f0c040' : '#243347';
+      btnDraw.style.color = mode === 'draw' ? '#1a1a1a' : '#f0f4f8';
 
-      const getPos = (e) => {
-        const r = wrap.getBoundingClientRect();
-        const src = e.touches ? e.touches[0] : e;
-        return { x: src.clientX - r.left, y: src.clientY - r.top };
-      };
-
-      // Draw a line segment between two points using a rotated div
-      const drawSegment = (x1, y1, x2, y2) => {
-        const container = document.getElementById('lavagnaLines');
-        if (!container) return;
-        const dx = x2 - x1, dy = y2 - y1;
-        const len = Math.sqrt(dx*dx + dy*dy);
-        if (len < 1) return;
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        const seg = document.createElement('div');
-        seg.style.cssText = [
-          'position:absolute',
-          'background:#ffeb3b',
-          'border-radius:3px',
-          'height:4px',
-          'pointer-events:none',
-          'transform-origin:0 50%',
-          'left:' + x1 + 'px',
-          'top:' + (y1 - 2) + 'px',
-          'width:' + len + 'px',
-          'transform:rotate(' + angle + 'deg)',
-        ].join(';');
-        container.appendChild(seg);
-      };
-
-      const onStart = (e) => {
-        e.preventDefault();
-        lavIsDrawing = true;
-        const p = getPos(e);
-        lastX = p.x; lastY = p.y;
-      };
-
-      const onMove = (e) => {
-        if (!lavIsDrawing) return;
-        e.preventDefault();
-        const p = getPos(e);
-        drawSegment(lastX, lastY, p.x, p.y);
-        lastX = p.x; lastY = p.y;
-      };
-
-      const onEnd = () => { lavIsDrawing = false; };
-
-      overlay.addEventListener('touchstart', onStart, { passive: false });
-      overlay.addEventListener('touchmove',  onMove,  { passive: false });
-      overlay.addEventListener('touchend',   onEnd);
-      overlay.addEventListener('mousedown',  onStart);
-      overlay.addEventListener('mousemove',  onMove);
-      overlay.addEventListener('mouseup',    onEnd);
+      // In draw mode tokens don't receive touches
+      if (tokens) tokens.style.pointerEvents = mode === 'draw' ? 'none' : 'auto';
+      if (colorRow) colorRow.style.display = mode === 'draw' ? 'flex' : 'none';
     }
 
-    function setSquadra(tipo) {
-      lavCurrentSquadra = tipo;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const p = cfg.colorPrimary || '#1a7c3e';
-      const acc = cfg.colorAccent || '#f0c040';
-      const btnC = document.getElementById('btnCasaLav');
-      const btnO = document.getElementById('btnOspiteLav');
-      const dotC = document.getElementById('dotCasa');
-      const dotO = document.getElementById('dotOspite');
-      const base = 'border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0';
-      if (dotC) dotC.style.background = p;
-      if (dotO) dotO.style.background = acc;
-      if (btnC) btnC.style.cssText = tipo === 'casa'
-        ? 'background:' + p + ';border:1px solid ' + p + ';color:#fff;' + base
-        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;' + base;
-      if (btnO) btnO.style.cssText = tipo === 'ospite'
-        ? 'background:' + acc + ';border:1px solid ' + acc + ';color:#1a1a1a;' + base
-        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;' + base;
-      // Restore dots after cssText override
-      setTimeout(() => {
-        const d1 = document.getElementById('dotCasa');
-        const d2 = document.getElementById('dotOspite');
-        if (d1) d1.style.background = p;
-        if (d2) d2.style.background = acc;
-      }, 0);
+    function lavSetColor(color, el) {
+      lavColor = color;
+      document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+      if (el) el.classList.add('active');
     }
 
-    function lavToggleDraw() {
-      lavDrawMode = !lavDrawMode;
-      const btn = document.getElementById('btnDraw');
-      const overlay = document.getElementById('drawOverlay');
-      const tokens = document.getElementById('lavagnaTokens');
-      btn.style.background = lavDrawMode ? '#f0c040' : '#243347';
-      btn.style.borderColor = lavDrawMode ? '#f0c040' : '#344d66';
-      btn.style.color = lavDrawMode ? '#1a1a1a' : '#f0f4f8';
-      if (overlay) overlay.style.display = lavDrawMode ? 'block' : 'none';
-      if (tokens) tokens.style.pointerEvents = lavDrawMode ? 'none' : 'auto';
+    // ── FIELD TOUCH HANDLERS (draw mode) ──
+    function lavGetPos(e) {
+      const wrap = document.getElementById('lavagnaWrap');
+      const r = wrap.getBoundingClientRect();
+      const src = e.touches ? e.touches[0] : e;
+      return { x: src.clientX - r.left, y: src.clientY - r.top };
+    }
+
+    function lavFieldTouchStart(e) {
+      if (lavMode !== 'draw') return;
+      e.preventDefault();
+      lavDrawing = true;
+      const p = lavGetPos(e);
+      lavCurrentPath = 'M' + p.x + ',' + p.y;
+      lavRenderCurrentPath();
+    }
+
+    function lavFieldTouchMove(e) {
+      if (lavMode !== 'draw' || !lavDrawing) return;
+      e.preventDefault();
+      const p = lavGetPos(e);
+      lavCurrentPath += ' L' + p.x + ',' + p.y;
+      lavRenderCurrentPath();
+    }
+
+    function lavFieldTouchEnd(e) {
+      if (lavMode !== 'draw' || !lavDrawing) return;
+      lavDrawing = false;
+      if (lavCurrentPath) {
+        lavLines.push({ path: lavCurrentPath, color: lavColor });
+        lavCurrentPath = '';
+        lavRenderAllPaths();
+      }
+    }
+
+    function lavFieldMouseDown(e) {
+      if (lavMode !== 'draw') return;
+      lavDrawing = true;
+      const p = lavGetPos(e);
+      lavCurrentPath = 'M' + p.x + ',' + p.y;
+    }
+
+    function lavFieldMouseMove(e) {
+      if (lavMode !== 'draw' || !lavDrawing) return;
+      const p = lavGetPos(e);
+      lavCurrentPath += ' L' + p.x + ',' + p.y;
+      lavRenderCurrentPath();
+    }
+
+    function lavFieldMouseUp(e) {
+      if (lavMode !== 'draw' || !lavDrawing) return;
+      lavDrawing = false;
+      if (lavCurrentPath) {
+        lavLines.push({ path: lavCurrentPath, color: lavColor });
+        lavCurrentPath = '';
+        lavRenderAllPaths();
+      }
+    }
+
+    function lavRenderCurrentPath() {
+      const svg = document.getElementById('lavagnaLines');
+      if (!svg) return;
+      // Remove current path element if exists
+      const existing = document.getElementById('lavCurrentPathEl');
+      if (existing) existing.remove();
+      if (!lavCurrentPath) return;
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('id','lavCurrentPathEl');
+      path.setAttribute('d', lavCurrentPath);
+      path.setAttribute('stroke', lavColor);
+      path.setAttribute('stroke-width','3');
+      path.setAttribute('stroke-linecap','round');
+      path.setAttribute('stroke-linejoin','round');
+      path.setAttribute('fill','none');
+      svg.appendChild(path);
+    }
+
+    function lavRenderAllPaths() {
+      const svg = document.getElementById('lavagnaLines');
+      if (!svg) return;
+      svg.innerHTML = '';
+      lavLines.forEach(l => {
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d', l.path);
+        path.setAttribute('stroke', l.color);
+        path.setAttribute('stroke-width','3');
+        path.setAttribute('stroke-linecap','round');
+        path.setAttribute('stroke-linejoin','round');
+        path.setAttribute('fill','none');
+        svg.appendChild(path);
+      });
+    }
+
+    function lavUndo() {
+      lavLines.pop();
+      lavRenderAllPaths();
+    }
+
+    function lavClearLines() {
+      lavLines = [];
+      lavCurrentPath = '';
+      const svg = document.getElementById('lavagnaLines');
+      if (svg) svg.innerHTML = '';
     }
 
     function lavClearAll() {
@@ -3035,116 +3330,25 @@
       if (sel) sel.value = '';
     }
 
-    function lavAddPallone() {
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      addLavToken(wrap.offsetWidth/2, wrap.offsetHeight/2, '⚽', '#f5f5f5', '#000');
-    }
-
-    function lavAddToken() {
-      // Open pick modal
-      renderPickGiocatori();
-      openModal('modalPickGiocatore');
-    }
-
-    function switchPickTab(tab) {
-      const isRosa = tab === 'rosa';
-      document.getElementById('pickTabRosa').style.display = isRosa ? 'block' : 'none';
-      document.getElementById('pickTabCustom').style.display = isRosa ? 'none' : 'block';
-      document.getElementById('pickBtnRosa').classList.toggle('active', isRosa);
-      document.getElementById('pickBtnCustom').classList.toggle('active', !isRosa);
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      document.getElementById('pickBtnRosa').style.background = isRosa ? cfg.colorPrimary : '#243347';
-      document.getElementById('pickBtnCustom').style.background = !isRosa ? cfg.colorPrimary : '#243347';
-    }
-
-    function renderPickGiocatori() {
-      const giocatori = DB.get('giocatori', []);
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
-      const list = document.getElementById('pickGiocatoriList');
-
-      if (!giocatori.length) {
-        list.innerHTML = '<div class="placeholder" style="padding:20px 0"><p>Nessun giocatore nella rosa.</p></div>';
-        return;
-      }
-
-      // Sort by ruolo then numero
-      const sorted = [...giocatori].sort((a,b) => {
-        const ro = ['P','D','C','A'];
-        return ro.indexOf(a.ruolo) - ro.indexOf(b.ruolo) || (a.numero||99) - (b.numero||99);
-      });
-
-      list.innerHTML = sorted.map(g => {
-        const bg = colors[g.ruolo] || cfg.colorPrimary;
-        return `<div class="pick-giocatore-row" onclick="addGiocatoreToken('${g.id}')">
-          <div class="pick-num" style="background:${bg}">${g.numero || '?'}</div>
-          <div class="pick-nome">${g.cognome} ${g.nome}</div>
-          <span class="pick-ruolo ruolo-${g.ruolo}">${g.ruolo}</span>
-        </div>`;
-      }).join('');
-    }
-
-    function addGiocatoreToken(id) {
-      const giocatori = DB.get('giocatori', []);
-      const g = giocatori.find(p => p.id === id);
-      if (!g) return;
-
-      const wrap = document.getElementById('lavagnaWrap');
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
-
-      // Use ruolo color for all, regardless of casa/ospite
-      const isOspite = lavCurrentSquadra === 'ospite';
-      const bg = isOspite ? (cfg.colorAccent || '#f0c040') : (colors[g.ruolo] || cfg.colorPrimary);
-      const textColor = isOspite ? '#1a1a1a' : '#fff';
-
-      const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
-      const x = W/2 + (Math.random()-0.5)*80;
-      const y = H/2 + (Math.random()-0.5)*80;
-
-      // Show numero on token, cognome as subtitle
-      addLavToken(x, y, String(g.numero || g.cognome.slice(0,3).toUpperCase()), bg, textColor, g.cognome.toUpperCase());
-      closeModal('modalPickGiocatore');
-    }
-
-    function addCustomToken() {
-      const label = document.getElementById('pickCustomLabel').value.trim() || '?';
-      const wrap = document.getElementById('lavagnaWrap');
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const bg = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#f0c040');
-      const textColor = lavCurrentSquadra === 'casa' ? '#fff' : '#1a1a1a';
-      const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
-      const x = W/2 + (Math.random()-0.5)*60;
-      const y = H/2 + (Math.random()-0.5)*60;
-      addLavToken(x, y, label, bg, textColor, '');
-      document.getElementById('pickCustomLabel').value = '';
-      closeModal('modalPickGiocatore');
-    }
-
-    function lavClearLines() {
-      const el = document.getElementById('lavagnaLines');
-      if (el) el.innerHTML = '';
-    }
-
+    // ── TOKEN DRAG (move mode only) ──
     function addLavToken(x, y, label, bg, color, sub) {
       const container = document.getElementById('lavagnaTokens');
       const el = document.createElement('div');
       el.className = 'lav-token';
       el.style.left = x + 'px';
-      el.style.top = y + 'px';
+      el.style.top  = y + 'px';
       el.style.background = bg || '#1a7c3e';
       el.style.color = color || '#fff';
       el.textContent = label || '';
+
       if (sub) {
         const s = document.createElement('div');
         s.className = 'lav-token-sub';
-        // Truncate long names
-        s.textContent = sub.length > 8 ? sub.slice(0,7) + '.' : sub;
+        s.textContent = sub.length > 8 ? sub.slice(0,7)+'.' : sub;
         el.appendChild(s);
       }
 
-      // Double tap = remove
+      // Double-tap to remove
       let lastTap = 0;
       el.addEventListener('touchend', (e) => {
         const now = Date.now();
@@ -3152,107 +3356,92 @@
         lastTap = now;
       });
 
-      // Drag
-      const onStart = (e) => {
-        if (lavDrawMode) return;
+      // Drag via pointerdown on token itself
+      el.addEventListener('pointerdown', (e) => {
+        if (lavMode === 'draw') return;
         e.preventDefault(); e.stopPropagation();
+        el.setPointerCapture(e.pointerId);
         const wrap = document.getElementById('lavagnaWrap');
         const r = wrap.getBoundingClientRect();
-        const src = e.touches ? e.touches[0] : e;
-        lavDragOffX = src.clientX - r.left - parseFloat(el.style.left);
-        lavDragOffY = src.clientY - r.top - parseFloat(el.style.top);
+        lavDragOffX = e.clientX - r.left - parseFloat(el.style.left);
+        lavDragOffY = e.clientY - r.top  - parseFloat(el.style.top);
         lavDragToken = el;
         el.style.zIndex = 20;
-      };
-      el.addEventListener('touchstart', onStart, { passive: false });
-      el.addEventListener('mousedown', onStart);
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!lavDragToken || lavDragToken !== el) return;
+        e.preventDefault();
+        const wrap = document.getElementById('lavagnaWrap');
+        const r = wrap.getBoundingClientRect();
+        const x = e.clientX - r.left - lavDragOffX;
+        const y = e.clientY - r.top  - lavDragOffY;
+        el.style.left = Math.max(18, Math.min(r.width-18,  x)) + 'px';
+        el.style.top  = Math.max(18, Math.min(r.height-18, y)) + 'px';
+      });
+
+      el.addEventListener('pointerup', (e) => {
+        if (lavDragToken === el) { el.style.zIndex = 10; lavDragToken = null; }
+      });
+
       container.appendChild(el);
     }
 
-    // Global drag move/end
-    document.addEventListener('touchmove', (e) => {
-      if (!lavDragToken) return;
-      e.preventDefault();
+    function setSquadra(tipo) {
+      lavCurrentSquadra = tipo;
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
+      const p   = cfg.colorPrimary || '#1a7c3e';
+      const acc = cfg.colorAccent  || '#f0c040';
+      const btnC = document.getElementById('btnCasaLav');
+      const btnO = document.getElementById('btnOspiteLav');
+      const dotC = document.getElementById('dotCasa');
+      const dotO = document.getElementById('dotOspite');
+      const base = 'border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0';
+      if (dotC) dotC.style.background = p;
+      if (dotO) dotO.style.background = acc;
+      if (btnC) btnC.style.cssText = tipo === 'casa'
+        ? 'background:'+p+';border:1px solid '+p+';color:#fff;'+base
+        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;'+base;
+      if (btnO) btnO.style.cssText = tipo === 'ospite'
+        ? 'background:'+acc+';border:1px solid '+acc+';color:#1a1a1a;'+base
+        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;'+base;
+      setTimeout(() => {
+        const d1 = document.getElementById('dotCasa');
+        const d2 = document.getElementById('dotOspite');
+        if (d1) d1.style.background = p;
+        if (d2) d2.style.background = acc;
+      }, 0);
+    }
+
+    function lavAddPallone() {
       const wrap = document.getElementById('lavagnaWrap');
       if (!wrap) return;
-      const r = wrap.getBoundingClientRect();
-      const x = e.touches[0].clientX - r.left - lavDragOffX;
-      const y = e.touches[0].clientY - r.top - lavDragOffY;
-      lavDragToken.style.left = Math.max(17, Math.min(r.width-17, x)) + 'px';
-      lavDragToken.style.top = Math.max(17, Math.min(r.height-17, y)) + 'px';
-    }, { passive: false });
-
-    document.addEventListener('touchend', () => {
-      if (lavDragToken) { lavDragToken.style.zIndex = 10; lavDragToken = null; }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!lavDragToken) return;
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const r = wrap.getBoundingClientRect();
-      const x = e.clientX - r.left - lavDragOffX;
-      const y = e.clientY - r.top - lavDragOffY;
-      lavDragToken.style.left = Math.max(17, Math.min(r.width-17, x)) + 'px';
-      lavDragToken.style.top = Math.max(17, Math.min(r.height-17, y)) + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (lavDragToken) { lavDragToken.style.zIndex = 10; lavDragToken = null; }
-    });
+      addLavToken(wrap.offsetWidth/2, wrap.offsetHeight/2, '⚽', '#f5f5f5', '#000');
+    }
 
     function applyFormation(formation) {
       if (!formation) return;
       const wrap = document.getElementById('lavagnaWrap');
       if (!wrap) return;
       document.getElementById('lavagnaTokens').innerHTML = '';
-
-      const W = wrap.offsetWidth;
-      const H = wrap.offsetHeight || 400;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      // Casa = colore primario, Ospite = colore secondario
-      const color = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#e05252');
+      const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
+      const color = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#f0c040');
+      const textCol = lavCurrentSquadra === 'ospite' ? '#1a1a1a' : '#fff';
       const m = 28;
-
-      // Portiere (colore diverso)
-      addLavToken(W/2, H - m - 20, '1', '#d4820a', '#fff', 'P');
-
+      addLavToken(W/2, H-m-20, '1', '#d4820a', '#fff', 'P');
       const lines = formation.split('-').map(Number);
       const fieldH = H * 0.78;
       const startY = H - m - 60;
-      const stepY = (fieldH - 80) / lines.length;
-
+      const stepY  = (fieldH - 80) / lines.length;
       lines.forEach((count, i) => {
-        const y = startY - (i + 1) * stepY;
-        const stepX = (W - m*2) / (count + 1);
+        const y = startY - (i+1)*stepY;
+        const stepX = (W - m*2) / (count+1);
         const role = i === lines.length-1 ? 'A' : i === lines.length-2 ? 'C' : 'D';
         for (let j = 0; j < count; j++) {
-          const x = m + stepX * (j + 1);
-          const textCol = lavCurrentSquadra === 'ospite' ? '#1a1a1a' : '#fff';
-          addLavToken(x, y, String(i*10+j+2), color, textCol, role);
+          addLavToken(m+stepX*(j+1), y, String(i*10+j+2), color, textCol, role);
         }
       });
     }
 
     
-        // ── PWA SERVICE WORKER ──
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
-
-    // ── INIT ──
-    loadSettings();
-    updateHomeStats();
-    renderRosa();
-    renderCalendario();
-    updateAttivita();
-
-    document.getElementById('colorPrimary').addEventListener('input', e => {
-      applyTheme({ ...DB.get('settings', {}), colorPrimary: e.target.value });
-    });
-    document.getElementById('colorAccent').addEventListener('input', e => {
-      applyTheme({ ...DB.get('settings', {}), colorAccent: e.target.value });
-    });
-  </script>
-</body>
-</html>
