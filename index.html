@@ -1295,6 +1295,59 @@
       overflow: hidden;
     }
     #screen-lavagna.active { display: flex; }
+
+    /* ── PICK GIOCATORE LAVAGNA ── */
+    .lav-pick-btn {
+      flex: 1;
+      background: #243347;
+      border: 1px solid #344d66;
+      color: #8a9bb0;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .lav-pick-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .pick-giocatore-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 4px;
+      border-bottom: 1px solid #344d66;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pick-giocatore-row:last-child { border-bottom: none; }
+    .pick-giocatore-row:active { opacity: 0.6; }
+
+    .pick-num {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .pick-nome {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: #f0f4f8;
+    }
+
+    .pick-ruolo {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
@@ -1420,6 +1473,34 @@
         <div class="modal-footer">
           <button class="btn-cancel" onclick="closeModal('modalGiocatore')">Annulla</button>
           <button class="btn-confirm" id="btnSalvaGiocatore" onclick="salvaGiocatore()">Salva</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL PICK GIOCATORE LAVAGNA -->
+    <div class="modal-overlay" id="modalPickGiocatore" onclick="closeModalOutside(event,'modalPickGiocatore')">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">Aggiungi pedina</span>
+          <button class="modal-close" onclick="closeModal('modalPickGiocatore')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button class="lav-pick-btn active" id="pickBtnRosa" onclick="switchPickTab('rosa')">👥 Dalla rosa</button>
+            <button class="lav-pick-btn" id="pickBtnCustom" onclick="switchPickTab('custom')">✏️ Personalizzata</button>
+          </div>
+          <!-- Rosa tab -->
+          <div id="pickTabRosa">
+            <div id="pickGiocatoriList"></div>
+          </div>
+          <!-- Custom tab -->
+          <div id="pickTabCustom" style="display:none">
+            <div class="form-group">
+              <label class="form-label">Testo pedina</label>
+              <input type="text" class="form-input" id="pickCustomLabel" placeholder="Es. 10, CAP, ?" maxlength="4"/>
+            </div>
+            <button class="btn-confirm" style="width:100%;margin-top:8px" onclick="addCustomToken()">Aggiungi</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1677,8 +1758,8 @@
             <div class="field-corner field-corner-br"></div>
           </div>
         </div>
-        <!-- SVG draw overlay -->
-        <svg id="lavagnaLines" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:15;pointer-events:none;overflow:visible"></svg>
+        <!-- Draw container -->
+        <div id="lavagnaLines" style="position:absolute;inset:0;z-index:15;pointer-events:none;overflow:hidden"></div>
         <!-- Tokens container -->
         <div id="lavagnaTokens" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6"></div>
       </div>
@@ -2850,8 +2931,7 @@
       const wrap    = document.getElementById('lavagnaWrap');
       if (!overlay || !wrap) return;
 
-      let currentPath = null;
-      let points = [];
+      let lastX = 0, lastY = 0;
 
       const getPos = (e) => {
         const r = wrap.getBoundingClientRect();
@@ -2859,46 +2939,53 @@
         return { x: src.clientX - r.left, y: src.clientY - r.top };
       };
 
-      const startDraw = (e) => {
+      // Draw a line segment between two points using a rotated div
+      const drawSegment = (x1, y1, x2, y2) => {
+        const container = document.getElementById('lavagnaLines');
+        if (!container) return;
+        const dx = x2 - x1, dy = y2 - y1;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        if (len < 1) return;
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        const seg = document.createElement('div');
+        seg.style.cssText = [
+          'position:absolute',
+          'background:#ffeb3b',
+          'border-radius:3px',
+          'height:4px',
+          'pointer-events:none',
+          'transform-origin:0 50%',
+          'left:' + x1 + 'px',
+          'top:' + (y1 - 2) + 'px',
+          'width:' + len + 'px',
+          'transform:rotate(' + angle + 'deg)',
+        ].join(';');
+        container.appendChild(seg);
+      };
+
+      const onStart = (e) => {
         e.preventDefault();
         lavIsDrawing = true;
         const p = getPos(e);
-        points = [p];
-        const svg = document.getElementById('lavagnaLines');
-        currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        currentPath.setAttribute('stroke', '#ffeb3b');
-        currentPath.setAttribute('stroke-width', '4');
-        currentPath.setAttribute('stroke-linecap', 'round');
-        currentPath.setAttribute('stroke-linejoin', 'round');
-        currentPath.setAttribute('fill', 'none');
-        currentPath.setAttribute('d', 'M ' + p.x + ' ' + p.y);
-        svg.appendChild(currentPath);
+        lastX = p.x; lastY = p.y;
       };
 
-      const doDraw = (e) => {
-        if (!lavIsDrawing || !currentPath) return;
+      const onMove = (e) => {
+        if (!lavIsDrawing) return;
         e.preventDefault();
         const p = getPos(e);
-        points.push(p);
-        let d = 'M ' + points[0].x + ' ' + points[0].y;
-        for (let i = 1; i < points.length; i++) {
-          d += ' L ' + points[i].x + ' ' + points[i].y;
-        }
-        currentPath.setAttribute('d', d);
+        drawSegment(lastX, lastY, p.x, p.y);
+        lastX = p.x; lastY = p.y;
       };
 
-      const stopDraw = () => {
-        lavIsDrawing = false;
-        currentPath = null;
-        points = [];
-      };
+      const onEnd = () => { lavIsDrawing = false; };
 
-      overlay.addEventListener('touchstart', startDraw, { passive: false });
-      overlay.addEventListener('touchmove',  doDraw,     { passive: false });
-      overlay.addEventListener('touchend',   stopDraw);
-      overlay.addEventListener('mousedown',  startDraw);
-      overlay.addEventListener('mousemove',  doDraw);
-      overlay.addEventListener('mouseup',    stopDraw);
+      overlay.addEventListener('touchstart', onStart, { passive: false });
+      overlay.addEventListener('touchmove',  onMove,  { passive: false });
+      overlay.addEventListener('touchend',   onEnd);
+      overlay.addEventListener('mousedown',  onStart);
+      overlay.addEventListener('mousemove',  onMove);
+      overlay.addEventListener('mouseup',    onEnd);
     }
 
     function setSquadra(tipo) {
@@ -2955,20 +3042,89 @@
     }
 
     function lavAddToken() {
+      // Open pick modal
+      renderPickGiocatori();
+      openModal('modalPickGiocatore');
+    }
+
+    function switchPickTab(tab) {
+      const isRosa = tab === 'rosa';
+      document.getElementById('pickTabRosa').style.display = isRosa ? 'block' : 'none';
+      document.getElementById('pickTabCustom').style.display = isRosa ? 'none' : 'block';
+      document.getElementById('pickBtnRosa').classList.toggle('active', isRosa);
+      document.getElementById('pickBtnCustom').classList.toggle('active', !isRosa);
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
+      document.getElementById('pickBtnRosa').style.background = isRosa ? cfg.colorPrimary : '#243347';
+      document.getElementById('pickBtnCustom').style.background = !isRosa ? cfg.colorPrimary : '#243347';
+    }
+
+    function renderPickGiocatori() {
+      const giocatori = DB.get('giocatori', []);
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
+      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
+      const list = document.getElementById('pickGiocatoriList');
+
+      if (!giocatori.length) {
+        list.innerHTML = '<div class="placeholder" style="padding:20px 0"><p>Nessun giocatore nella rosa.</p></div>';
+        return;
+      }
+
+      // Sort by ruolo then numero
+      const sorted = [...giocatori].sort((a,b) => {
+        const ro = ['P','D','C','A'];
+        return ro.indexOf(a.ruolo) - ro.indexOf(b.ruolo) || (a.numero||99) - (b.numero||99);
+      });
+
+      list.innerHTML = sorted.map(g => {
+        const bg = colors[g.ruolo] || cfg.colorPrimary;
+        return `<div class="pick-giocatore-row" onclick="addGiocatoreToken('${g.id}')">
+          <div class="pick-num" style="background:${bg}">${g.numero || '?'}</div>
+          <div class="pick-nome">${g.cognome} ${g.nome}</div>
+          <span class="pick-ruolo ruolo-${g.ruolo}">${g.ruolo}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function addGiocatoreToken(id) {
+      const giocatori = DB.get('giocatori', []);
+      const g = giocatori.find(p => p.id === id);
+      if (!g) return;
+
       const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
+      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
+      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
+
+      // Use ruolo color for all, regardless of casa/ospite
+      const isOspite = lavCurrentSquadra === 'ospite';
+      const bg = isOspite ? (cfg.colorAccent || '#f0c040') : (colors[g.ruolo] || cfg.colorPrimary);
+      const textColor = isOspite ? '#1a1a1a' : '#fff';
+
+      const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
+      const x = W/2 + (Math.random()-0.5)*80;
+      const y = H/2 + (Math.random()-0.5)*80;
+
+      // Show numero on token, cognome as subtitle
+      addLavToken(x, y, String(g.numero || g.cognome.slice(0,3).toUpperCase()), bg, textColor, g.cognome.toUpperCase());
+      closeModal('modalPickGiocatore');
+    }
+
+    function addCustomToken() {
+      const label = document.getElementById('pickCustomLabel').value.trim() || '?';
+      const wrap = document.getElementById('lavagnaWrap');
       const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
       const bg = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#f0c040');
       const textColor = lavCurrentSquadra === 'casa' ? '#fff' : '#1a1a1a';
       const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
       const x = W/2 + (Math.random()-0.5)*60;
       const y = H/2 + (Math.random()-0.5)*60;
-      addLavToken(x, y, '?', bg, textColor, '');
+      addLavToken(x, y, label, bg, textColor, '');
+      document.getElementById('pickCustomLabel').value = '';
+      closeModal('modalPickGiocatore');
     }
 
     function lavClearLines() {
-      const svg = document.getElementById('lavagnaLines');
-      if (svg) svg.innerHTML = '';
+      const el = document.getElementById('lavagnaLines');
+      if (el) el.innerHTML = '';
     }
 
     function addLavToken(x, y, label, bg, color, sub) {
@@ -2983,7 +3139,8 @@
       if (sub) {
         const s = document.createElement('div');
         s.className = 'lav-token-sub';
-        s.textContent = sub;
+        // Truncate long names
+        s.textContent = sub.length > 8 ? sub.slice(0,7) + '.' : sub;
         el.appendChild(s);
       }
 
