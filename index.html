@@ -2831,7 +2831,7 @@
       const H = wrap.offsetHeight;
       if (W < 10 || H < 10) { setTimeout(initLavagna, 100); return; }
 
-      setupLavDraw(wrap);
+      setupLavDraw();
 
       // Prevent page scroll on wrap touch
       wrap.addEventListener('touchmove', (e) => {
@@ -2845,8 +2845,11 @@
       }
     }
 
-    function setupLavDraw(wrap) {
+    function setupLavDraw() {
       const overlay = document.getElementById('drawOverlay');
+      const wrap    = document.getElementById('lavagnaWrap');
+      if (!overlay || !wrap) return;
+
       let currentPath = null;
       let points = [];
 
@@ -2857,7 +2860,7 @@
       };
 
       const startDraw = (e) => {
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
         lavIsDrawing = true;
         const p = getPos(e);
         points = [p];
@@ -2890,13 +2893,12 @@
         points = [];
       };
 
-      // Attach to overlay div — completely independent from tokens
       overlay.addEventListener('touchstart', startDraw, { passive: false });
-      overlay.addEventListener('touchmove', doDraw, { passive: false });
-      overlay.addEventListener('touchend', stopDraw);
-      overlay.addEventListener('mousedown', startDraw);
-      overlay.addEventListener('mousemove', doDraw);
-      overlay.addEventListener('mouseup', stopDraw);
+      overlay.addEventListener('touchmove',  doDraw,     { passive: false });
+      overlay.addEventListener('touchend',   stopDraw);
+      overlay.addEventListener('mousedown',  startDraw);
+      overlay.addEventListener('mousemove',  doDraw);
+      overlay.addEventListener('mouseup',    stopDraw);
     }
 
     function setSquadra(tipo) {
