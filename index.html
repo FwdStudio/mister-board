@@ -1993,106 +1993,7 @@
       </div>
     </div>
 
-    <!-- LAVAGNA -->
-    <section class="screen" id="screen-lavagna" style="padding:0">
-      <div class="lavagna-toolbar">
-        <div class="lav-row">
-          <button class="lav-btn" onclick="setSquadra('casa')" id="btnCasaLav"><span id="dotCasa" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a7c3e;margin-right:5px;vertical-align:middle"></span>Casa</button>
-          <button class="lav-btn" onclick="setSquadra('ospite')" id="btnOspiteLav"><span id="dotOspite" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0c040;margin-right:5px;vertical-align:middle"></span>Ospite</button>
-          <button class="lav-btn" onclick="lavAddToken()">＋ Pedina</button>
-          <button class="lav-btn" onclick="lavAddPallone()">⚽</button>
-        </div>
-        <div class="lav-row">
-          <button class="lav-btn" onclick="lavToggleDraw()" id="btnDraw">✏️ Disegna</button>
-          <button class="lav-btn" onclick="lavClearLines()">↩ Cancella linee</button>
-          <button class="lav-btn" onclick="lavClearAll()" style="color:#e05252">🗑 Cancella tutto</button>
-        </div>
-      </div>
 
-      <div class="lavagna-wrap" id="lavagnaWrap">
-        <!-- Draw overlay - active only in draw mode -->
-        <div id="drawOverlay" style="position:absolute;inset:0;z-index:20;display:none;touch-action:none;cursor:crosshair"></div>
-        <!-- CSS Field -->
-        <div class="css-field" id="cssField">
-          <div class="field-inner">
-            <div class="field-line field-line-mid"></div>
-            <div class="field-circle field-circle-center"></div>
-            <div class="field-dot field-dot-center"></div>
-            <div class="field-area field-area-top-big"></div>
-            <div class="field-area field-area-top-small"></div>
-            <div class="field-area field-area-bot-big"></div>
-            <div class="field-area field-area-bot-small"></div>
-            <div class="field-corner field-corner-tl"></div>
-            <div class="field-corner field-corner-tr"></div>
-            <div class="field-corner field-corner-bl"></div>
-            <div class="field-corner field-corner-br"></div>
-          </div>
-        </div>
-        <!-- Draw container -->
-        <div id="lavagnaLines" style="position:absolute;inset:0;z-index:15;pointer-events:none;overflow:hidden"></div>
-        <!-- Tokens container -->
-        <div id="lavagnaTokens" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6"></div>
-      </div>
-
-      <div class="lavagna-bottom">
-        <div class="lav-formation-row">
-          <span style="font-size:12px;color:#8a9bb0;font-weight:600">MODULO</span>
-          <select class="lav-select" onchange="applyFormation(this.value)">
-            <option value="">-- Scegli --</option>
-            <option value="4-3-3">4-3-3</option>
-            <option value="4-4-2">4-4-2</option>
-            <option value="4-2-3-1">4-2-3-1</option>
-            <option value="3-5-2">3-5-2</option>
-            <option value="3-4-3">3-4-3</option>
-            <option value="5-3-2">5-3-2</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <!-- IMPOSTAZIONI -->
-    <section class="screen" id="screen-settings">
-      <div class="screen-title">Impostazioni</div>
-      <div class="screen-subtitle">Personalizza la tua squadra</div>
-
-      <div class="settings-section">
-        <div class="settings-label">Squadra</div>
-        <div class="settings-row">
-          <label>Nome squadra</label>
-          <input type="text" id="settingTeamName" placeholder="La Mia Squadra" />
-        </div>
-        <div class="settings-row">
-          <label>Stagione</label>
-          <input type="text" id="settingSeason" placeholder="2025/26" />
-        </div>
-        <div class="settings-row">
-          <label>Categoria</label>
-          <input type="text" id="settingCategory" placeholder="Under 15" />
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-label">Colori squadra</div>
-        <div class="settings-row">
-          <label>Colore primario</label>
-          <div class="color-row">
-            <div class="color-swatch">
-              <input type="color" id="colorPrimary" value="#1a7c3e" />
-            </div>
-          </div>
-        </div>
-        <div class="settings-row">
-          <label>Colore secondario</label>
-          <div class="color-row">
-            <div class="color-swatch">
-              <input type="color" id="colorAccent" value="#f0c040" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn-save" onclick="saveSettings()">Salva impostazioni</button>
-    </section>
 
   </main>
 
@@ -3411,6 +3312,11 @@
         if (d1) d1.style.background = p;
         if (d2) d2.style.background = acc;
       }, 0);
+    }
+
+    function lavAddToken() {
+      renderPickGiocatori();
+      openModal('modalPickGiocatore');
     }
 
     function lavAddPallone() {
