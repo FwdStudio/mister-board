@@ -412,7 +412,7 @@
     function darken(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r*(1-pct/100),g*(1-pct/100),b*(1-pct/100))}
     const DB={get:(k,fb=null)=>{try{return JSON.parse(localStorage.getItem(k))??fb}catch{return fb}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 
-        // ── THEME ──
+            // ── THEME ──
     function applyTheme(s){
       const p=s.colorPrimary||'#1a7c3e',pL=lighten(p,22),pD=darken(p,15),acc=s.colorAccent||'#f0c040';
       const root=document.documentElement;
@@ -424,9 +424,6 @@
       if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta);}
       meta.content=p;
       
-      const cP=document.querySelector('.card-primary'),cS=document.querySelector('.card-secondary');
-      const cPD=document.querySelector('.card-primary-dark'),cSD=document.querySelector('.card-secondary-dark');
-      
       function contrastColor(hex){
         const [r,g,b]=hexToRgb(hex);
         return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1a1a1a':'#ffffff';
@@ -436,34 +433,32 @@
         return(0.299*r+0.587*g+0.114*b)/255>0.55?'rgba(0,0,0,0.6)':'rgba(255,255,255,0.75)';
       }
       
-      // 1. Card Giocatori
-      if(cP) {
-        cP.style.background = p;
-        cP.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(p));
-        cP.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(p));
-      }
+      // SOLUZIONE DRASTICA: Troviamo le 4 card della griglia in base alla loro posizione reale nell'HTML,
+      // ignorando i selettori di classe specifici che potrebbero essere errati o assenti.
+      const homeGrid = document.querySelector('.stats-grid, .grid-container, .screen-home'); 
+      // Se non troviamo il container, prendiamo tutte le card che contengono i contatori
+      const cards = homeGrid ? homeGrid.querySelectorAll('.card, [class*="card-"]') : document.querySelectorAll('[class*="card-"]');
       
-      // 2. Card Partite
-      if(cS) {
-        cS.style.background = acc;
-        cS.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(acc));
-        cS.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(acc));
-      }
+      const backgrounds = [p, acc, pD, darken(acc, 15)];
       
-      // 3. Card Allenamenti
-      if(cPD) {
-        cPD.style.background = pD;
-        cPD.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(pD));
-        cPD.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(pD));
-      }
-      
-      // 4. Card % Presenze (Risoluzione diretta del problema)
-      if(cSD) {
-        const bgScuroAccento = darken(acc, 15);
-        cSD.style.background = bgScuroAccento;
-        cSD.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(bgScuroAccento));
-        cSD.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(bgScuroAccento));
-      }
+      cards.forEach((card, index) => {
+        if (index > 3) return; // Gestiamo solo le prime 4 card riassuntive
+        
+        const bg = backgrounds[index];
+        card.style.setProperty('background', bg, 'important');
+        
+        // Applichiamo il colore direttamente iniettandolo con !important per vincere qualsiasi regola CSS contraria
+        card.querySelectorAll('.stat-value, .stat-label, span, div').forEach(el => {
+          if (el.classList.contains('stat-label')) {
+            el.style.setProperty('color', contrastMuted(bg), 'important');
+          } else if (el.classList.contains('stat-value') || el.textContent === '—' || el.textContent.includes('%')) {
+            el.style.setProperty('color', contrastColor(bg), 'important');
+          } else {
+            // Testo generico interno alla card (es. etichette non classate)
+            el.style.setProperty('color', contrastColor(bg), 'important');
+          }
+        });
+      });
 
       document.querySelectorAll('.nav-item').forEach(item=>{
         const isA=item.classList.contains('active');
@@ -477,17 +472,25 @@
       
       const btnSave = document.querySelector('.btn-save');
       if(btnSave){
-        btnSave.style.background = p;
-        btnSave.style.color = contrastColor(p);
+        btnSave.style.setProperty('background', p, 'important');
+        btnSave.style.setProperty('color', contrastColor(p), 'important');
       }
       
-      // Corretti i refusi di sintassi (.forEach=el=>) che causavano crash silenziosi nel rendering del tema
       document.querySelectorAll('.screen-title').forEach(el=>el.style.color='#f0f4f8');
       document.querySelectorAll('.screen-subtitle').forEach(el=>el.style.color='#8a9bb0');
-      document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{el.style.background='#243347';el.style.borderColor='#344d66'});
-      document.querySelector('.app-header').style.background='#243347';
-      document.querySelector('.bottom-nav').style.background='#243347';
+      
+      // Escludiamo le 4 card principali da questa pulizia per evitare che sovrascriva lo sfondo appena calcolato
+      document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{
+        if (!el.querySelector('.stat-value')) {
+          el.style.background='#243347';
+          el.style.borderColor='#344d66';
+        }
+      });
+      
+      if(document.querySelector('.app-header')) document.querySelector('.app-header').style.background='#243347';
+      if(document.querySelector('.bottom-nav')) document.querySelector('.bottom-nav').style.background='#243347';
     }
+
 
 
     // ── NAVIGATION ──
