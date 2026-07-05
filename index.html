@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
@@ -9,1330 +9,206 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Mister Board</title>
-
   <style>
-    /* ── DESIGN TOKENS ── */
     :root {
-      --primary: #1a7c3e;
-      --primary-dark: #125c2d;
-      --primary-light: #22a050;
-      --accent: #f0c040;
-      --bg: #182233;
-      --bg-card: #243347;
-      --bg-card2: #2c3f55;
-      --text: #f0f4f8;
-      --text-muted: #8a9bb0;
-      --border: #344d66;
-      --danger: #e05252;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --nav-h: 64px;
-    }
-
-    /* ── RESET ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; background: #182233 !important; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #182233 !important;
-      color: #f0f4f8 !important;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── HEADER ── */
-    .app-header {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
-      padding: calc(var(--safe-top) + 12px) 20px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-
-    .app-header .team-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.3px;
-    }
-
-    .app-header .season-badge {
-      font-size: 12px;
-      color: var(--text-muted);
-      background: var(--bg-card2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 10px;
-    }
-
-    /* ── MAIN CONTENT ── */
-    .app-content {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: calc(var(--nav-h) + var(--safe-bottom));
-      background: #182233 !important;
-    }
-
-    /* ── SCREENS ── */
-    .screen { display: none; padding: 20px 16px; }
-    .screen.active { display: block; }
-
-    /* ── BOTTOM NAV ── */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0; right: 0;
-      height: calc(var(--nav-h) + var(--safe-bottom));
-      background: var(--bg-card);
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: flex-start;
-      padding-top: 8px;
-      padding-bottom: var(--safe-bottom);
-      z-index: 100;
-    }
-
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      padding: 4px 0;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s;
-    }
-
-    .nav-item:active { opacity: 0.6; }
-
-    .nav-icon {
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-icon svg {
-      width: 22px;
-      height: 22px;
-      stroke: var(--text-muted);
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.15s;
-    }
-
-    .nav-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      transition: color 0.15s;
-      font-weight: 500;
-    }
-
-    .nav-item.active .nav-icon svg { stroke: var(--primary-light); }
-    .nav-item.active .nav-label { color: var(--primary-light); }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 12px;
-    }
-
-    /* ── STAT GRID (Home) ── */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .stat-card {
-      border-radius: 14px;
-      padding: 16px 14px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      border: none;
-    }
-
-    .stat-icon {
-      font-size: 22px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .stat-value {
-      font-size: 34px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.75);
-      font-weight: 500;
-    }
-
-    .card-primary      { background: var(--primary); }
-    .card-secondary    { background: var(--accent); }
-    .card-secondary    .stat-value { color: #1a1a1a; }
-    .card-secondary    .stat-label { color: rgba(0,0,0,0.6); }
-    .card-primary-dark { background: var(--primary-dark); }
-    .card-secondary-dark { background: #c8a020; }
-    .card-secondary-dark .stat-value,
-    .card-secondary-dark .stat-label { color: #fff !important; }
-
-    /* ── NEXT EVENT ── */
-    .next-event {
-      background: var(--bg-card2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .event-dot {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 20px;
-    }
-
-    .event-info .event-type {
-      font-size: 11px;
-      color: var(--primary-light);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    .event-info .event-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin: 2px 0;
-    }
-
-    .event-info .event-date {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* ── SCREEN TITLES ── */
-    .screen-title {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 4px;
-      letter-spacing: -0.5px;
-    }
-
-    .screen-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    /* ── PLACEHOLDER ── */
-    .placeholder {
-      text-align: center;
-      padding: 48px 20px;
-      color: var(--text-muted);
-    }
-
-    .placeholder-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      opacity: 0.4;
-    }
-
-    .placeholder p {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* ── SETTINGS ── */
-    .settings-section {
-      margin-bottom: 24px;
-    }
-
-    .settings-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 10px;
-      padding: 0 4px;
-    }
-
-    .settings-row {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .settings-row label {
-      font-size: 14px;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .settings-row input[type="text"] {
-      background: var(--bg-card2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 14px;
-      padding: 6px 10px;
-      width: 160px;
-      outline: none;
-    }
-
-    .settings-row input[type="text"]:focus {
-      border-color: var(--primary-light);
-    }
-
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .color-swatch {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      border: 2px solid var(--border);
-      cursor: pointer;
-      overflow: hidden;
-    }
-
-    .color-swatch input[type="color"] {
-      width: 48px;
-      height: 48px;
-      border: none;
-      cursor: pointer;
-      transform: translate(-8px, -8px);
-    }
-
-    .btn-save {
-      width: 100%;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.15s;
-    }
-
-    .btn-save:active { background: var(--primary-dark); }
-
-    /* ── FIELD PITCH (placeholder) ── */
-    .pitch-placeholder {
-      background: linear-gradient(180deg, #2d6a4f 0%, #1b4332 100%);
-      border-radius: 14px;
-      aspect-ratio: 3/4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #40916c;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .pitch-placeholder::before {
-      content: '';
-      position: absolute;
-      inset: 12px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 4px;
-    }
-
-    .pitch-placeholder::after {
-      content: '';
-      position: absolute;
-      left: 12px; right: 12px;
-      top: 50%;
-      height: 2px;
-      background: rgba(255,255,255,0.2);
-      transform: translateY(-50%);
-    }
-
-    .pitch-label {
-      color: rgba(255,255,255,0.4);
-      font-size: 13px;
-      font-weight: 500;
-      z-index: 1;
-    }
-
-    /* ── ROSA ── */
-    .rosa-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .btn-add {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 9px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .ruolo-filter {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 14px;
-      scrollbar-width: none;
-    }
-    .ruolo-filter::-webkit-scrollbar { display: none; }
-
-    .filter-btn {
-      background: #243347;
-      color: #8a9bb0;
-      border: 1px solid #344d66;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .filter-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    .giocatore-card {
-      background: #243347;
-      border: 1px solid #344d66;
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .giocatore-card:active { opacity: 0.7; }
-
-    .giocatore-numero {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .giocatore-info { flex: 1; min-width: 0; }
-
-    .giocatore-nome {
-      font-size: 15px;
-      font-weight: 700;
-      color: #f0f4f8;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .giocatore-meta {
-      font-size: 12px;
-      color: #8a9bb0;
-      margin-top: 2px;
-    }
-
-    .giocatore-ruolo-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 20px;
-      flex-shrink: 0;
-    }
-
-    .ruolo-P { background: rgba(90,120,200,0.25); color: #7a9fef; }
-    .ruolo-D { background: rgba(50,180,100,0.25); color: #50c878; }
-    .ruolo-C { background: rgba(240,190,60,0.25);  color: #f0be3c; }
-    .ruolo-A { background: rgba(220,80,80,0.25);   color: #e05050; }
-
-    .btn-delete-g {
-      background: none;
-      border: none;
-      color: #e05252;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 4px 6px;
-      opacity: 0.6;
-      flex-shrink: 0;
-    }
-    .btn-delete-g:active { opacity: 1; }
-
-    /* ── MODALS ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-      padding: 16px;
-    }
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: #243347;
-      border-radius: 20px 20px 0 0;
-      width: 100%;
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-body {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      flex: 1;
-    }
-
-    .modal-sm { max-width: 320px; }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid #344d66;
-      flex-shrink: 0;
-    }
-
-    .modal-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: #f0f4f8;
-    }
-
-    .modal-close {
-      background: #2a3a50;
-      border: none;
-      color: #8a9bb0;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
-    .modal-footer {
-      padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
-      display: flex;
-      gap: 10px;
-      border-top: 1px solid #2a3a50;
-      flex-shrink: 0;
-      background: #243347;
-    }
-
-    .form-row { display: flex; gap: 10px; }
-    .form-group { flex: 1; margin-bottom: 10px; }
-
-    .form-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #8a9bb0;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 6px;
-    }
-
-    .form-input {
-      width: 100%;
-      background: #212f42;
-      border: 1px solid #344d66;
-      border-radius: 10px;
-      color: #f0f4f8;
-      font-size: 15px;
-      padding: 10px 12px;
-      outline: none;
-      -webkit-appearance: none;
-    }
-    .form-input:focus { border-color: var(--primary-light); }
-    select.form-input { cursor: pointer; }
-
-    .btn-cancel {
-      flex: 1;
-      background: #344d66;
-      color: #f0f4f8;
-      border: none;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-confirm {
-      flex: 2;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-danger {
-      flex: 2;
-      background: #e05252;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .ruolo-section-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #8a9bb0;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 8px 4px 6px;
-    }
-
-    /* ── CALENDARIO ── */
-    .cal-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .cal-nav-btn {
-      background: #243347;
-      border: 1px solid #344d66;
-      color: #f0f4f8;
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .cal-month-label {
-      font-size: 17px;
-      font-weight: 700;
-      color: #f0f4f8;
-      text-transform: capitalize;
-    }
-
-    .cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
-      margin-bottom: 10px;
-    }
-
-    .cal-dow {
-      text-align: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #8a9bb0;
-      padding: 4px 0 8px;
-      text-transform: uppercase;
-    }
-
-    #calDays {
-      display: contents;
-    }
-
-    .cal-day {
-      aspect-ratio: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding-top: 6px;
-      border-radius: 10px;
-      cursor: pointer;
-      position: relative;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .cal-day:active { background: #344d66; }
-
-    .cal-day.empty { cursor: default; }
-    .cal-day.empty:active { background: none; }
-
-    .cal-day.today .day-num {
-      background: var(--primary);
-      color: #fff;
-      border-radius: 50%;
-      width: 26px; height: 26px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .cal-day.selected { background: rgba(255,255,255,0.08); }
-
-    .day-num {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f4f8;
-      line-height: 1;
-      width: 26px; height: 26px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .cal-day.other-month .day-num { color: #4a5a70; }
-
-    .day-dots {
-      display: flex;
-      gap: 2px;
-      margin-top: 3px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .day-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-    }
-
-    .cal-legend {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #8a9bb0;
-      margin-bottom: 16px;
-      padding: 0 2px;
-    }
-
-    .legend-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .cal-events-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #f0f4f8;
-    }
-
-    .evento-card {
-      background: #243347;
-      border: 1px solid #344d66;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .evento-color-bar {
-      width: 4px;
-      border-radius: 4px;
-      align-self: stretch;
-      flex-shrink: 0;
-      min-height: 40px;
-    }
-
-    .evento-info { flex: 1; min-width: 0; }
-
-    .evento-tipo {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 2px;
-    }
-
-    .evento-titolo {
-      font-size: 14px;
-      font-weight: 600;
-      color: #f0f4f8;
-    }
-
-    .evento-meta {
-      font-size: 12px;
-      color: #8a9bb0;
-      margin-top: 2px;
-    }
-
-    .toggle-btn {
-      flex: 1;
-      background: #182233;
-      border: 1px solid #344d66;
-      color: #8a9bb0;
-      border-radius: 10px;
-      padding: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .toggle-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-    }
-
-    /* ── PRESENZE ── */
-    .presenze-badge {
-      font-size: 11px;
-      font-weight: 700;
-      color: #8a9bb0;
-      white-space: nowrap;
-    }
-
-    .presenze-section { }
-
-    .presenze-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .presenze-quick-btn {
-      background: #182233;
-      border: 1px solid #344d66;
-      color: #8a9bb0;
-      border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .presenza-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 4px;
-      border-bottom: 1px solid #344d66;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .presenza-row:last-child { border-bottom: none; }
-
-    .presenza-checkbox {
-      width: 22px; height: 22px;
-      border-radius: 6px;
-      border: 2px solid #344d66;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
-
-    .presenza-checkbox.checked {
-      border-color: var(--primary);
-      background: var(--primary);
-    }
-
-    .presenza-checkbox.checked::after {
-      content: '✓';
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .presenza-num {
-      width: 28px; height: 28px;
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .presenza-nome {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 600;
-      color: #f0f4f8;
-    }
-
-    .presenza-ruolo {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
-
-    .detail-info-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      font-size: 13px;
-      color: #8a9bb0;
-    }
-
-    .detail-info-row strong { color: #f0f4f8; }
-
-    .presenze-summary {
-      background: #182233;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .presenze-summary-num {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--primary-light);
-    }
-
-    .presenze-summary-label {
-      font-size: 12px;
-      color: #8a9bb0;
-    }
-
-    /* ── VALUTAZIONI & RADAR ── */
-    .radar-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      background: #182233;
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .val-slider-row {
-      margin-bottom: 14px;
-    }
-
-    .val-slider-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .val-slider-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f4f8;
-    }
-
-    .val-slider-value {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--primary-light);
-      min-width: 28px;
-      text-align: right;
-    }
-
-    .val-slider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: #344d66;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .val-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--primary);
-      cursor: pointer;
-      border: 2px solid #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-
-    .gd-stat-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .gd-stat {
-      flex: 1;
-      background: #182233;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .gd-stat-val {
-      font-size: 20px;
-      font-weight: 800;
-      color: #f0f4f8;
-    }
-
-    .gd-stat-lbl {
-      font-size: 11px;
-      color: #8a9bb0;
-      margin-top: 2px;
-    }
-
-    /* ── WHATSAPP CONVOCAZIONI ── */
-    .btn-whatsapp {
-      width: 100%;
-      background: #25d366;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-whatsapp:active { background: #1da851; }
-
-    .conv-giocatore-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 4px;
-      border-bottom: 1px solid #344d66;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .conv-giocatore-row:last-child { border-bottom: none; }
-
-    .conv-check {
-      width: 20px; height: 20px;
-      border-radius: 5px;
-      border: 2px solid #344d66;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 12px;
-    }
-    .conv-check.checked {
-      background: #25d366;
-      border-color: #25d366;
-      color: #fff;
-    }
-
-    .conv-nome {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 600;
-      color: #f0f4f8;
-    }
-
-    .conv-ruolo {
-      font-size: 11px;
-      color: #8a9bb0;
-    }
-
-    /* ── LAVAGNA ── */
-    .lavagna-toolbar {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 8px 12px;
-      background: #182233;
-      border-bottom: 1px solid #344d66;
-      flex-shrink: 0;
-    }
-    .lav-row {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .lav-row::-webkit-scrollbar { display: none; }
-
-    .lav-btn {
-      background: #243347;
-      border: 1px solid #344d66;
-      color: #f0f4f8;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .lavagna-wrap {
-      position: relative;
-      width: 100%;
-      flex: 1;
-      overflow: hidden;
-      touch-action: none;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-    }
-
-    /* CSS Field */
-    .css-field {
-      position: absolute;
-      inset: 0;
-      background: #2d7a3e;
-      z-index: 1;
-    }
-
-    .field-inner {
-      position: absolute;
-      inset: 14px;
-      border: 2px solid rgba(255,255,255,0.7);
-    }
-
-    .field-line-mid {
-      position: absolute;
-      left: 0; right: 0;
-      top: 50%;
-      height: 2px;
-      background: rgba(255,255,255,0.7);
-      transform: translateY(-50%);
-    }
-
-    .field-circle-center {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 18%;
-      padding-top: 18%;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.7);
-      transform: translate(-50%, -50%);
-    }
-
-    .field-dot-center {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 6px; height: 6px;
-      background: rgba(255,255,255,0.8);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-
-    .field-area-top-big {
-      position: absolute;
-      left: 20%; right: 20%;
-      top: 0; height: 16%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-top: none;
-    }
-
-    .field-area-top-small {
-      position: absolute;
-      left: 33%; right: 33%;
-      top: 0; height: 7%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-top: none;
-    }
-
-    .field-area-bot-big {
-      position: absolute;
-      left: 20%; right: 20%;
-      bottom: 0; height: 16%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-bottom: none;
-    }
-
-    .field-area-bot-small {
-      position: absolute;
-      left: 33%; right: 33%;
-      bottom: 0; height: 7%;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-bottom: none;
-    }
-
-    .field-corner {
-      position: absolute;
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-radius: 0;
-    }
-    .field-corner-tl { top: -2px; left: -2px; border-radius: 0 0 100% 0; border-top: none; border-left: none; }
-    .field-corner-tr { top: -2px; right: -2px; border-radius: 0 0 0 100%; border-top: none; border-right: none; }
-    .field-corner-bl { bottom: -2px; left: -2px; border-radius: 0 100% 0 0; border-bottom: none; border-left: none; }
-    .field-corner-br { bottom: -2px; right: -2px; border-radius: 100% 0 0 0; border-bottom: none; border-right: none; }
-
-    .lavagna-bottom {
-      padding: 8px 12px;
-      background: #182233;
-      border-top: 1px solid #344d66;
-      flex-shrink: 0;
-    }
-
-    .lav-formation-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .lav-select {
-      flex: 1;
-      background: #243347;
-      border: 1px solid #344d66;
-      color: #f0f4f8;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 13px;
-      -webkit-appearance: none;
-      outline: none;
-    }
-
-    .lav-token {
-      position: absolute;
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: #fff;
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      border: 2px solid rgba(255,255,255,0.4);
-      z-index: 10;
-    }
-
-    .lav-token-sub {
-      position: absolute;
-      bottom: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 9px;
-      font-weight: 700;
-      color: #fff;
-      white-space: nowrap;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-      pointer-events: none;
-    }
-
-    #screen-lavagna {
-      display: none;
-      flex-direction: column;
-      position: fixed;
-      top: 52px;
-      left: 0; right: 0;
-      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-      overflow: hidden;
-    }
-    #screen-lavagna.active { display: flex; }
+      --primary: #1a7c3e; --primary-dark: #125c2d; --primary-light: #22a050;
+      --accent: #f0c040; --bg: #182233; --bg-card: #243347; --bg-card2: #2c3f55;
+      --text: #f0f4f8; --text-muted: #8a9bb0; --border: #344d66;
+      --danger: #e05252; --safe-top: env(safe-area-inset-top,0px);
+      --safe-bottom: env(safe-area-inset-bottom,0px); --nav-h: 64px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden;background:#182233 !important}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#182233 !important;color:#f0f4f8;display:flex;flex-direction:column}
+    .app-header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:calc(var(--safe-top) + 12px) 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .app-header .team-name{font-size:18px;font-weight:700;color:var(--text)}
+    .app-header .season-badge{font-size:12px;color:var(--text-muted);background:var(--bg-card2);border:1px solid var(--border);border-radius:20px;padding:3px 10px}
+    .app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + var(--safe-bottom));background:#182233 !important}
+    .screen{display:none;padding:20px 16px}
+    .screen.active{display:block}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-bottom));background:var(--bg-card);border-top:1px solid var(--border);display:flex;align-items:flex-start;padding-top:8px;padding-bottom:var(--safe-bottom);z-index:100}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent}
+    .nav-icon svg{width:22px;height:22px;stroke:var(--text-muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .nav-label{font-size:10px;color:var(--text-muted);font-weight:500}
+    .nav-item.active .nav-icon svg{stroke:var(--primary-light)}
+    .nav-item.active .nav-label{color:var(--primary-light)}
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+    .card-title{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .stat-card{border-radius:14px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:2px;border:none}
+    .stat-icon{font-size:22px;margin-bottom:6px;display:block}
+    .stat-value{font-size:34px;font-weight:800;color:#fff;line-height:1}
+    .stat-label{font-size:12px;color:rgba(255,255,255,.75);font-weight:500}
+    .card-primary{background:var(--primary)}
+    .card-secondary{background:var(--accent)}
+    .card-secondary .stat-value{color:#1a1a1a}
+    .card-secondary .stat-label{color:rgba(0,0,0,.6)}
+    .card-primary-dark{background:var(--primary-dark)}
+    .card-secondary-dark{background:#c8a020}
+    .card-secondary-dark .stat-value,.card-secondary-dark .stat-label{color:#fff !important}
+    .next-event{background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+    .event-dot{width:44px;height:44px;border-radius:12px;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+    .event-info .event-type{font-size:11px;color:var(--primary-light);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+    .event-info .event-title{font-size:15px;font-weight:600;color:var(--text);margin:2px 0}
+    .event-info .event-date{font-size:12px;color:var(--text-muted)}
+    .screen-title{font-size:24px;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:-.5px}
+    .screen-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:20px}
+    .placeholder{text-align:center;padding:48px 20px;color:var(--text-muted)}
+    .placeholder-icon{font-size:48px;margin-bottom:12px;opacity:.4}
+    .placeholder p{font-size:14px;line-height:1.5}
+    .settings-section{margin-bottom:24px}
+    .settings-label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:0 4px}
+    .settings-row{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+    .settings-row label{font-size:14px;color:var(--text);font-weight:500}
+    .settings-row input[type="text"]{background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;padding:6px 10px;width:160px;outline:none}
+    .color-row{display:flex;align-items:center;gap:10px}
+    .color-swatch{width:32px;height:32px;border-radius:8px;border:2px solid var(--border);cursor:pointer;overflow:hidden}
+    .color-swatch input[type="color"]{width:48px;height:48px;border:none;cursor:pointer;transform:translate(-8px,-8px)}
+    .btn-save{width:100%;background:var(--primary);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+    .rosa-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+    .btn-add{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-top:4px}
+    .ruolo-filter{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+    .ruolo-filter::-webkit-scrollbar{display:none}
+    .filter-btn{background:#243347;color:#8a9bb0;border:1px solid #344d66;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .giocatore-card{background:#243347;border:1px solid #344d66;border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .giocatore-card:active{opacity:.7}
+    .giocatore-numero{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+    .giocatore-info{flex:1;min-width:0}
+    .giocatore-nome{font-size:15px;font-weight:700;color:#f0f4f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .giocatore-meta{font-size:12px;color:#8a9bb0;margin-top:2px}
+    .giocatore-ruolo-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0}
+    .ruolo-P{background:rgba(90,120,200,.25);color:#7a9fef}
+    .ruolo-D{background:rgba(50,180,100,.25);color:#50c878}
+    .ruolo-C{background:rgba(240,190,60,.25);color:#f0be3c}
+    .ruolo-A{background:rgba(220,80,80,.25);color:#e05050}
+    .btn-delete-g{background:none;border:none;color:#e05252;font-size:18px;cursor:pointer;padding:4px 6px;opacity:.6;flex-shrink:0}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+    .modal-overlay.open{display:flex}
+    .modal{background:#243347;border-radius:20px;width:calc(100% - 32px);max-width:400px;max-height:85vh;display:flex;flex-direction:column}
+    .modal-body{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+    .modal-sm{max-width:320px}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid #344d66;flex-shrink:0}
+    .modal-title{font-size:17px;font-weight:700;color:#f0f4f8}
+    .modal-close{background:#2a3a50;border:none;color:#8a9bb0;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+    .modal-footer{padding:12px 16px 14px;display:flex;gap:10px;border-top:1px solid #344d66;flex-shrink:0;background:#243347;border-radius:0 0 20px 20px}
+    .form-row{display:flex;gap:10px}
+    .form-group{flex:1;margin-bottom:10px}
+    .form-label{display:block;font-size:12px;font-weight:600;color:#8a9bb0;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+    .form-input{width:100%;background:#212f42;border:1px solid #344d66;border-radius:10px;color:#f0f4f8;font-size:15px;padding:10px 12px;outline:none;-webkit-appearance:none}
+    .form-input:focus{border-color:var(--primary-light)}
+    select.form-input{cursor:pointer}
+    .btn-cancel{flex:1;background:#344d66;color:#f0f4f8;border:none;border-radius:12px;padding:11px;font-size:15px;font-weight:600;cursor:pointer}
+    .btn-confirm{flex:2;background:var(--primary);color:#fff;border:none;border-radius:12px;padding:11px;font-size:15px;font-weight:600;cursor:pointer}
+    .btn-danger{flex:2;background:#e05252;color:#fff;border:none;border-radius:12px;padding:11px;font-size:15px;font-weight:600;cursor:pointer}
+    .ruolo-section-title{font-size:11px;font-weight:700;color:#8a9bb0;text-transform:uppercase;letter-spacing:.8px;padding:8px 4px 6px}
+    .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .cal-nav-btn{background:#243347;border:1px solid #344d66;color:#f0f4f8;width:36px;height:36px;border-radius:10px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .cal-month-label{font-size:17px;font-weight:700;color:#f0f4f8;text-transform:capitalize}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px}
+    .cal-dow{text-align:center;font-size:11px;font-weight:700;color:#8a9bb0;padding:4px 0 8px;text-transform:uppercase}
+    #calDays{display:contents}
+    .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6px;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .cal-day.empty{cursor:default}
+    .cal-day.today .day-num{background:var(--primary);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+    .day-num{font-size:13px;font-weight:600;color:#f0f4f8;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+    .day-dots{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center}
+    .day-dot{width:5px;height:5px;border-radius:50%}
+    .cal-legend{display:flex;align-items:center;gap:6px;font-size:12px;color:#8a9bb0;margin-bottom:16px;padding:0 2px}
+    .legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .cal-events-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:14px;font-weight:700;color:#f0f4f8}
+    .evento-card{background:#243347;border:1px solid #344d66;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .evento-color-bar{width:4px;border-radius:4px;align-self:stretch;flex-shrink:0;min-height:40px}
+    .evento-info{flex:1;min-width:0}
+    .evento-tipo{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+    .evento-titolo{font-size:14px;font-weight:600;color:#f0f4f8}
+    .evento-meta{font-size:12px;color:#8a9bb0;margin-top:2px}
+    .toggle-btn{flex:1;background:#182233;border:1px solid #344d66;color:#8a9bb0;border-radius:10px;padding:8px;font-size:13px;font-weight:600;cursor:pointer}
+    .toggle-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .presenze-badge{font-size:11px;font-weight:700;color:#8a9bb0;white-space:nowrap}
+    .presenze-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .presenze-quick-btn{background:#182233;border:1px solid #344d66;color:#8a9bb0;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer}
+    .presenza-row{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid #344d66;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .presenza-row:last-child{border-bottom:none}
+    .presenza-checkbox{width:22px;height:22px;border-radius:6px;border:2px solid #344d66;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .presenza-checkbox.checked{border-color:var(--primary);background:var(--primary)}
+    .presenza-checkbox.checked::after{content:'✓';color:#fff;font-size:13px;font-weight:700}
+    .presenza-num{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+    .presenza-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
+    .presenza-ruolo{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+    .detail-info-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;color:#8a9bb0}
+    .detail-info-row strong{color:#f0f4f8}
+    .presenze-summary{background:#182233;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+    .presenze-summary-num{font-size:22px;font-weight:800;color:var(--primary-light)}
+    .presenze-summary-label{font-size:12px;color:#8a9bb0}
+    .radar-container{display:flex;justify-content:center;margin-bottom:20px;background:#182233;border-radius:16px;padding:16px}
+    .val-slider-row{margin-bottom:14px}
+    .val-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .val-slider-label{font-size:13px;font-weight:600;color:#f0f4f8}
+    .val-slider-value{font-size:15px;font-weight:800;color:var(--primary-light);min-width:28px;text-align:right}
+    .val-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:#344d66;outline:none;cursor:pointer}
+    .val-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--primary);cursor:pointer;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+    .gd-stat-row{display:flex;gap:8px;margin-bottom:12px}
+    .gd-stat{flex:1;background:#182233;border-radius:10px;padding:10px;text-align:center}
+    .gd-stat-val{font-size:20px;font-weight:800;color:#f0f4f8}
+    .gd-stat-lbl{font-size:11px;color:#8a9bb0;margin-top:2px}
+    .btn-whatsapp{width:100%;background:#25d366;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+    .conv-giocatore-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #344d66;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .conv-giocatore-row:last-child{border-bottom:none}
+    .conv-check{width:20px;height:20px;border-radius:5px;border:2px solid #344d66;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+    .conv-check.checked{background:#25d366;border-color:#25d366;color:#fff}
+    .conv-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
+    .conv-ruolo{font-size:11px;color:#8a9bb0}
+    /* LAVAGNA */
+    .lavagna-toolbar{display:flex;flex-direction:column;gap:6px;padding:8px 12px;background:#182233;border-bottom:1px solid #344d66;flex-shrink:0}
+    .lav-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
+    .lav-row::-webkit-scrollbar{display:none}
+    .lav-btn{background:#243347;border:1px solid #344d66;color:#f0f4f8;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .lav-select{flex:1;background:#243347;border:1px solid #344d66;color:#f0f4f8;border-radius:8px;padding:6px 10px;font-size:13px;-webkit-appearance:none;outline:none}
+    .lavagna-wrap{position:relative;width:100%;flex:1;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+    .css-field{position:absolute;inset:0;background:#2d7a3e;z-index:1}
+    .field-inner{position:absolute;inset:14px;border:2px solid rgba(255,255,255,.7)}
+    .field-line-mid{position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(255,255,255,.7);transform:translateY(-50%)}
+    .field-circle-center{position:absolute;left:50%;top:50%;width:18%;padding-top:18%;border-radius:50%;border:2px solid rgba(255,255,255,.7);transform:translate(-50%,-50%)}
+    .field-dot-center{position:absolute;left:50%;top:50%;width:6px;height:6px;background:rgba(255,255,255,.8);border-radius:50%;transform:translate(-50%,-50%);z-index:2}
+    .field-area-top-big{position:absolute;left:20%;right:20%;top:0;height:16%;border:2px solid rgba(255,255,255,.7);border-top:none}
+    .field-area-top-small{position:absolute;left:33%;right:33%;top:0;height:7%;border:2px solid rgba(255,255,255,.7);border-top:none}
+    .field-area-bot-big{position:absolute;left:20%;right:20%;bottom:0;height:16%;border:2px solid rgba(255,255,255,.7);border-bottom:none}
+    .field-area-bot-small{position:absolute;left:33%;right:33%;bottom:0;height:7%;border:2px solid rgba(255,255,255,.7);border-bottom:none}
+    .field-corner{position:absolute;width:14px;height:14px;border:2px solid rgba(255,255,255,.7);border-radius:0}
+    .field-corner-tl{top:-2px;left:-2px;border-radius:0 0 100% 0;border-top:none;border-left:none}
+    .field-corner-tr{top:-2px;right:-2px;border-radius:0 0 0 100%;border-top:none;border-right:none}
+    .field-corner-bl{bottom:-2px;left:-2px;border-radius:0 100% 0 0;border-bottom:none;border-left:none}
+    .field-corner-br{bottom:-2px;right:-2px;border-radius:100% 0 0 0;border-bottom:none;border-right:none}
+    .lav-token{position:absolute;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.4);z-index:10;touch-action:none;user-select:none;-webkit-user-select:none}
+    .lav-token-sub{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none}
+    #screen-lavagna{display:none;flex-direction:column;position:fixed;top:52px;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));overflow:hidden}
+    #screen-lavagna.active{display:flex}
+    /* PICK */
+    .lav-pick-btn{flex:1;background:#243347;border:1px solid #344d66;color:#8a9bb0;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer}
+    .lav-pick-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .pick-giocatore-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #344d66;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .pick-giocatore-row:last-child{border-bottom:none}
+    .pick-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+    .pick-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
+    .pick-ruolo{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
   </style>
 </head>
 <body>
-
-  <!-- HEADER -->
   <header class="app-header">
     <span class="team-name" id="headerTeamName">La Mia Squadra</span>
     <span class="season-badge" id="headerSeason">2025/26</span>
   </header>
-
-  <!-- CONTENT -->
   <main class="app-content">
-
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <div class="stat-grid">
-        <div class="stat-card card-primary">
-          <span class="stat-icon">👥</span>
-          <span class="stat-value" id="statGiocatori">0</span>
-          <span class="stat-label">Giocatori</span>
-        </div>
-        <div class="stat-card card-secondary">
-          <span class="stat-icon">⚽</span>
-          <span class="stat-value" id="statPartite">0</span>
-          <span class="stat-label">Partite</span>
-        </div>
-        <div class="stat-card card-primary-dark">
-          <span class="stat-icon">🏃</span>
-          <span class="stat-value" id="statAllenamenti">0</span>
-          <span class="stat-label">Allenamenti</span>
-        </div>
-        <div class="stat-card card-secondary-dark">
-          <span class="stat-icon">📊</span>
-          <span class="stat-value" id="statPresenze">–</span>
-          <span class="stat-label">% Presenze</span>
-        </div>
+        <div class="stat-card card-primary"><span class="stat-icon">👥</span><span class="stat-value" id="statGiocatori">0</span><span class="stat-label">Giocatori</span></div>
+        <div class="stat-card card-secondary"><span class="stat-icon">⚽</span><span class="stat-value" id="statPartite">0</span><span class="stat-label">Partite</span></div>
+        <div class="stat-card card-primary-dark"><span class="stat-icon">🏃</span><span class="stat-value" id="statAllenamenti">0</span><span class="stat-label">Allenamenti</span></div>
+        <div class="stat-card card-secondary-dark"><span class="stat-icon">📊</span><span class="stat-value" id="statPresenze">–</span><span class="stat-label">% Presenze</span></div>
       </div>
-
       <div class="next-event" id="nextEventBox">
         <div class="event-dot">📅</div>
         <div class="event-info">
@@ -1341,134 +217,24 @@
           <div class="event-date">Aggiungi eventi dal Calendario</div>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-title">Attività recente</div>
-        <div id="attivitaRecente"></div>
-      </div>
+      <div class="card"><div class="card-title">Attività recente</div><div id="attivitaRecente"></div></div>
     </section>
-
     <!-- ROSA -->
     <section class="screen" id="screen-rosa">
       <div class="rosa-header">
-        <div>
-          <div class="screen-title">Rosa</div>
-          <div class="screen-subtitle" id="rosaSubtitle">0 giocatori</div>
-        </div>
-        <button class="btn-add" onclick="openModal('modalGiocatore')">+ Aggiungi</button>
+        <div><div class="screen-title">Rosa</div><div class="screen-subtitle" id="rosaSubtitle">0 giocatori</div></div>
+        <button class="btn-add" onclick="openModalGiocatore()">+ Aggiungi</button>
       </div>
-
-      <div class="ruolo-filter" id="ruoloFilter">
-        <button class="filter-btn active" onclick="filterRosa('tutti', this)">Tutti</button>
-        <button class="filter-btn" onclick="filterRosa('P', this)">Portieri</button>
-        <button class="filter-btn" onclick="filterRosa('D', this)">Difensori</button>
-        <button class="filter-btn" onclick="filterRosa('C', this)">Centrocampisti</button>
-        <button class="filter-btn" onclick="filterRosa('A', this)">Attaccanti</button>
+      <div class="ruolo-filter">
+        <button class="filter-btn active" onclick="filterRosa('tutti',this)">Tutti</button>
+        <button class="filter-btn" onclick="filterRosa('P',this)">Portieri</button>
+        <button class="filter-btn" onclick="filterRosa('D',this)">Difensori</button>
+        <button class="filter-btn" onclick="filterRosa('C',this)">Centrocampisti</button>
+        <button class="filter-btn" onclick="filterRosa('A',this)">Attaccanti</button>
       </div>
-
       <div id="rosaList"></div>
-
-      <div class="placeholder" id="rosaEmpty" style="display:none">
-        <div class="placeholder-icon">👥</div>
-        <p>Nessun giocatore ancora.<br>Tocca <strong>+ Aggiungi</strong> per iniziare.</p>
-      </div>
+      <div class="placeholder" id="rosaEmpty" style="display:none"><div class="placeholder-icon">👥</div><p>Nessun giocatore ancora.<br>Tocca <strong>+ Aggiungi</strong> per iniziare.</p></div>
     </section>
-
-    <!-- MODAL GIOCATORE -->
-    <div class="modal-overlay" id="modalGiocatore" onclick="closeModalOutside(event, 'modalGiocatore')">
-      <div class="modal">
-        <div class="modal-header">
-          <span class="modal-title" id="modalGiocatoreTitle">Nuovo Giocatore</span>
-          <button class="modal-close" onclick="closeModal('modalGiocatore')">✕</button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="gId" />
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Nome</label>
-              <input type="text" class="form-input" id="gNome" placeholder="Marco" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Cognome</label>
-              <input type="text" class="form-input" id="gCognome" placeholder="Rossi" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">N° Maglia</label>
-              <input type="number" class="form-input" id="gNumero" placeholder="10" min="1" max="99" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Ruolo</label>
-              <select class="form-input" id="gRuolo">
-                <option value="P">Portiere</option>
-                <option value="D">Difensore</option>
-                <option value="C" selected>Centrocampista</option>
-                <option value="A">Attaccante</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Anno di nascita</label>
-            <input type="number" class="form-input" id="gAnno" placeholder="2010" min="1990" max="2020" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Note (opzionale)</label>
-            <input type="text" class="form-input" id="gNote" placeholder="Capitano, infortunato..." />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal('modalGiocatore')">Annulla</button>
-          <button class="btn-confirm" id="btnSalvaGiocatore" onclick="salvaGiocatore()">Salva</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DETTAGLIO GIOCATORE -->
-    <div class="modal-overlay" id="modalGiocatoreDetail" onclick="closeModalOutside(event,'modalGiocatoreDetail')">
-      <div class="modal" style="max-height:90vh">
-        <div class="modal-header">
-          <span class="modal-title" id="gdTitle">Giocatore</span>
-          <button class="modal-close" onclick="closeModal('modalGiocatoreDetail')">✕</button>
-        </div>
-        <div class="modal-body">
-          <div id="gdInfo" style="margin-bottom:16px"></div>
-
-          <!-- RADAR CHART -->
-          <div class="radar-container">
-            <canvas id="radarCanvas" width="280" height="280"></canvas>
-          </div>
-
-          <!-- VALUTAZIONI SLIDERS -->
-          <div id="valSliders"></div>
-        </div>
-        <div class="modal-footer" style="flex-direction:column;gap:8px">
-          <div style="display:flex;gap:8px;width:100%">
-            <button class="btn-cancel" style="flex:1" onclick="openEditFromDetail()">✏️ Modifica</button>
-            <button class="btn-confirm" style="flex:2" onclick="salvaValutazione()">Salva valutazione</button>
-          </div>
-          <button class="btn-cancel" style="width:100%;color:#e05252" onclick="closeModal('modalGiocatoreDetail');askDeleteGiocatore(currentGiocatoreId,'')">🗑 Elimina giocatore</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL CONFIRM DELETE -->
-    <div class="modal-overlay" id="modalDeleteGiocatore" onclick="closeModalOutside(event, 'modalDeleteGiocatore')">
-      <div class="modal modal-sm">
-        <div class="modal-header">
-          <span class="modal-title">Elimina giocatore</span>
-          <button class="modal-close" onclick="closeModal('modalDeleteGiocatore')">✕</button>
-        </div>
-        <div class="modal-body">
-          <p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteGiocatoreNome"></strong> dalla rosa?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal('modalDeleteGiocatore')">Annulla</button>
-          <button class="btn-danger" onclick="confirmDeleteGiocatore()">Elimina</button>
-        </div>
-      </div>
-    </div>
-
     <!-- CALENDARIO -->
     <section class="screen" id="screen-calendario">
       <div class="cal-nav">
@@ -1476,214 +242,31 @@
         <span class="cal-month-label" id="calMonthLabel"></span>
         <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
       </div>
-
       <div class="cal-grid">
-        <div class="cal-dow">Lu</div><div class="cal-dow">Ma</div>
-        <div class="cal-dow">Me</div><div class="cal-dow">Gi</div>
-        <div class="cal-dow">Ve</div><div class="cal-dow">Sa</div>
-        <div class="cal-dow">Do</div>
+        <div class="cal-dow">Lu</div><div class="cal-dow">Ma</div><div class="cal-dow">Me</div><div class="cal-dow">Gi</div><div class="cal-dow">Ve</div><div class="cal-dow">Sa</div><div class="cal-dow">Do</div>
         <div id="calDays"></div>
       </div>
-
-      <div class="cal-legend">
-        <span class="legend-dot" style="background:#5b9bd5"></span><span>Allenamento</span>
-        <span class="legend-dot" style="background:#e05252;margin-left:12px"></span><span>Partita</span>
-      </div>
-
-      <div class="cal-events-header">
-        <span id="calEventsTitle">Eventi del mese</span>
-        <button class="btn-add" onclick="openModalEvento(null)" style="padding:7px 14px;font-size:13px">+ Aggiungi</button>
-      </div>
+      <div class="cal-legend"><span class="legend-dot" style="background:#5b9bd5"></span><span>Allenamento</span><span class="legend-dot" style="background:#e05252;margin-left:12px"></span><span>Partita</span></div>
+      <div class="cal-events-header"><span id="calEventsTitle">Eventi del mese</span><button class="btn-add" onclick="openModalEvento(null)" style="padding:7px 14px;font-size:13px">+ Aggiungi</button></div>
       <div id="calEventsList"></div>
     </section>
-
-    <!-- MODAL EVENTO -->
-    <div class="modal-overlay" id="modalEvento" onclick="closeModalOutside(event,'modalEvento')">
-      <div class="modal">
-        <div class="modal-header">
-          <span class="modal-title" id="modalEventoTitle">Nuovo Evento</span>
-          <button class="modal-close" onclick="closeModal('modalEvento')">✕</button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="eId" />
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Tipo</label>
-              <select class="form-input" id="eTipo" onchange="toggleAvversario()">
-                <option value="allenamento">🏃 Allenamento</option>
-                <option value="partita">⚽ Partita</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Data</label>
-              <input type="date" class="form-input" id="eData" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Ora inizio</label>
-              <input type="time" class="form-input" id="eOra" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Durata (min)</label>
-              <input type="number" class="form-input" id="eDurata" placeholder="90" min="15" max="300" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Titolo / Luogo</label>
-            <input type="text" class="form-input" id="eTitolo" placeholder="Campo Sportivo..." />
-          </div>
-          <div class="form-group" id="avversarioGroup">
-            <label class="form-label">Avversario</label>
-            <input type="text" class="form-input" id="eAvversario" placeholder="Nome squadra avversaria" />
-          </div>
-          <div class="form-group" id="casaTrasfertaGroup">
-            <label class="form-label">Casa / Trasferta</label>
-            <div style="display:flex;gap:8px">
-              <button class="toggle-btn active" id="btnCasa" onclick="setCasaTrasferta('casa')">🏠 Casa</button>
-              <button class="toggle-btn" id="btnTrasferta" onclick="setCasaTrasferta('trasferta')">🚌 Trasferta</button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Note</label>
-            <input type="text" class="form-input" id="eNote" placeholder="Note aggiuntive..." />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal('modalEvento')">Annulla</button>
-          <button class="btn-confirm" onclick="salvaEvento()">Salva</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DETTAGLIO EVENTO + PRESENZE -->
-    <div class="modal-overlay" id="modalEventoDetail" onclick="closeModalOutside(event,'modalEventoDetail')">
-      <div class="modal" style="max-height:88vh">
-        <div class="modal-header">
-          <span class="modal-title" id="detailTitle">Dettaglio Evento</span>
-          <button class="modal-close" onclick="closeModal('modalEventoDetail')">✕</button>
-        </div>
-        <div class="modal-body">
-          <div id="detailInfo" style="margin-bottom:16px"></div>
-          <div class="presenze-section">
-            <div class="presenze-header">
-              <span class="form-label" style="margin:0">Presenze</span>
-              <div style="display:flex;gap:8px">
-                <button class="presenze-quick-btn" onclick="selectAllPresenze(true)">Tutti ✓</button>
-                <button class="presenze-quick-btn" onclick="selectAllPresenze(false)">Nessuno ✗</button>
-              </div>
-            </div>
-            <div id="presenzeList"></div>
-          </div>
-        </div>
-        <div class="modal-footer" style="flex-direction:column;gap:8px">
-          <div style="display:flex;gap:8px;width:100%">
-            <button class="btn-cancel" style="flex:1" onclick="closeModal('modalEventoDetail')">Chiudi</button>
-            <button class="btn-confirm" style="flex:2" onclick="salvaPresenze()">Salva presenze</button>
-          </div>
-          <button class="btn-whatsapp" onclick="apriConvocazione()">
-            <span>📲</span> Invia convocazione WhatsApp
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL CONVOCAZIONE WHATSAPP -->
-    <div class="modal-overlay" id="modalConvocazione" onclick="closeModalOutside(event,'modalConvocazione')">
-      <div class="modal">
-        <div class="modal-header">
-          <span class="modal-title">📲 Convocazione WhatsApp</span>
-          <button class="modal-close" onclick="closeModal('modalConvocazione')">✕</button>
-        </div>
-        <div class="modal-body">
-
-          <div class="form-group">
-            <label class="form-label">Giocatori convocati</label>
-            <div id="convGiocatoriList"></div>
-          </div>
-
-          <div class="form-group" style="margin-top:8px">
-            <label class="form-label">Anteprima messaggio</label>
-            <textarea id="convMessaggio" class="form-input"
-              style="height:180px;resize:none;font-size:13px;line-height:1.5"
-              oninput=""></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Numero WhatsApp gruppo (opzionale)</label>
-            <input type="tel" class="form-input" id="convNumero" placeholder="+39 333 123 4567" />
-            <div style="font-size:11px;color:#8a9bb0;margin-top:4px">Lascia vuoto per aprire WhatsApp senza numero</div>
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal('modalConvocazione')">Annulla</button>
-          <button class="btn-whatsapp" onclick="inviaWhatsApp()">
-            <span>📲</span> Apri WhatsApp
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DELETE EVENTO -->
-    <div class="modal-overlay" id="modalDeleteEvento" onclick="closeModalOutside(event,'modalDeleteEvento')">
-      <div class="modal modal-sm">
-        <div class="modal-header">
-          <span class="modal-title">Elimina evento</span>
-          <button class="modal-close" onclick="closeModal('modalDeleteEvento')">✕</button>
-        </div>
-        <div class="modal-body">
-          <p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteEventoNome"></strong>?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal('modalDeleteEvento')">Annulla</button>
-          <button class="btn-danger" onclick="confirmDeleteEvento()">Elimina</button>
-        </div>
-      </div>
-    </div>
-
     <!-- LAVAGNA -->
     <section class="screen" id="screen-lavagna" style="padding:0">
       <div class="lavagna-toolbar">
         <div class="lav-row">
-          <button class="lav-btn" onclick="setSquadra('casa')" id="btnCasaLav"><span id="dotCasa" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a7c3e;margin-right:5px;vertical-align:middle"></span>Casa</button>
-          <button class="lav-btn" onclick="setSquadra('ospite')" id="btnOspiteLav"><span id="dotOspite" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0c040;margin-right:5px;vertical-align:middle"></span>Ospite</button>
+          <button class="lav-btn" id="btnCasaLav" onclick="setSquadra('casa')"><span id="dotCasa" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a7c3e;margin-right:5px;vertical-align:middle"></span>Casa</button>
+          <button class="lav-btn" id="btnOspiteLav" onclick="setSquadra('ospite')"><span id="dotOspite" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0c040;margin-right:5px;vertical-align:middle"></span>Ospite</button>
           <button class="lav-btn" onclick="lavAddToken()">＋ Pedina</button>
           <button class="lav-btn" onclick="lavAddPallone()">⚽</button>
         </div>
         <div class="lav-row">
-          <button class="lav-btn" onclick="lavToggleDraw()" id="btnDraw">✏️ Disegna</button>
-          <button class="lav-btn" onclick="lavClearLines()">↩ Cancella linee</button>
-          <button class="lav-btn" onclick="lavClearAll()" style="color:#e05252">🗑 Cancella tutto</button>
+          <button class="lav-btn" id="btnDraw" onclick="lavToggleDraw()">✏️ Disegna</button>
+          <button class="lav-btn" onclick="lavUndo()">↩ Annulla</button>
+          <button class="lav-btn" onclick="lavClearLines()">🧹 Linee</button>
+          <button class="lav-btn" onclick="lavClearAll()" style="color:#e05252">🗑 Tutto</button>
         </div>
-      </div>
-
-      <div class="lavagna-wrap" id="lavagnaWrap">
-        <!-- CSS Field -->
-        <div class="css-field" id="cssField">
-          <div class="field-inner">
-            <div class="field-line field-line-mid"></div>
-            <div class="field-circle field-circle-center"></div>
-            <div class="field-dot field-dot-center"></div>
-            <div class="field-area field-area-top-big"></div>
-            <div class="field-area field-area-top-small"></div>
-            <div class="field-area field-area-bot-big"></div>
-            <div class="field-area field-area-bot-small"></div>
-            <div class="field-corner field-corner-tl"></div>
-            <div class="field-corner field-corner-tr"></div>
-            <div class="field-corner field-corner-bl"></div>
-            <div class="field-corner field-corner-br"></div>
-          </div>
-        </div>
-        <!-- SVG draw overlay -->
-        <svg id="lavagnaLines" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible"></svg>
-        <!-- Tokens container -->
-        <div id="lavagnaTokens" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6"></div>
-      </div>
-
-      <div class="lavagna-bottom">
-        <div class="lav-formation-row">
-          <span style="font-size:12px;color:#8a9bb0;font-weight:600">MODULO</span>
+        <div class="lav-row">
+          <span style="font-size:12px;color:#8a9bb0;font-weight:600;flex-shrink:0">MODULO</span>
           <select class="lav-select" onchange="applyFormation(this.value)">
             <option value="">-- Scegli --</option>
             <option value="4-3-3">4-3-3</option>
@@ -1695,1406 +278,784 @@
           </select>
         </div>
       </div>
+      <div class="lavagna-wrap" id="lavagnaWrap"
+        ontouchstart="lavOnTouchStart(event)"
+        ontouchmove="lavOnTouchMove(event)"
+        ontouchend="lavOnTouchEnd(event)"
+        onmousedown="lavOnMouseDown(event)"
+        onmousemove="lavOnMouseMove(event)"
+        onmouseup="lavOnMouseUp(event)">
+        <div class="css-field">
+          <div class="field-inner">
+            <div class="field-line-mid"></div>
+            <div class="field-circle-center"></div>
+            <div class="field-dot-center"></div>
+            <div class="field-area field-area-top-big"></div>
+            <div class="field-area field-area-top-small"></div>
+            <div class="field-area field-area-bot-big"></div>
+            <div class="field-area field-area-bot-small"></div>
+            <div class="field-corner field-corner-tl"></div>
+            <div class="field-corner field-corner-tr"></div>
+            <div class="field-corner field-corner-bl"></div>
+            <div class="field-corner field-corner-br"></div>
+          </div>
+        </div>
+        <svg id="lavagnaLines" style="position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible"></svg>
+        <div id="lavagnaTokens" style="position:absolute;inset:0;z-index:10"></div>
+      </div>
     </section>
-
     <!-- IMPOSTAZIONI -->
     <section class="screen" id="screen-settings">
       <div class="screen-title">Impostazioni</div>
       <div class="screen-subtitle">Personalizza la tua squadra</div>
-
       <div class="settings-section">
         <div class="settings-label">Squadra</div>
-        <div class="settings-row">
-          <label>Nome squadra</label>
-          <input type="text" id="settingTeamName" placeholder="La Mia Squadra" />
-        </div>
-        <div class="settings-row">
-          <label>Stagione</label>
-          <input type="text" id="settingSeason" placeholder="2025/26" />
-        </div>
-        <div class="settings-row">
-          <label>Categoria</label>
-          <input type="text" id="settingCategory" placeholder="Under 15" />
-        </div>
+        <div class="settings-row"><label>Nome squadra</label><input type="text" id="settingTeamName" placeholder="La Mia Squadra"/></div>
+        <div class="settings-row"><label>Stagione</label><input type="text" id="settingSeason" placeholder="2025/26"/></div>
+        <div class="settings-row"><label>Categoria</label><input type="text" id="settingCategory" placeholder="Under 15"/></div>
       </div>
-
       <div class="settings-section">
         <div class="settings-label">Colori squadra</div>
-        <div class="settings-row">
-          <label>Colore primario</label>
-          <div class="color-row">
-            <div class="color-swatch">
-              <input type="color" id="colorPrimary" value="#1a7c3e" />
-            </div>
-          </div>
-        </div>
-        <div class="settings-row">
-          <label>Colore secondario</label>
-          <div class="color-row">
-            <div class="color-swatch">
-              <input type="color" id="colorAccent" value="#f0c040" />
-            </div>
-          </div>
-        </div>
+        <div class="settings-row"><label>Colore primario</label><div class="color-row"><div class="color-swatch"><input type="color" id="colorPrimary" value="#1a7c3e"/></div></div></div>
+        <div class="settings-row"><label>Colore secondario</label><div class="color-row"><div class="color-swatch"><input type="color" id="colorAccent" value="#f0c040"/></div></div></div>
       </div>
-
       <button class="btn-save" onclick="saveSettings()">Salva impostazioni</button>
     </section>
-
   </main>
-
+  <!-- MODALS -->
+  <div class="modal-overlay" id="modalGiocatore" onclick="closeModalOutside(event,'modalGiocatore')">
+    <div class="modal"><div class="modal-header"><span class="modal-title" id="modalGiocatoreTitle">Nuovo Giocatore</span><button class="modal-close" onclick="closeModal('modalGiocatore')">✕</button></div>
+    <div class="modal-body"><input type="hidden" id="gId"/>
+      <div class="form-row"><div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="gNome" placeholder="Marco"/></div><div class="form-group"><label class="form-label">Cognome</label><input type="text" class="form-input" id="gCognome" placeholder="Rossi"/></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">N° Maglia</label><input type="number" class="form-input" id="gNumero" placeholder="10"/></div><div class="form-group"><label class="form-label">Ruolo</label><select class="form-input" id="gRuolo"><option value="P">Portiere</option><option value="D">Difensore</option><option value="C" selected>Centrocampista</option><option value="A">Attaccante</option></select></div></div>
+      <div class="form-group"><label class="form-label">Anno di nascita</label><input type="number" class="form-input" id="gAnno" placeholder="2010"/></div>
+      <div class="form-group"><label class="form-label">Note (opzionale)</label><input type="text" class="form-input" id="gNote" placeholder="Capitano, infortunato..."/></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalGiocatore')">Annulla</button><button class="btn-confirm" onclick="salvaGiocatore()">Salva</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalGiocatoreDetail" onclick="closeModalOutside(event,'modalGiocatoreDetail')">
+    <div class="modal" style="max-height:90vh"><div class="modal-header"><span class="modal-title" id="gdTitle">Giocatore</span><button class="modal-close" onclick="closeModal('modalGiocatoreDetail')">✕</button></div>
+    <div class="modal-body"><div id="gdInfo" style="margin-bottom:16px"></div><div class="radar-container"><canvas id="radarCanvas" width="280" height="280"></canvas></div><div id="valSliders"></div></div>
+    <div class="modal-footer" style="flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;width:100%"><button class="btn-cancel" style="flex:1" onclick="openEditFromDetail()">✏️ Modifica</button><button class="btn-confirm" style="flex:2" onclick="salvaValutazione()">Salva valutazione</button></div>
+      <button class="btn-cancel" style="width:100%;color:#e05252" onclick="closeModal('modalGiocatoreDetail');askDeleteGiocatore(currentGiocatoreId,'')">🗑 Elimina giocatore</button>
+    </div></div>
+  </div>
+  <div class="modal-overlay" id="modalDeleteGiocatore" onclick="closeModalOutside(event,'modalDeleteGiocatore')">
+    <div class="modal modal-sm"><div class="modal-header"><span class="modal-title">Elimina giocatore</span><button class="modal-close" onclick="closeModal('modalDeleteGiocatore')">✕</button></div>
+    <div class="modal-body"><p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteGiocatoreNome"></strong> dalla rosa?</p></div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalDeleteGiocatore')">Annulla</button><button class="btn-danger" onclick="confirmDeleteGiocatore()">Elimina</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalEvento" onclick="closeModalOutside(event,'modalEvento')">
+    <div class="modal"><div class="modal-header"><span class="modal-title" id="modalEventoTitle">Nuovo Evento</span><button class="modal-close" onclick="closeModal('modalEvento')">✕</button></div>
+    <div class="modal-body"><input type="hidden" id="eId"/>
+      <div class="form-row"><div class="form-group"><label class="form-label">Tipo</label><select class="form-input" id="eTipo" onchange="toggleAvversario()"><option value="allenamento">🏃 Allenamento</option><option value="partita">⚽ Partita</option></select></div><div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="eData"/></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Ora inizio</label><input type="time" class="form-input" id="eOra"/></div><div class="form-group"><label class="form-label">Durata (min)</label><input type="number" class="form-input" id="eDurata" placeholder="90"/></div></div>
+      <div class="form-group"><label class="form-label">Titolo / Luogo</label><input type="text" class="form-input" id="eTitolo" placeholder="Campo Sportivo..."/></div>
+      <div class="form-group" id="avversarioGroup"><label class="form-label">Avversario</label><input type="text" class="form-input" id="eAvversario" placeholder="Nome squadra avversaria"/></div>
+      <div class="form-group" id="casaTrasfertaGroup"><label class="form-label">Casa / Trasferta</label><div style="display:flex;gap:8px"><button class="toggle-btn active" id="btnCasa" onclick="setCasaTrasferta('casa')">🏠 Casa</button><button class="toggle-btn" id="btnTrasferta" onclick="setCasaTrasferta('trasferta')">🚌 Trasferta</button></div></div>
+      <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="eNote" placeholder="Note aggiuntive..."/></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalEvento')">Annulla</button><button class="btn-confirm" onclick="salvaEvento()">Salva</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalEventoDetail" onclick="closeModalOutside(event,'modalEventoDetail')">
+    <div class="modal" style="max-height:88vh"><div class="modal-header"><span class="modal-title" id="detailTitle">Dettaglio Evento</span><button class="modal-close" onclick="closeModal('modalEventoDetail')">✕</button></div>
+    <div class="modal-body"><div id="detailInfo" style="margin-bottom:16px"></div>
+      <div><div class="presenze-header"><span class="form-label" style="margin:0">Presenze</span><div style="display:flex;gap:8px"><button class="presenze-quick-btn" onclick="selectAllPresenze(true)">Tutti ✓</button><button class="presenze-quick-btn" onclick="selectAllPresenze(false)">Nessuno ✗</button></div></div><div id="presenzeList"></div></div>
+    </div>
+    <div class="modal-footer" style="flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;width:100%"><button class="btn-cancel" style="flex:1" onclick="closeModal('modalEventoDetail')">Chiudi</button><button class="btn-confirm" style="flex:2" onclick="salvaPresenze()">Salva presenze</button></div>
+      <button class="btn-whatsapp" onclick="apriConvocazione()"><span>📲</span> Invia convocazione WhatsApp</button>
+    </div></div>
+  </div>
+  <div class="modal-overlay" id="modalConvocazione" onclick="closeModalOutside(event,'modalConvocazione')">
+    <div class="modal"><div class="modal-header"><span class="modal-title">📲 Convocazione WhatsApp</span><button class="modal-close" onclick="closeModal('modalConvocazione')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Giocatori convocati</label><div id="convGiocatoriList"></div></div>
+      <div class="form-group" style="margin-top:8px"><label class="form-label">Anteprima messaggio</label><textarea id="convMessaggio" class="form-input" style="height:180px;resize:none;font-size:13px;line-height:1.5"></textarea></div>
+      <div class="form-group"><label class="form-label">Numero WhatsApp gruppo (opzionale)</label><input type="tel" class="form-input" id="convNumero" placeholder="+39 333 123 4567"/><div style="font-size:11px;color:#8a9bb0;margin-top:4px">Lascia vuoto per aprire WhatsApp senza numero</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalConvocazione')">Annulla</button><button class="btn-whatsapp" onclick="inviaWhatsApp()"><span>📲</span> Apri WhatsApp</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalDeleteEvento" onclick="closeModalOutside(event,'modalDeleteEvento')">
+    <div class="modal modal-sm"><div class="modal-header"><span class="modal-title">Elimina evento</span><button class="modal-close" onclick="closeModal('modalDeleteEvento')">✕</button></div>
+    <div class="modal-body"><p style="color:#f0f4f8;font-size:14px;line-height:1.5">Vuoi eliminare <strong id="deleteEventoNome"></strong>?</p></div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalDeleteEvento')">Annulla</button><button class="btn-danger" onclick="confirmDeleteEvento()">Elimina</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalPickGiocatore" onclick="closeModalOutside(event,'modalPickGiocatore')">
+    <div class="modal"><div class="modal-header"><span class="modal-title">Aggiungi pedina</span><button class="modal-close" onclick="closeModal('modalPickGiocatore')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="lav-pick-btn active" id="pickBtnRosa" onclick="switchPickTab('rosa')">👥 Dalla rosa</button>
+        <button class="lav-pick-btn" id="pickBtnCustom" onclick="switchPickTab('custom')">✏️ Personalizzata</button>
+      </div>
+      <div id="pickTabRosa"><div id="pickGiocatoriList"></div></div>
+      <div id="pickTabCustom" style="display:none">
+        <div class="form-group"><label class="form-label">Testo pedina</label><input type="text" class="form-input" id="pickCustomLabel" placeholder="Es. 10, CAP, ?" maxlength="4"/></div>
+        <button class="btn-confirm" style="width:100%;margin-top:8px" onclick="addCustomToken()">Aggiungi</button>
+      </div>
+    </div></div>
+  </div>
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <div class="nav-item active" onclick="navigate('home', this)">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-      </div>
-      <span class="nav-label">Home</span>
-    </div>
-    <div class="nav-item" onclick="navigate('rosa', this)">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6"/><circle cx="17" cy="9" r="3"/><path d="M13 20c0-3.3 2.7-6 6-6"/></svg>
-      </div>
-      <span class="nav-label">Rosa</span>
-    </div>
-    <div class="nav-item" onclick="navigate('calendario', this)">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      </div>
-      <span class="nav-label">Calendario</span>
-    </div>
-    <div class="nav-item" onclick="navigate('lavagna', this)">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><path d="M8 21h8M12 19v2"/><circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg>
-      </div>
-      <span class="nav-label">Lavagna</span>
-    </div>
-    <div class="nav-item" onclick="navigate('settings', this)">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      </div>
-      <span class="nav-label">Impostazioni</span>
-    </div>
+    <div class="nav-item active" onclick="navigate('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div><span class="nav-label">Home</span></div>
+    <div class="nav-item" onclick="navigate('rosa',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6"/><circle cx="17" cy="9" r="3"/><path d="M13 20c0-3.3 2.7-6 6-6"/></svg></div><span class="nav-label">Rosa</span></div>
+    <div class="nav-item" onclick="navigate('calendario',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><span class="nav-label">Calendario</span></div>
+    <div class="nav-item" onclick="navigate('lavagna',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg></div><span class="nav-label">Lavagna</span></div>
+    <div class="nav-item" onclick="navigate('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><span class="nav-label">Impostazioni</span></div>
   </nav>
-
   <script>
-    // ── UTILITY COLORE ──
-    function hexToRgb(hex) {
-      return [1,3,5].map(i => parseInt(hex.slice(i, i+2), 16));
-    }
-    function rgbToHex(r,g,b) {
-      return '#' + [r,g,b].map(v => Math.min(255,Math.max(0,Math.round(v))).toString(16).padStart(2,'0')).join('');
-    }
-    function lighten(hex, pct) {
-      const [r,g,b] = hexToRgb(hex);
-      return rgbToHex(r+(255-r)*pct/100, g+(255-g)*pct/100, b+(255-b)*pct/100);
-    }
-    function darken(hex, pct) {
-      const [r,g,b] = hexToRgb(hex);
-      return rgbToHex(r*(1-pct/100), g*(1-pct/100), b*(1-pct/100));
-    }
+    // ── UTILS ──
+    function hexToRgb(hex){return[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16))}
+    function rgbToHex(r,g,b){return'#'+[r,g,b].map(v=>Math.min(255,Math.max(0,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+    function lighten(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r+(255-r)*pct/100,g+(255-g)*pct/100,b+(255-b)*pct/100)}
+    function darken(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r*(1-pct/100),g*(1-pct/100),b*(1-pct/100))}
+    const DB={get:(k,fb=null)=>{try{return JSON.parse(localStorage.getItem(k))??fb}catch{return fb}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 
-    // ── STORAGE ──
-    const DB = {
-      get: (key, fallback = null) => {
-        try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
-      },
-      set: (key, val) => localStorage.setItem(key, JSON.stringify(val))
-    };
-
-    // ── APPLY THEME ──
-    function applyTheme(s) {
-      const p   = s.colorPrimary || '#1a7c3e';
-      const pL  = lighten(p, 22);
-      const pD  = darken(p, 15);
-      const acc = s.colorAccent  || '#f0c040';
-
-      // CSS variables
-      const root = document.documentElement;
-      root.style.setProperty('--primary',       p);
-      root.style.setProperty('--primary-light', pL);
-      root.style.setProperty('--primary-dark',  pD);
-      root.style.setProperty('--accent',        acc);
-
-      // Header
-      if (s.teamName) document.getElementById('headerTeamName').textContent = s.teamName;
-      if (s.season)   document.getElementById('headerSeason').textContent   = s.season;
-
-      // Theme-color browser
-      let meta = document.querySelector('meta[name="theme-color"]');
-      if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta); }
-      meta.content = p;
-
-      // Stat cards — tutte colorate
-      const cardPrimary = document.querySelector('.card-primary');
-      const cardSecondary = document.querySelector('.card-secondary');
-      const cardPrimaryDark = document.querySelector('.card-primary-dark');
-      const cardSecondaryDark = document.querySelector('.card-secondary-dark');
-
-      if (cardPrimary)      { cardPrimary.style.background = p; }
-      if (cardSecondary)    {
-        cardSecondary.style.background = acc;
-        cardSecondary.querySelector('.stat-value').style.color = '#1a1a1a';
-        cardSecondary.querySelector('.stat-label').style.color = 'rgba(0,0,0,0.6)';
-      }
-      if (cardPrimaryDark)  { cardPrimaryDark.style.background = pD; }
-      if (cardSecondaryDark) {
-        cardSecondaryDark.style.background = darken(acc, 15);
-        cardSecondaryDark.querySelectorAll('.stat-value,.stat-label').forEach(el => el.style.color = '#fff');
-      }
-
-      // Nav colori
-      document.querySelectorAll('.nav-item').forEach(item => {
-        const isActive = item.classList.contains('active');
-        const svg = item.querySelector('svg');
-        const lbl = item.querySelector('.nav-label');
-        if (svg) svg.style.stroke = isActive ? pL : 'var(--text-muted)';
-        if (lbl) lbl.style.color  = isActive ? pL : 'var(--text-muted)';
+    // ── THEME ──
+    function applyTheme(s){
+      const p=s.colorPrimary||'#1a7c3e',pL=lighten(p,22),pD=darken(p,15),acc=s.colorAccent||'#f0c040';
+      const root=document.documentElement;
+      root.style.setProperty('--primary',p);root.style.setProperty('--primary-light',pL);
+      root.style.setProperty('--primary-dark',pD);root.style.setProperty('--accent',acc);
+      if(s.teamName)document.getElementById('headerTeamName').textContent=s.teamName;
+      if(s.season)document.getElementById('headerSeason').textContent=s.season;
+      let meta=document.querySelector('meta[name="theme-color"]');
+      if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta);}
+      meta.content=p;
+      const cP=document.querySelector('.card-primary'),cS=document.querySelector('.card-secondary');
+      const cPD=document.querySelector('.card-primary-dark'),cSD=document.querySelector('.card-secondary-dark');
+      if(cP)cP.style.background=p;
+      if(cS){cS.style.background=acc;cS.querySelector('.stat-value').style.color='#1a1a1a';cS.querySelector('.stat-label').style.color='rgba(0,0,0,0.6)'}
+      if(cPD)cPD.style.background=pD;
+      if(cSD){cSD.style.background=darken(acc,15);cSD.querySelectorAll('.stat-value,.stat-label').forEach(el=>el.style.color='#fff')}
+      document.querySelectorAll('.nav-item').forEach(item=>{
+        const isA=item.classList.contains('active');
+        const svg=item.querySelector('svg'),lbl=item.querySelector('.nav-label');
+        if(svg)svg.style.stroke=isA?pL:'var(--text-muted)';
+        if(lbl)lbl.style.color=isA?pL:'var(--text-muted)';
       });
-
-      // Btn salva
-      const btnSave = document.querySelector('.btn-save');
-      if (btnSave) btnSave.style.background = p;
-
-      // Event type label
-      document.querySelectorAll('.event-type').forEach(el => el.style.color = pL);
-
-      // Force body/page backgrounds (Safari preview override fix)
-      document.body.style.background = '#182233';
-      document.documentElement.style.background = '#182233';
-      document.querySelectorAll('.app-content').forEach(el => el.style.background = '#182233');
-      document.querySelectorAll('.screen').forEach(el => el.style.background = '#182233');
-
-      // Force screen titles to correct colors
-      document.querySelectorAll('.screen-title').forEach(el => el.style.color = '#f0f4f8');
-      document.querySelectorAll('.screen-subtitle').forEach(el => el.style.color = '#8a9bb0');
-      document.querySelectorAll('.card-title').forEach(el => el.style.color = '#8a9bb0');
-      document.querySelectorAll('.settings-label').forEach(el => el.style.color = '#8a9bb0');
-      document.querySelectorAll('.placeholder p').forEach(el => el.style.color = '#8a9bb0');
-
-      // Force card backgrounds (non stat-card)
-      document.querySelectorAll('.card, .next-event, .settings-row').forEach(el => {
-        el.style.background = '#243347';
-        el.style.borderColor = '#344d66';
-      });
-      document.querySelectorAll('.settings-row label').forEach(el => el.style.color = '#f0f4f8');
-      document.querySelectorAll('.settings-row input').forEach(el => {
-        el.style.background = '#2c3f55';
-        el.style.color = '#f0f4f8';
-        el.style.borderColor = '#344d66';
-      });
-
-      // Header
-      document.querySelector('.app-header').style.background = '#243347';
-      document.querySelector('.app-header').style.borderColor = '#344d66';
-      document.getElementById('headerTeamName').style.color = '#f0f4f8';
-      document.getElementById('headerSeason').style.color = '#8a9bb0';
-
-      // Bottom nav
-      document.querySelector('.bottom-nav').style.background = '#243347';
-      document.querySelector('.bottom-nav').style.borderColor = '#344d66';
+      document.querySelectorAll('.event-type').forEach(el=>el.style.color=pL);
+      document.body.style.background='#182233';
+      document.querySelectorAll('.app-content,.screen').forEach(el=>el.style.background='#182233');
+      document.querySelectorAll('.screen-title').forEach(el=>el.style.color='#f0f4f8');
+      document.querySelectorAll('.screen-subtitle').forEach(el=>el.style.color='#8a9bb0');
+      document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{el.style.background='#243347';el.style.borderColor='#344d66'});
+      document.querySelector('.app-header').style.background='#243347';
+      document.querySelector('.bottom-nav').style.background='#243347';
     }
 
     // ── NAVIGATION ──
-    function navigate(screenId, navEl) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('screen-' + screenId).classList.add('active');
-      if (navEl) navEl.classList.add('active');
-      const s = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
+    function navigate(screenId,navEl){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      document.getElementById('screen-'+screenId).classList.add('active');
+      if(navEl)navEl.classList.add('active');
+      const s=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
       applyTheme(s);
+      if(screenId==='lavagna')setTimeout(initLavagna,50);
     }
+
+    // ── MODALS ──
+    function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden'}
+    function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow=''}
+    function closeModalOutside(e,id){if(e.target.id===id)closeModal(id)}
 
     // ── SETTINGS ──
-    function loadSettings() {
-      const s = DB.get('settings', {
-        teamName: 'La Mia Squadra', season: '2025/26',
-        category: '', colorPrimary: '#1a7c3e', colorAccent: '#f0c040'
-      });
-      document.getElementById('settingTeamName').value = s.teamName  || '';
-      document.getElementById('settingSeason').value   = s.season    || '';
-      document.getElementById('settingCategory').value = s.category  || '';
-      document.getElementById('colorPrimary').value    = s.colorPrimary || '#1a7c3e';
-      document.getElementById('colorAccent').value     = s.colorAccent  || '#f0c040';
+    function loadSettings(){
+      const s=DB.get('settings',{teamName:'La Mia Squadra',season:'2025/26',category:'',colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      document.getElementById('settingTeamName').value=s.teamName||'';
+      document.getElementById('settingSeason').value=s.season||'';
+      document.getElementById('settingCategory').value=s.category||'';
+      document.getElementById('colorPrimary').value=s.colorPrimary||'#1a7c3e';
+      document.getElementById('colorAccent').value=s.colorAccent||'#f0c040';
       applyTheme(s);
     }
-
-    function saveSettings() {
-      const s = {
-        teamName:     document.getElementById('settingTeamName').value  || 'La Mia Squadra',
-        season:       document.getElementById('settingSeason').value    || '2025/26',
-        category:     document.getElementById('settingCategory').value  || '',
-        colorPrimary: document.getElementById('colorPrimary').value,
-        colorAccent:  document.getElementById('colorAccent').value
-      };
-      DB.set('settings', s);
-      applyTheme(s);
-      const btn = document.querySelector('.btn-save');
-      btn.textContent = '✓ Salvato';
-      setTimeout(() => btn.textContent = 'Salva impostazioni', 1500);
+    function saveSettings(){
+      const s={teamName:document.getElementById('settingTeamName').value||'La Mia Squadra',season:document.getElementById('settingSeason').value||'2025/26',category:document.getElementById('settingCategory').value||'',colorPrimary:document.getElementById('colorPrimary').value,colorAccent:document.getElementById('colorAccent').value};
+      DB.set('settings',s);applyTheme(s);
+      const btn=document.querySelector('.btn-save');btn.textContent='✓ Salvato';setTimeout(()=>btn.textContent='Salva impostazioni',1500);
     }
+    document.getElementById('colorPrimary').addEventListener('input',e=>applyTheme({...DB.get('settings',{}),colorPrimary:e.target.value}));
+    document.getElementById('colorAccent').addEventListener('input',e=>applyTheme({...DB.get('settings',{}),colorAccent:e.target.value}));
 
-    // ── STATS HOME ──
-    function updateHomeStats() {
-      const giocatori   = DB.get('giocatori', []);
-      const eventi      = DB.get('eventi', []);
-      const partite     = eventi.filter(e => e.tipo === 'partita');
-      const allenamenti = eventi.filter(e => e.tipo === 'allenamento');
+    // ── ROSA ──
+    const RUOLI={P:'Portiere',D:'Difensore',C:'Centrocampista',A:'Attaccante'};
+    const RUOLI_ORDER=['P','D','C','A'];
+    let currentFilter='tutti',deleteTargetId=null,currentGiocatoreId=null;
 
-      // Calcola % media presenze
-      const allPresenze = DB.get('presenze', {});
-      let totPres = 0, totEventi = 0;
-      eventi.forEach(ev => {
-        const p = allPresenze[ev.id];
-        if (p && giocatori.length) {
-          totPres += Object.values(p).filter(Boolean).length;
-          totEventi += giocatori.length;
-        }
-      });
-      const pctPresenze = totEventi > 0 ? Math.round(totPres / totEventi * 100) + '%' : '–';
-
-      document.getElementById('statGiocatori').textContent   = giocatori.length;
-      document.getElementById('statPartite').textContent     = partite.length;
-      document.getElementById('statAllenamenti').textContent = allenamenti.length;
-      document.getElementById('statPresenze').textContent    = pctPresenze;
-      updateAttivita();
-
-      const oggi = new Date();
-      const prossimo = eventi
-        .filter(e => new Date(e.data) >= oggi)
-        .sort((a,b) => new Date(a.data) - new Date(b.data))[0];
-
-      if (prossimo) {
-        const label = new Date(prossimo.data).toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
-        document.getElementById('nextEventBox').innerHTML = `
-          <div class="event-dot">${prossimo.tipo === 'partita' ? '⚽' : '🏃'}</div>
-          <div class="event-info">
-            <div class="event-type">${prossimo.tipo === 'partita' ? 'Partita' : 'Allenamento'}</div>
-            <div class="event-title">${prossimo.titolo || ''}</div>
-            <div class="event-date">${label} · ${prossimo.ora || ''}</div>
+    function renderRosa(){
+      const giocatori=DB.get('giocatori',[]);
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      document.getElementById('rosaSubtitle').textContent=giocatori.length+' giocator'+(giocatori.length===1?'e':'i');
+      const filtered=currentFilter==='tutti'?giocatori:giocatori.filter(g=>g.ruolo===currentFilter);
+      if(!filtered.length){document.getElementById('rosaList').innerHTML='';document.getElementById('rosaEmpty').style.display='block';return}
+      document.getElementById('rosaEmpty').style.display='none';
+      const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
+      const grouped={};
+      RUOLI_ORDER.forEach(r=>{const g=filtered.filter(p=>p.ruolo===r);if(g.length)grouped[r]=g.sort((a,b)=>(a.numero||99)-(b.numero||99))});
+      let html='';
+      Object.entries(grouped).forEach(([ruolo,players])=>{
+        if(currentFilter==='tutti')html+=`<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
+        players.forEach(g=>{
+          const bg=colors[g.ruolo]||cfg.colorPrimary;
+          html+=`<div class="giocatore-card" onclick="openGiocatoreDetail('${g.id}')">
+            <div class="giocatore-numero" style="background:${bg}">${g.numero||'–'}</div>
+            <div class="giocatore-info"><div class="giocatore-nome">${g.cognome} ${g.nome}</div><div class="giocatore-meta">${RUOLI[g.ruolo]}${g.anno?' · '+g.anno:''}${g.note?' · '+g.note:''}</div></div>
+            <span class="giocatore-ruolo-badge ruolo-${g.ruolo}">${g.ruolo}</span>
+            <button class="btn-delete-g" onclick="event.stopPropagation();askDeleteGiocatore('${g.id}','${g.nome} ${g.cognome}')">🗑</button>
           </div>`;
-        const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-        document.querySelectorAll('.event-type').forEach(el => el.style.color = lighten(cfg.colorPrimary, 22));
-      }
-    }
-
-
-    // ── ROSA MODULE ──
-    const RUOLI = { P: 'Portiere', D: 'Difensore', C: 'Centrocampista', A: 'Attaccante' };
-    const RUOLI_ORDER = ['P','D','C','A'];
-    let currentFilter = 'tutti';
-    let deleteTargetId = null;
-
-    function renderRosa() {
-      const giocatori = DB.get('giocatori', []);
-      const list = document.getElementById('rosaList');
-      const empty = document.getElementById('rosaEmpty');
-      const subtitle = document.getElementById('rosaSubtitle');
-
-      subtitle.textContent = giocatori.length + ' giocator' + (giocatori.length === 1 ? 'e' : 'i');
-
-      const filtered = currentFilter === 'tutti'
-        ? giocatori
-        : giocatori.filter(g => g.ruolo === currentFilter);
-
-      if (filtered.length === 0) {
-        list.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-      empty.style.display = 'none';
-
-      // Raggruppa per ruolo
-      const grouped = {};
-      RUOLI_ORDER.forEach(r => {
-        const g = filtered.filter(p => p.ruolo === r);
-        if (g.length) grouped[r] = g.sort((a,b) => (a.numero||99) - (b.numero||99));
-      });
-
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
-
-      let html = '';
-      Object.entries(grouped).forEach(([ruolo, players]) => {
-        if (currentFilter === 'tutti') {
-          html += `<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
-        }
-        players.forEach(g => {
-          const bg = colors[g.ruolo] || cfg.colorPrimary;
-          html += `
-            <div class="giocatore-card" onclick="openGiocatoreDetail('${g.id}')">
-              <div class="giocatore-numero" style="background:${bg}">${g.numero || '–'}</div>
-              <div class="giocatore-info">
-                <div class="giocatore-nome">${g.cognome} ${g.nome}</div>
-                <div class="giocatore-meta">${RUOLI[g.ruolo]}${g.anno ? ' · ' + g.anno : ''}${g.note ? ' · ' + g.note : ''}</div>
-              </div>
-              <span class="giocatore-ruolo-badge ruolo-${g.ruolo}">${g.ruolo}</span>
-              <button class="btn-delete-g" onclick="event.stopPropagation(); askDeleteGiocatore('${g.id}','${g.nome} ${g.cognome}')">🗑</button>
-            </div>`;
         });
       });
-
-      list.innerHTML = html;
-      // Aggiorna btn-add e filter colors
-      const cfg2 = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      document.querySelectorAll('.btn-add, .btn-confirm').forEach(b => b.style.background = cfg2.colorPrimary);
-      document.querySelectorAll('.filter-btn.active').forEach(b => {
-        b.style.background = cfg2.colorPrimary;
-        b.style.borderColor = cfg2.colorPrimary;
-      });
+      document.getElementById('rosaList').innerHTML=html;
     }
 
-    function filterRosa(ruolo, btn) {
-      currentFilter = ruolo;
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.remove('active');
-        b.style.background = '';
-        b.style.borderColor = '';
-        b.style.color = '';
-      });
+    function filterRosa(ruolo,btn){
+      currentFilter=ruolo;
+      document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.borderColor='';b.style.color=''});
       btn.classList.add('active');
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      btn.style.background = cfg.colorPrimary;
-      btn.style.borderColor = cfg.colorPrimary;
-      btn.style.color = '#fff';
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
+      btn.style.background=cfg.colorPrimary;btn.style.borderColor=cfg.colorPrimary;btn.style.color='#fff';
       renderRosa();
     }
 
-    function openModal(id) {
-      document.getElementById(id).classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function closeModalOutside(e, id) {
-      if (e.target.id === id) closeModal(id);
-    }
-
-    function openModalGiocatore() {
-      document.getElementById('modalGiocatoreTitle').textContent = 'Nuovo Giocatore';
-      document.getElementById('gId').value = '';
-      document.getElementById('gNome').value = '';
-      document.getElementById('gCognome').value = '';
-      document.getElementById('gNumero').value = '';
-      document.getElementById('gRuolo').value = 'C';
-      document.getElementById('gAnno').value = '';
-      document.getElementById('gNote').value = '';
-      openModal('modalGiocatore');
-      // Non forziamo focus per evitare shift tastiera iOS
-    }
-
-    function editGiocatore(id) {
-      const giocatori = DB.get('giocatori', []);
-      const g = giocatori.find(p => p.id === id);
-      if (!g) return;
-      document.getElementById('modalGiocatoreTitle').textContent = 'Modifica Giocatore';
-      document.getElementById('gId').value = g.id;
-      document.getElementById('gNome').value = g.nome;
-      document.getElementById('gCognome').value = g.cognome;
-      document.getElementById('gNumero').value = g.numero || '';
-      document.getElementById('gRuolo').value = g.ruolo;
-      document.getElementById('gAnno').value = g.anno || '';
-      document.getElementById('gNote').value = g.note || '';
+    function openModalGiocatore(){
+      document.getElementById('modalGiocatoreTitle').textContent='Nuovo Giocatore';
+      ['gId','gNome','gCognome','gNumero','gAnno','gNote'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('gRuolo').value='C';
       openModal('modalGiocatore');
     }
 
-    function salvaGiocatore() {
-      const nome    = document.getElementById('gNome').value.trim();
-      const cognome = document.getElementById('gCognome').value.trim();
-      if (!nome && !cognome) {
-        document.getElementById('gNome').focus();
-        return;
-      }
-      const id      = document.getElementById('gId').value;
-      const numero  = parseInt(document.getElementById('gNumero').value) || null;
-      const ruolo   = document.getElementById('gRuolo').value;
-      const anno    = parseInt(document.getElementById('gAnno').value) || null;
-      const note    = document.getElementById('gNote').value.trim();
-
-      let giocatori = DB.get('giocatori', []);
-      if (id) {
-        giocatori = giocatori.map(g => g.id === id ? { ...g, nome, cognome, numero, ruolo, anno, note } : g);
-      } else {
-        giocatori.push({ id: Date.now().toString(), nome, cognome, numero, ruolo, anno, note });
-      }
-      DB.set('giocatori', giocatori);
-      closeModal('modalGiocatore');
-      renderRosa();
-      updateHomeStats();
+    function editGiocatore(id){
+      const g=DB.get('giocatori',[]).find(p=>p.id===id);if(!g)return;
+      document.getElementById('modalGiocatoreTitle').textContent='Modifica Giocatore';
+      document.getElementById('gId').value=g.id;document.getElementById('gNome').value=g.nome;
+      document.getElementById('gCognome').value=g.cognome;document.getElementById('gNumero').value=g.numero||'';
+      document.getElementById('gRuolo').value=g.ruolo;document.getElementById('gAnno').value=g.anno||'';
+      document.getElementById('gNote').value=g.note||'';
+      openModal('modalGiocatore');
     }
 
-    function askDeleteGiocatore(id, nome) {
-      deleteTargetId = id;
-      document.getElementById('deleteGiocatoreNome').textContent = nome;
-      openModal('modalDeleteGiocatore');
+    function salvaGiocatore(){
+      const nome=document.getElementById('gNome').value.trim(),cognome=document.getElementById('gCognome').value.trim();
+      if(!nome&&!cognome)return;
+      const id=document.getElementById('gId').value;
+      const g={id:id||Date.now().toString(),nome,cognome,numero:parseInt(document.getElementById('gNumero').value)||null,ruolo:document.getElementById('gRuolo').value,anno:parseInt(document.getElementById('gAnno').value)||null,note:document.getElementById('gNote').value.trim()};
+      let gs=DB.get('giocatori',[]);
+      if(id)gs=gs.map(p=>p.id===id?g:p);else gs.push(g);
+      DB.set('giocatori',gs);closeModal('modalGiocatore');renderRosa();updateHomeStats();
     }
 
-    function confirmDeleteGiocatore() {
-      if (!deleteTargetId) return;
-      let giocatori = DB.get('giocatori', []);
-      giocatori = giocatori.filter(g => g.id !== deleteTargetId);
-      DB.set('giocatori', giocatori);
-      deleteTargetId = null;
-      closeModal('modalDeleteGiocatore');
-      renderRosa();
-      updateHomeStats();
-    }
+    function askDeleteGiocatore(id,nome){deleteTargetId=id;document.getElementById('deleteGiocatoreNome').textContent=nome;openModal('modalDeleteGiocatore')}
+    function confirmDeleteGiocatore(){if(!deleteTargetId)return;DB.set('giocatori',DB.get('giocatori',[]).filter(g=>g.id!==deleteTargetId));deleteTargetId=null;closeModal('modalDeleteGiocatore');renderRosa();updateHomeStats()}
 
-    // Override btn-add onclick to use modal
-    document.addEventListener('DOMContentLoaded', () => {
-      const btnAdd = document.querySelector('#screen-rosa .btn-add');
-      if (btnAdd) btnAdd.onclick = openModalGiocatore;
-    });
+    // ── VALUTAZIONI ──
+    const VAL_CRITERI=[{key:'tecnica',label:'Tecnica',emoji:'⚽'},{key:'tattica',label:'Tattica',emoji:'🧠'},{key:'fisico',label:'Fisico',emoji:'💪'},{key:'velocita',label:'Velocità',emoji:'⚡'},{key:'mentale',label:'Mentale',emoji:'🎯'},{key:'team',label:'Gioco di squadra',emoji:'🤝'}];
+    let currentValutazione={};
 
-
-    // ── CALENDARIO MODULE ──
-    let calYear  = new Date().getFullYear();
-    let calMonth = new Date().getMonth();
-    let calSelectedDate = null;
-    let deleteTargetEventoId = null;
-    let casaTrasferta = 'casa';
-
-    const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-                  'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-
-    function renderCalendario() {
-      const eventi = DB.get('eventi', []);
-      const label  = document.getElementById('calMonthLabel');
-      label.textContent = MESI[calMonth] + ' ' + calYear;
-
-      const firstDay = new Date(calYear, calMonth, 1).getDay();
-      const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-      // Monday-based: 0=Mon..6=Sun
-      const startOffset = (firstDay + 6) % 7;
-
-      const today = new Date();
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-
-      let html = '';
-
-      // Empty cells before first day
-      for (let i = 0; i < startOffset; i++) {
-        html += '<div class="cal-day empty"></div>';
-      }
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-        const dayEvents = eventi.filter(e => e.data === dateStr);
-        const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
-        const isSelected = calSelectedDate === dateStr;
-
-        const dots = dayEvents.map(e =>
-          `<div class="day-dot" style="background:${e.tipo==='partita'?'#e05252':'#5b9bd5'}"></div>`
-        ).join('');
-
-        html += `<div class="cal-day${isToday?' today':''}${isSelected?' selected':''}"
-          onclick="selectDay('${dateStr}')">
-          <div class="day-num">${d}</div>
-          <div class="day-dots">${dots}</div>
+    function openGiocatoreDetail(id){
+      const g=DB.get('giocatori',[]).find(p=>p.id===id);if(!g)return;
+      currentGiocatoreId=id;
+      const allVal=DB.get('valutazioni',{});const saved=allVal[id];const hasVal=!!saved;
+      currentValutazione=saved?{...saved}:{};
+      VAL_CRITERI.forEach(c=>{if(!currentValutazione[c.key])currentValutazione[c.key]=5});
+      document.getElementById('gdTitle').textContent=g.cognome+' '+g.nome;
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
+      const bg=colors[g.ruolo]||cfg.colorPrimary;
+      const allPres=DB.get('presenze',{});let presenze=0;
+      Object.values(allPres).forEach(p=>{if(p[id])presenze++});
+      const media=hasVal?Math.round(VAL_CRITERI.map(c=>currentValutazione[c.key]).reduce((a,b)=>a+b,0)/VAL_CRITERI.length*10)/10:'–';
+      document.getElementById('gdInfo').innerHTML=`
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="width:52px;height:52px;border-radius:14px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0">${g.numero||'–'}</div>
+          <div><div style="font-size:18px;font-weight:800;color:#f0f4f8">${g.cognome} ${g.nome}</div><div style="font-size:13px;color:#8a9bb0">${RUOLI[g.ruolo]}${g.anno?' · '+g.anno:''}${g.note?' · '+g.note:''}</div></div>
+        </div>
+        <div class="gd-stat-row">
+          <div class="gd-stat"><div class="gd-stat-val">${presenze}</div><div class="gd-stat-lbl">Presenze</div></div>
+          <div class="gd-stat"><div class="gd-stat-val" id="gdMediaVoto">${media}</div><div class="gd-stat-lbl">Media voto</div></div>
         </div>`;
-      }
+      renderSliders();drawRadar();openModal('modalGiocatoreDetail');
+    }
 
-      document.getElementById('calDays').innerHTML = html;
+    function renderSliders(){
+      let html='<div style="font-size:12px;font-weight:700;color:#8a9bb0;text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px">Valutazione</div>';
+      VAL_CRITERI.forEach(c=>{
+        const val=currentValutazione[c.key]||5;
+        html+=`<div class="val-slider-row"><div class="val-slider-header"><span class="val-slider-label">${c.emoji} ${c.label}</span><span class="val-slider-value" id="val-num-${c.key}">${val}</span></div><input type="range" class="val-slider" min="1" max="10" value="${val}" oninput="updateSlider('${c.key}',this.value)"/></div>`;
+      });
+      document.getElementById('valSliders').innerHTML=html;
+    }
+
+    function updateSlider(key,val){
+      currentValutazione[key]=parseInt(val);
+      document.getElementById('val-num-'+key).textContent=val;
+      drawRadar();
+      const media=Math.round(VAL_CRITERI.map(c=>currentValutazione[c.key]).reduce((a,b)=>a+b,0)/VAL_CRITERI.length*10)/10;
+      const el=document.getElementById('gdMediaVoto');if(el)el.textContent=media;
+    }
+
+    function drawRadar(){
+      const canvas=document.getElementById('radarCanvas');if(!canvas)return;
+      const ctx=canvas.getContext('2d');const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=Math.min(W,H)/2-30;
+      const N=VAL_CRITERI.length,step=Math.PI*2/N,start=-Math.PI/2;
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
+      ctx.clearRect(0,0,W,H);
+      for(let lv=1;lv<=5;lv++){const r=R*lv*2/10;ctx.beginPath();for(let i=0;i<N;i++){const a=start+i*step;i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a))}ctx.closePath();ctx.strokeStyle='rgba(100,150,200,0.2)';ctx.lineWidth=1;ctx.stroke()}
+      for(let i=0;i<N;i++){const a=start+i*step;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle='rgba(100,150,200,0.25)';ctx.lineWidth=1;ctx.stroke()}
+      ctx.beginPath();VAL_CRITERI.forEach((c,i)=>{const val=(currentValutazione[c.key]||0)/10,a=start+i*step;i===0?ctx.moveTo(cx+R*val*Math.cos(a),cy+R*val*Math.sin(a)):ctx.lineTo(cx+R*val*Math.cos(a),cy+R*val*Math.sin(a))});
+      ctx.closePath();ctx.fillStyle=cfg.colorPrimary+'55';ctx.fill();ctx.strokeStyle=cfg.colorPrimary;ctx.lineWidth=2.5;ctx.stroke();
+      VAL_CRITERI.forEach((c,i)=>{const val=(currentValutazione[c.key]||0)/10,a=start+i*step,x=cx+R*val*Math.cos(a),y=cy+R*val*Math.sin(a);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=cfg.colorPrimary;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke()});
+      ctx.font='bold 11px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      VAL_CRITERI.forEach((c,i)=>{const a=start+i*step;ctx.fillStyle='#8a9bb0';ctx.fillText(c.label,cx+(R+20)*Math.cos(a),cy+(R+20)*Math.sin(a))});
+    }
+
+    function salvaValutazione(){if(!currentGiocatoreId)return;const allVal=DB.get('valutazioni',{});allVal[currentGiocatoreId]={...currentValutazione,updatedAt:Date.now()};DB.set('valutazioni',allVal);closeModal('modalGiocatoreDetail')}
+    function openEditFromDetail(){closeModal('modalGiocatoreDetail');setTimeout(()=>editGiocatore(currentGiocatoreId),200)}
+
+    // ── CALENDARIO ──
+    let calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),calSelectedDate=null,deleteTargetEventoId=null,casaTrasferta='casa';
+    const MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+
+    function renderCalendario(){
+      const eventi=DB.get('eventi',[]);
+      document.getElementById('calMonthLabel').textContent=MESI[calMonth]+' '+calYear;
+      const firstDay=new Date(calYear,calMonth,1).getDay(),daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+      const startOffset=(firstDay+6)%7,today=new Date();
+      let html='';
+      for(let i=0;i<startOffset;i++)html+='<div class="cal-day empty"></div>';
+      for(let d=1;d<=daysInMonth;d++){
+        const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+        const dayEvents=eventi.filter(e=>e.data===ds);
+        const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+        const dots=dayEvents.map(e=>`<div class="day-dot" style="background:${e.tipo==='partita'?'#e05252':'#5b9bd5'}"></div>`).join('');
+        html+=`<div class="cal-day${isToday?' today':''}" onclick="selectDay('${ds}')"><div class="day-num">${d}</div><div class="day-dots">${dots}</div></div>`;
+      }
+      document.getElementById('calDays').innerHTML=html;
       renderEventsList();
     }
 
-    function selectDay(dateStr) {
-      calSelectedDate = dateStr;
-      renderCalendario();
-      // Auto-open modal with pre-filled date
-      openModalEvento(dateStr);
-    }
+    function selectDay(ds){calSelectedDate=ds;renderCalendario();openModalEvento(ds)}
+    function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++}if(calMonth<0){calMonth=11;calYear--}calSelectedDate=null;renderCalendario()}
 
-    function changeMonth(dir) {
-      calMonth += dir;
-      if (calMonth > 11) { calMonth = 0; calYear++; }
-      if (calMonth < 0)  { calMonth = 11; calYear--; }
-      calSelectedDate = null;
-      renderCalendario();
-    }
-
-    function renderEventsList() {
-      const eventi = DB.get('eventi', []);
-      const filtered = calSelectedDate
-        ? eventi.filter(e => e.data === calSelectedDate)
-        : eventi.filter(e => {
-            const d = new Date(e.data);
-            return d.getFullYear()===calYear && d.getMonth()===calMonth;
-          }).sort((a,b) => a.data.localeCompare(b.data));
-
-      const title = document.getElementById('calEventsTitle');
-      title.textContent = calSelectedDate
-        ? formatDateLabel(calSelectedDate)
-        : 'Eventi di ' + MESI[calMonth];
-
-      const list = document.getElementById('calEventsList');
-      if (!filtered.length) {
-        list.innerHTML = '<div class="placeholder" style="padding:24px 0"><div class="placeholder-icon" style="font-size:32px">📅</div><p>Nessun evento</p></div>';
-        return;
-      }
-
-      list.innerHTML = filtered.map(e => {
-        const color = e.tipo === 'partita' ? '#e05252' : '#5b9bd5';
-        const tipoLabel = e.tipo === 'partita' ? '⚽ Partita' : '🏃 Allenamento';
-        const meta = [e.ora, e.durata ? e.durata+'min' : '', e.avversario ? 'vs '+e.avversario : '', e.casaTrasferta].filter(Boolean).join(' · ');
-        const dateLabel = e.data ? formatDateLabel(e.data) : '';
-        return `<div class="evento-card" onclick="openEventoDetail('${e.id}')" style="cursor:pointer">
+    function renderEventsList(){
+      const eventi=DB.get('eventi',[]);
+      const filtered=calSelectedDate?eventi.filter(e=>e.data===calSelectedDate):eventi.filter(e=>{const d=new Date(e.data);return d.getFullYear()===calYear&&d.getMonth()===calMonth}).sort((a,b)=>a.data.localeCompare(b.data));
+      document.getElementById('calEventsTitle').textContent=calSelectedDate?formatDateLabel(calSelectedDate):'Eventi di '+MESI[calMonth];
+      const list=document.getElementById('calEventsList');
+      if(!filtered.length){list.innerHTML='<div class="placeholder" style="padding:24px 0"><div class="placeholder-icon" style="font-size:32px">📅</div><p>Nessun evento</p></div>';return}
+      list.innerHTML=filtered.map(e=>{
+        const color=e.tipo==='partita'?'#e05252':'#5b9bd5';
+        const meta=[e.ora,e.durata?e.durata+'min':'',e.avversario?'vs '+e.avversario:'',e.casaTrasferta].filter(Boolean).join(' · ');
+        return`<div class="evento-card" onclick="openEventoDetail('${e.id}')" style="cursor:pointer">
           <div class="evento-color-bar" style="background:${color}"></div>
-          <div class="evento-info">
-            <div class="evento-tipo" style="color:${color}">${tipoLabel}${e.casaTrasferta ? ' · '+e.casaTrasferta : ''}</div>
-            <div class="evento-titolo">${e.titolo || (e.tipo==='partita' ? 'Partita' : 'Allenamento')}</div>
-            <div class="evento-meta">${dateLabel}${meta ? ' · '+meta : ''}</div>
-          </div>
+          <div class="evento-info"><div class="evento-tipo" style="color:${color}">${e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento'}</div>
+          <div class="evento-titolo">${e.titolo||(e.tipo==='partita'?'Partita':'Allenamento')}</div>
+          <div class="evento-meta">${formatDateLabel(e.data)}${meta?' · '+meta:''}</div></div>
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
             <span id="presenze-badge-${e.id}" class="presenze-badge"></span>
             <button class="btn-delete-g" onclick="event.stopPropagation();askDeleteEvento('${e.id}','${(e.titolo||e.tipo).replace(/'/g,'')}')" style="font-size:16px">🗑</button>
-          </div>
+          </div></div>`;
+      }).join('');
+      updatePresenzeBadges();
+    }
+
+    function formatDateLabel(ds){const d=new Date(ds+'T00:00:00');return d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}
+    function toggleAvversario(){const show=document.getElementById('eTipo').value==='partita';document.getElementById('avversarioGroup').style.display=show?'block':'none';document.getElementById('casaTrasfertaGroup').style.display=show?'block':'none'}
+    function setCasaTrasferta(val){casaTrasferta=val;document.getElementById('btnCasa').classList.toggle('active',val==='casa');document.getElementById('btnTrasferta').classList.toggle('active',val==='trasferta')}
+
+    function openModalEvento(prefilledDate){
+      document.getElementById('modalEventoTitle').textContent='Nuovo Evento';
+      document.getElementById('eId').value='';document.getElementById('eTipo').value='allenamento';
+      document.getElementById('eData').value=prefilledDate||new Date().toISOString().split('T')[0];
+      document.getElementById('eOra').value='17:00';document.getElementById('eDurata').value='90';
+      document.getElementById('eTitolo').value='';document.getElementById('eAvversario').value='';document.getElementById('eNote').value='';
+      casaTrasferta='casa';setCasaTrasferta('casa');toggleAvversario();openModal('modalEvento');
+    }
+
+    function salvaEvento(){
+      const data=document.getElementById('eData').value;if(!data)return;
+      const id=document.getElementById('eId').value;
+      const e={id:id||Date.now().toString(),tipo:document.getElementById('eTipo').value,data,ora:document.getElementById('eOra').value,durata:document.getElementById('eDurata').value,titolo:document.getElementById('eTitolo').value.trim(),avversario:document.getElementById('eAvversario').value.trim(),casaTrasferta,note:document.getElementById('eNote').value.trim()};
+      let eventi=DB.get('eventi',[]);
+      if(id)eventi=eventi.map(ev=>ev.id===id?e:ev);else eventi.push(e);
+      DB.set('eventi',eventi);closeModal('modalEvento');calSelectedDate=null;renderCalendario();updateHomeStats();
+    }
+
+    function askDeleteEvento(id,nome){deleteTargetEventoId=id;document.getElementById('deleteEventoNome').textContent=nome;openModal('modalDeleteEvento')}
+    function confirmDeleteEvento(){if(!deleteTargetEventoId)return;DB.set('eventi',DB.get('eventi',[]).filter(e=>e.id!==deleteTargetEventoId));deleteTargetEventoId=null;closeModal('modalDeleteEvento');renderCalendario();updateHomeStats()}
+
+    // ── PRESENZE ──
+    let currentEventoId=null,currentPresenze={};
+
+    function openEventoDetail(id){
+      const e=DB.get('eventi',[]).find(ev=>ev.id===id);if(!e)return;
+      currentEventoId=id;
+      currentPresenze={...(DB.get('presenze',{})[id]||{})};
+      document.getElementById('detailTitle').textContent=e.titolo||(e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento');
+      let info=`<div class="detail-info-row">${e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento'}</div>`;
+      if(e.data)info+=`<div class="detail-info-row">📅 <strong>${formatDateLabel(e.data)}</strong>${e.ora?' · '+e.ora:''}</div>`;
+      if(e.avversario)info+=`<div class="detail-info-row">vs <strong>${e.avversario}</strong> · ${e.casaTrasferta||''}</div>`;
+      if(e.note)info+=`<div class="detail-info-row">📝 ${e.note}</div>`;
+      document.getElementById('detailInfo').innerHTML=info;
+      renderPresenzeList();openModal('modalEventoDetail');
+    }
+
+    function renderPresenzeList(){
+      const giocatori=DB.get('giocatori',[]);
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
+      const presenti=Object.values(currentPresenze).filter(Boolean).length;
+      let html=`<div class="presenze-summary"><div><div class="presenze-summary-num">${presenti}/${giocatori.length}</div><div class="presenze-summary-label">giocatori presenti</div></div><div style="font-size:28px;font-weight:800;color:var(--primary-light)">${giocatori.length?Math.round(presenti/giocatori.length*100):0}%</div></div>`;
+      if(!giocatori.length){document.getElementById('presenzeList').innerHTML=html+'<div class="placeholder" style="padding:20px 0"><p>Nessun giocatore nella rosa.</p></div>';return}
+      RUOLI_ORDER.forEach(ruolo=>{
+        const gruppo=giocatori.filter(g=>g.ruolo===ruolo).sort((a,b)=>(a.numero||99)-(b.numero||99));
+        if(!gruppo.length)return;
+        html+=`<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
+        gruppo.forEach(g=>{
+          const isP=!!currentPresenze[g.id],bg=colors[g.ruolo]||cfg.colorPrimary;
+          html+=`<div class="presenza-row" onclick="togglePresenza('${g.id}')"><div class="presenza-checkbox${isP?' checked':''}"></div><div class="presenza-num" style="background:${bg}">${g.numero||'–'}</div><div class="presenza-nome">${g.cognome} ${g.nome}</div><span class="presenza-ruolo ruolo-${g.ruolo}">${g.ruolo}</span></div>`;
+        });
+      });
+      document.getElementById('presenzeList').innerHTML=html;
+    }
+
+    function togglePresenza(gId){currentPresenze[gId]=!currentPresenze[gId];renderPresenzeList()}
+    function selectAllPresenze(val){DB.get('giocatori',[]).forEach(g=>currentPresenze[g.id]=val);renderPresenzeList()}
+
+    function salvaPresenze(){
+      if(!currentEventoId)return;
+      const all=DB.get('presenze',{});all[currentEventoId]=currentPresenze;DB.set('presenze',all);
+      closeModal('modalEventoDetail');renderEventsList();
+    }
+
+    function updatePresenzeBadges(){
+      const all=DB.get('presenze',{}),gs=DB.get('giocatori',[]);
+      Object.entries(all).forEach(([eId,pres])=>{const b=document.getElementById('presenze-badge-'+eId);if(b){const p=Object.values(pres).filter(Boolean).length;b.textContent=p?p+'/'+gs.length:''}});
+    }
+
+    // ── WHATSAPP ──
+    let convocati={};
+
+    function apriConvocazione(){
+      const gs=DB.get('giocatori',[]);convocati={};
+      gs.forEach(g=>convocati[g.id]=!!currentPresenze[g.id]);
+      renderConvGiocatori();aggiornaMessaggio();openModal('modalConvocazione');
+    }
+
+    function renderConvGiocatori(){
+      const gs=DB.get('giocatori',[]);
+      let html=`<div style="display:flex;gap:8px;margin-bottom:10px"><button class="presenze-quick-btn" onclick="selezionaTutti(true)">Tutti ✓</button><button class="presenze-quick-btn" onclick="selezionaTutti(false)">Nessuno ✗</button></div>`;
+      RUOLI_ORDER.forEach(ruolo=>{
+        const gruppo=gs.filter(g=>g.ruolo===ruolo).sort((a,b)=>(a.numero||99)-(b.numero||99));
+        if(!gruppo.length)return;
+        html+=`<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
+        gruppo.forEach(g=>{
+          const checked=!!convocati[g.id],chkClass=checked?'conv-check checked':'conv-check',chkMark=checked?'✓':'';
+          html+=`<div class="conv-giocatore-row" onclick="toggleConvocato('${g.id}')"><div class="${chkClass}">${chkMark}</div><span class="conv-nome">${g.numero?'#'+g.numero+' ':''}${g.cognome} ${g.nome}</span><span class="conv-ruolo">${g.ruolo}</span></div>`;
+        });
+      });
+      document.getElementById('convGiocatoriList').innerHTML=html;
+    }
+
+    function toggleConvocato(id){convocati[id]=!convocati[id];renderConvGiocatori();aggiornaMessaggio()}
+    function selezionaTutti(val){DB.get('giocatori',[]).forEach(g=>convocati[g.id]=val);renderConvGiocatori();aggiornaMessaggio()}
+
+    function aggiornaMessaggio(){
+      const ev=DB.get('eventi',[]).find(e=>e.id===currentEventoId);
+      const gs=DB.get('giocatori',[]),set=DB.get('settings',{teamName:'La Mia Squadra'}),SEP='----------------';
+      const conv=gs.filter(g=>convocati[g.id]).sort((a,b)=>(a.numero||99)-(b.numero||99));
+      const lines=['⚽ *'+(set.teamName||'La Mia Squadra')+'*',SEP];
+      if(ev){
+        lines.push((ev.tipo==='partita'?'⚽':'🏃')+' *'+(ev.tipo==='partita'?'PARTITA':'ALLENAMENTO')+'*');
+        if(ev.data)lines.push('📅 '+new Date(ev.data+'T00:00:00').toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}));
+        if(ev.ora)lines.push('🕐 Ore '+ev.ora);if(ev.titolo)lines.push('📍 '+ev.titolo);
+        if(ev.avversario)lines.push('🆚 '+ev.avversario+(ev.casaTrasferta?' ('+ev.casaTrasferta+')':''));
+        if(ev.durata)lines.push('⏱ Durata: '+ev.durata+' min');if(ev.note)lines.push('📝 '+ev.note);
+      }
+      lines.push(SEP,'👥 *CONVOCATI ('+conv.length+')*');
+      conv.forEach((g,i)=>lines.push((i+1)+'. '+(g.numero?'#'+g.numero+' ':'')+g.cognome+' '+g.nome));
+      lines.push(SEP,'Presentarsi 15 minuti prima 🙏');
+      document.getElementById('convMessaggio').value=lines.join('\n');
+    }
+
+    function inviaWhatsApp(){
+      const msg=document.getElementById('convMessaggio').value;
+      const num=document.getElementById('convNumero').value.replace(/[^0-9+]/g,'');
+      const enc=encodeURIComponent(msg);
+      const a=document.createElement('a');
+      a.href=num?'https://wa.me/'+num.replace(/[^0-9]/g,'')+'?text='+enc:'whatsapp://send?text='+enc;
+      a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);
+    }
+
+    // ── HOME STATS ──
+    function updateHomeStats(){
+      const gs=DB.get('giocatori',[]),eventi=DB.get('eventi',[]);
+      const partite=eventi.filter(e=>e.tipo==='partita'),allenamenti=eventi.filter(e=>e.tipo==='allenamento');
+      const allPres=DB.get('presenze',{});let totP=0,totE=0;
+      eventi.forEach(ev=>{const p=allPres[ev.id];if(p&&gs.length){totP+=Object.values(p).filter(Boolean).length;totE+=gs.length}});
+      document.getElementById('statGiocatori').textContent=gs.length;
+      document.getElementById('statPartite').textContent=partite.length;
+      document.getElementById('statAllenamenti').textContent=allenamenti.length;
+      document.getElementById('statPresenze').textContent=totE>0?Math.round(totP/totE*100)+'%':'–';
+      const oggi=new Date();
+      const prossimo=eventi.filter(e=>new Date(e.data)>=oggi).sort((a,b)=>a.data.localeCompare(b.data))[0];
+      if(prossimo){
+        const label=new Date(prossimo.data+'T00:00:00').toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+        document.getElementById('nextEventBox').innerHTML=`<div class="event-dot">${prossimo.tipo==='partita'?'⚽':'🏃'}</div><div class="event-info"><div class="event-type">${prossimo.tipo==='partita'?'Partita':'Allenamento'}</div><div class="event-title">${prossimo.titolo||''}</div><div class="event-date">${label}${prossimo.ora?' · '+prossimo.ora:''}</div></div>`;
+        const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
+        document.querySelectorAll('.event-type').forEach(el=>el.style.color=lighten(cfg.colorPrimary,22));
+      }
+      updateAttivita();
+    }
+
+    function updateAttivita(){
+      const el=document.getElementById('attivitaRecente');if(!el)return;
+      const eventi=DB.get('eventi',[]),gs=DB.get('giocatori',[]);
+      const passati=eventi.filter(e=>new Date(e.data)<=new Date()).sort((a,b)=>b.data.localeCompare(a.data)).slice(0,4);
+      if(!gs.length&&!passati.length){el.innerHTML='<div class="placeholder"><div class="placeholder-icon">⚽</div><p>Nessuna attività ancora.</p></div>';return}
+      if(!passati.length){el.innerHTML='<div class="placeholder"><div class="placeholder-icon" style="font-size:32px">⚽</div><p>Nessun evento passato ancora.</p></div>';return}
+      const allPres=DB.get('presenze',{});
+      el.innerHTML=passati.map(e=>{
+        const color=e.tipo==='partita'?'#e05252':'#5b9bd5';
+        const p=allPres[e.id]?Object.values(allPres[e.id]).filter(Boolean).length:null;
+        return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #344d66">
+          <span style="font-size:18px">${e.tipo==='partita'?'⚽':'🏃'}</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#f0f4f8">${e.titolo||(e.tipo==='partita'?'Partita':'Allenamento')}</div><div style="font-size:11px;color:#8a9bb0">${formatDateLabel(e.data)}${p!==null?' · '+p+' presenti':''}</div></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0"></div>
         </div>`;
       }).join('');
     }
 
-    function formatDateLabel(dateStr) {
-      const d = new Date(dateStr + 'T00:00:00');
-      return d.toLocaleDateString('it-IT', { weekday:'short', day:'numeric', month:'short' });
+    // ── LAVAGNA ──
+    let lavCurrentSquadra='casa',lavDrawMode=false,lavIsDrawing=false,lavReady=false;
+    let lavDragToken=null,lavDragOffX=0,lavDragOffY=0;
+    let lavLines=[];
+
+    function initLavagna(){
+      const wrap=document.getElementById('lavagnaWrap');
+      if(!wrap||wrap.offsetWidth<10){setTimeout(initLavagna,100);return}
+      if(!lavReady){lavReady=true;setSquadra('casa');applyFormation('4-3-3')}
     }
 
-    function toggleAvversario() {
-      const tipo = document.getElementById('eTipo').value;
-      const show = tipo === 'partita';
-      document.getElementById('avversarioGroup').style.display = show ? 'block' : 'none';
-      document.getElementById('casaTrasfertaGroup').style.display = show ? 'block' : 'none';
+    // ── DRAWING — inline touch handlers on wrap ──
+    function lavOnTouchStart(e){
+      if(!lavDrawMode)return;
+      e.preventDefault();
+      const wrap=document.getElementById('lavagnaWrap');
+      const r=wrap.getBoundingClientRect();
+      const t=e.touches[0];
+      const x=t.clientX-r.left,y=t.clientY-r.top;
+      const svg=document.getElementById('lavagnaLines');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('id','lavActivePath');
+      path.setAttribute('stroke',lavDrawColor||'#ffeb3b');
+      path.setAttribute('stroke-width','3');
+      path.setAttribute('stroke-linecap','round');
+      path.setAttribute('stroke-linejoin','round');
+      path.setAttribute('fill','none');
+      path.setAttribute('d','M'+x+','+y);
+      svg.appendChild(path);
+      lavIsDrawing=true;
     }
 
-    function setCasaTrasferta(val) {
-      casaTrasferta = val;
-      document.getElementById('btnCasa').classList.toggle('active', val === 'casa');
-      document.getElementById('btnTrasferta').classList.toggle('active', val === 'trasferta');
+    function lavOnTouchMove(e){
+      if(!lavDrawMode||!lavIsDrawing)return;
+      e.preventDefault();
+      const wrap=document.getElementById('lavagnaWrap');
+      const r=wrap.getBoundingClientRect();
+      const t=e.touches[0];
+      const x=t.clientX-r.left,y=t.clientY-r.top;
+      const path=document.getElementById('lavActivePath');
+      if(path)path.setAttribute('d',path.getAttribute('d')+' L'+x+','+y);
     }
 
-    function openModalEvento(prefilledDate) {
-      document.getElementById('modalEventoTitle').textContent = 'Nuovo Evento';
-      document.getElementById('eId').value = '';
-      document.getElementById('eTipo').value = 'allenamento';
-      document.getElementById('eData').value = prefilledDate || new Date().toISOString().split('T')[0];
-      document.getElementById('eOra').value = '17:00';
-      document.getElementById('eDurata').value = '90';
-      document.getElementById('eTitolo').value = '';
-      document.getElementById('eAvversario').value = '';
-      document.getElementById('eNote').value = '';
-      casaTrasferta = 'casa';
-      setCasaTrasferta('casa');
-      toggleAvversario();
-      openModal('modalEvento');
-    }
-
-    function salvaEvento() {
-      const data = document.getElementById('eData').value;
-      if (!data) return;
-      const id      = document.getElementById('eId').value;
-      const tipo    = document.getElementById('eTipo').value;
-      const ora     = document.getElementById('eOra').value;
-      const durata  = document.getElementById('eDurata').value;
-      const titolo  = document.getElementById('eTitolo').value.trim();
-      const avv     = document.getElementById('eAvversario').value.trim();
-      const note    = document.getElementById('eNote').value.trim();
-
-      let eventi = DB.get('eventi', []);
-      const evento = { id: id || Date.now().toString(), tipo, data, ora, durata, titolo, avversario: avv, casaTrasferta, note };
-
-      if (id) {
-        eventi = eventi.map(e => e.id === id ? evento : e);
-      } else {
-        eventi.push(evento);
-      }
-      DB.set('eventi', eventi);
-      closeModal('modalEvento');
-      calSelectedDate = null;
-      renderCalendario();
-      updateHomeStats();
-    }
-
-    function askDeleteEvento(id, nome) {
-      deleteTargetEventoId = id;
-      document.getElementById('deleteEventoNome').textContent = nome;
-      openModal('modalDeleteEvento');
-    }
-
-    function confirmDeleteEvento() {
-      if (!deleteTargetEventoId) return;
-      let eventi = DB.get('eventi', []);
-      eventi = eventi.filter(e => e.id !== deleteTargetEventoId);
-      DB.set('eventi', eventi);
-      deleteTargetEventoId = null;
-      closeModal('modalDeleteEvento');
-      renderCalendario();
-      updateHomeStats();
-    }
-
-
-    // ── PRESENZE MODULE ──
-    let currentEventoId = null;
-    let currentPresenze = {};
-
-    function openEventoDetail(id) {
-      const eventi = DB.get('eventi', []);
-      const e = eventi.find(ev => ev.id === id);
-      if (!e) return;
-      currentEventoId = id;
-
-      // Load saved presenze
-      const allPresenze = DB.get('presenze', {});
-      currentPresenze = { ...(allPresenze[id] || {}) };
-
-      // Detail info
-      const color = e.tipo === 'partita' ? '#e05252' : '#5b9bd5';
-      const tipoLabel = e.tipo === 'partita' ? '⚽ Partita' : '🏃 Allenamento';
-      document.getElementById('detailTitle').textContent = e.titolo || tipoLabel;
-
-      let infoHtml = `<div class="detail-info-row"><span>${tipoLabel}</span></div>`;
-      if (e.data) infoHtml += `<div class="detail-info-row">📅 <strong>${formatDateLabel(e.data)}</strong>${e.ora ? ' · '+e.ora : ''}</div>`;
-      if (e.avversario) infoHtml += `<div class="detail-info-row">vs <strong>${e.avversario}</strong> · ${e.casaTrasferta || ''}</div>`;
-      if (e.note) infoHtml += `<div class="detail-info-row">📝 ${e.note}</div>`;
-      document.getElementById('detailInfo').innerHTML = infoHtml;
-
-      renderPresenzeList();
-      openModal('modalEventoDetail');
-    }
-
-    function renderPresenzeList() {
-      const giocatori = DB.get('giocatori', []);
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
-
-      const presenti = Object.values(currentPresenze).filter(Boolean).length;
-      const totale = giocatori.length;
-
-      const list = document.getElementById('presenzeList');
-
-      if (!giocatori.length) {
-        list.innerHTML = '<div class="placeholder" style="padding:20px 0"><p>Nessun giocatore nella rosa.<br>Aggiungili prima dalla sezione Rosa.</p></div>';
-        return;
-      }
-
-      // Summary
-      let html = `<div class="presenze-summary">
-        <div>
-          <div class="presenze-summary-num">${presenti}/${totale}</div>
-          <div class="presenze-summary-label">giocatori presenti</div>
-        </div>
-        <div style="font-size:28px;font-weight:800;color:var(--primary-light)">
-          ${totale ? Math.round(presenti/totale*100) : 0}%
-        </div>
-      </div>`;
-
-      // Group by ruolo
-
-
-      RUOLI_ORDER.forEach(ruolo => {
-        const gruppo = giocatori.filter(g => g.ruolo === ruolo).sort((a,b)=>(a.numero||99)-(b.numero||99));
-        if (!gruppo.length) return;
-        html += `<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
-        gruppo.forEach(g => {
-          const isPresente = !!currentPresenze[g.id];
-          const bg = colors[g.ruolo] || cfg.colorPrimary;
-          html += `<div class="presenza-row" onclick="togglePresenza('${g.id}')">
-            <div class="presenza-checkbox ${isPresente ? 'checked' : ''}"></div>
-            <div class="presenza-num" style="background:${bg}">${g.numero||'–'}</div>
-            <div class="presenza-nome">${g.cognome} ${g.nome}</div>
-            <span class="presenza-ruolo ruolo-${g.ruolo}">${g.ruolo}</span>
-          </div>`;
-        });
-      });
-
-      list.innerHTML = html;
-    }
-
-    function togglePresenza(gId) {
-      currentPresenze[gId] = !currentPresenze[gId];
-      renderPresenzeList();
-    }
-
-    function selectAllPresenze(val) {
-      const giocatori = DB.get('giocatori', []);
-      giocatori.forEach(g => currentPresenze[g.id] = val);
-      renderPresenzeList();
-    }
-
-    function salvaPresenze() {
-      if (!currentEventoId) return;
-      const allPresenze = DB.get('presenze', {});
-      allPresenze[currentEventoId] = currentPresenze;
-      DB.set('presenze', allPresenze);
-
-      // Update badge on evento card
-      const giocatori = DB.get('giocatori', []);
-      const presenti = Object.values(currentPresenze).filter(Boolean).length;
-      const badge = document.getElementById('presenze-badge-' + currentEventoId);
-      if (badge) badge.textContent = presenti + '/' + giocatori.length;
-
-      closeModal('modalEventoDetail');
-      renderEventsList();
-    }
-
-    // Update presenze badges after renderEventsList
-    function updatePresenzeBadges() {
-      const allPresenze = DB.get('presenze', {});
-      const giocatori = DB.get('giocatori', []);
-      Object.entries(allPresenze).forEach(([eId, pres]) => {
-        const badge = document.getElementById('presenze-badge-' + eId);
-        if (badge) {
-          const presenti = Object.values(pres).filter(Boolean).length;
-          badge.textContent = presenti ? presenti + '/' + giocatori.length : '';
-        }
-      });
-    }
-
-
-    // ── VALUTAZIONI MODULE ──
-    const VAL_CRITERI = [
-      { key: 'tecnica',    label: 'Tecnica',      emoji: '⚽' },
-      { key: 'tattica',    label: 'Tattica',      emoji: '🧠' },
-      { key: 'fisico',     label: 'Fisico',       emoji: '💪' },
-      { key: 'velocita',   label: 'Velocità',     emoji: '⚡' },
-      { key: 'mentale',    label: 'Mentale',      emoji: '🎯' },
-      { key: 'team',       label: 'Gioco di squadra', emoji: '🤝' },
-    ];
-
-    let currentGiocatoreId = null;
-    let currentValutazione = {};
-
-    function openGiocatoreDetail(id) {
-      const giocatori = DB.get('giocatori', []);
-      const g = giocatori.find(p => p.id === id);
-      if (!g) return;
-      currentGiocatoreId = id;
-
-      // Load existing valutazione
-      const allVal = DB.get('valutazioni', {});
-      const savedVal = allVal[id];
-      const hasValutazione = !!savedVal;
-      currentValutazione = savedVal ? { ...savedVal } : {};
-      VAL_CRITERI.forEach(c => {
-        if (!currentValutazione[c.key]) currentValutazione[c.key] = 5;
-      });
-
-      document.getElementById('gdTitle').textContent = g.cognome + ' ' + g.nome;
-
-      // Stats: presenze
-      const allPresenze = DB.get('presenze', {});
-      const eventi = DB.get('eventi', []);
-      let presenze = 0;
-      Object.entries(allPresenze).forEach(([eId, pres]) => {
-        if (pres[id]) presenze++;
-      });
-
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const colors = { P: '#5a78c8', D: '#32b464', C: cfg.colorAccent, A: '#dc5050' };
-      const bg = colors[g.ruolo] || cfg.colorPrimary;
-
-      document.getElementById('gdInfo').innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-          <div style="width:52px;height:52px;border-radius:14px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0">${g.numero||'–'}</div>
-          <div>
-            <div style="font-size:18px;font-weight:800;color:#f0f4f8">${g.cognome} ${g.nome}</div>
-            <div style="font-size:13px;color:#8a9bb0">${RUOLI[g.ruolo]}${g.anno ? ' · '+g.anno : ''}${g.note ? ' · '+g.note : ''}</div>
-          </div>
-        </div>
-        <div class="gd-stat-row">
-          <div class="gd-stat"><div class="gd-stat-val">${presenze}</div><div class="gd-stat-lbl">Presenze</div></div>
-          <div class="gd-stat"><div class="gd-stat-val" id="gdMediaVoto">${hasValutazione ? Math.round(Object.values(currentValutazione).filter((_,i)=>i<VAL_CRITERI.length).reduce((a,b)=>a+b,0)/VAL_CRITERI.length*10)/10 : '–'}</div><div class="gd-stat-lbl">Media voto</div></div>
-        </div>`;
-
-      renderSliders();
-      drawRadar();
-      openModal('modalGiocatoreDetail');
-    }
-
-    function renderSliders() {
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      let html = '<div style="font-size:12px;font-weight:700;color:#8a9bb0;text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px">Valutazione</div>';
-      VAL_CRITERI.forEach(c => {
-        const val = currentValutazione[c.key] || 5;
-        html += `<div class="val-slider-row">
-          <div class="val-slider-header">
-            <span class="val-slider-label">${c.emoji} ${c.label}</span>
-            <span class="val-slider-value" id="val-num-${c.key}">${val}</span>
-          </div>
-          <input type="range" class="val-slider" min="1" max="10" value="${val}"
-            oninput="updateSlider('${c.key}', this.value)"
-            style="--primary:${cfg.colorPrimary}" />
-        </div>`;
-      });
-      document.getElementById('valSliders').innerHTML = html;
-    }
-
-    function updateSlider(key, val) {
-      currentValutazione[key] = parseInt(val);
-      document.getElementById('val-num-' + key).textContent = val;
-      drawRadar();
-      const vals = VAL_CRITERI.map(c => currentValutazione[c.key] || 0);
-      const media = Math.round(vals.reduce((a,b)=>a+b,0)/VAL_CRITERI.length*10)/10;
-      const mediaEl = document.getElementById('gdMediaVoto');
-      if (mediaEl) mediaEl.textContent = media;
-    }
-
-    function drawRadar() {
-      const canvas = document.getElementById('radarCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const W = canvas.width, H = canvas.height;
-      const cx = W/2, cy = H/2;
-      const R = Math.min(W,H)/2 - 30;
-      const N = VAL_CRITERI.length;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-
-      ctx.clearRect(0,0,W,H);
-
-      const angleStep = (Math.PI * 2) / N;
-      const startAngle = -Math.PI / 2;
-
-      // Draw grid (5 levels)
-      for (let level = 1; level <= 5; level++) {
-        const r = R * (level * 2) / 10;
-        ctx.beginPath();
-        for (let i = 0; i < N; i++) {
-          const angle = startAngle + i * angleStep;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-        }
-        ctx.closePath();
-        ctx.strokeStyle = 'rgba(100,150,200,0.2)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-
-      // Draw axes
-      for (let i = 0; i < N; i++) {
-        const angle = startAngle + i * angleStep;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
-        ctx.strokeStyle = 'rgba(100,150,200,0.25)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-
-      // Draw data polygon
-      ctx.beginPath();
-      VAL_CRITERI.forEach((c, i) => {
-        const val = (currentValutazione[c.key] || 0) / 10;
-        const angle = startAngle + i * angleStep;
-        const x = cx + R * val * Math.cos(angle);
-        const y = cy + R * val * Math.sin(angle);
-        i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-      });
-      ctx.closePath();
-      ctx.fillStyle = cfg.colorPrimary + '55';
-      ctx.fill();
-      ctx.strokeStyle = cfg.colorPrimary;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Draw dots on vertices
-      VAL_CRITERI.forEach((c, i) => {
-        const val = (currentValutazione[c.key] || 0) / 10;
-        const angle = startAngle + i * angleStep;
-        const x = cx + R * val * Math.cos(angle);
-        const y = cy + R * val * Math.sin(angle);
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI*2);
-        ctx.fillStyle = cfg.colorPrimary;
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      });
-
-      // Draw labels
-      ctx.font = 'bold 11px -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      VAL_CRITERI.forEach((c, i) => {
-        const angle = startAngle + i * angleStep;
-        const labelR = R + 20;
-        const x = cx + labelR * Math.cos(angle);
-        const y = cy + labelR * Math.sin(angle);
-        ctx.fillStyle = '#8a9bb0';
-        ctx.fillText(c.label, x, y);
-      });
-    }
-
-    function salvaValutazione() {
-      if (!currentGiocatoreId) return;
-      const allVal = DB.get('valutazioni', {});
-      allVal[currentGiocatoreId] = { ...currentValutazione, updatedAt: Date.now() };
-      DB.set('valutazioni', allVal);
-      closeModal('modalGiocatoreDetail');
-      // Show feedback
-      const btn = document.querySelector('#modalGiocatoreDetail .btn-confirm');
-      if (btn) { btn.textContent = '✓ Salvata'; setTimeout(()=>btn.textContent='Salva valutazione',1500); }
-    }
-
-    function openEditFromDetail() {
-      closeModal('modalGiocatoreDetail');
-      setTimeout(() => editGiocatore(currentGiocatoreId), 200);
-    }
-
-
-    // ── CONVOCAZIONI WHATSAPP ──
-    let convocati = {};
-
-    function apriConvocazione() {
-      // Pre-seleziona i presenti
-      const giocatori = DB.get('giocatori', []);
-      convocati = {};
-      giocatori.forEach(g => {
-        convocati[g.id] = !!currentPresenze[g.id];
-      });
-
-      renderConvGiocatori();
-      aggiornaMessaggio();
-      openModal('modalConvocazione');
-    }
-
-    function renderConvGiocatori() {
-      const giocatori = DB.get('giocatori', []);
-      let html = '';
-
-      // Seleziona tutti / nessuno
-      html += `<div style="display:flex;gap:8px;margin-bottom:10px">
-        <button class="presenze-quick-btn" onclick="selezionaTutti(true)">Tutti ✓</button>
-        <button class="presenze-quick-btn" onclick="selezionaTutti(false)">Nessuno ✗</button>
-      </div>`;
-
-      RUOLI_ORDER.forEach(ruolo => {
-        const gruppo = giocatori.filter(g => g.ruolo === ruolo).sort((a,b)=>(a.numero||99)-(b.numero||99));
-        if (!gruppo.length) return;
-        html += `<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
-        gruppo.forEach(g => {
-          const checked = !!convocati[g.id];
-          const chkClass = checked ? 'conv-check checked' : 'conv-check';
-          const chkMark = checked ? '✓' : '';
-          html += `<div class="conv-giocatore-row" onclick="toggleConvocato('${g.id}')">
-            <div class="${chkClass}">${chkMark}</div>
-            <span class="conv-nome">${g.numero ? '#'+g.numero+' ' : ''}${g.cognome} ${g.nome}</span>
-            <span class="conv-ruolo">${g.ruolo}</span>
-          </div>`;
-        });
-      });
-
-      document.getElementById('convGiocatoriList').innerHTML = html;
-    }
-
-    function toggleConvocato(id) {
-      convocati[id] = !convocati[id];
-      renderConvGiocatori();
-      aggiornaMessaggio();
-    }
-
-    function selezionaTutti(val) {
-      const giocatori = DB.get('giocatori', []);
-      giocatori.forEach(g => convocati[g.id] = val);
-      renderConvGiocatori();
-      aggiornaMessaggio();
-    }
-
-    function aggiornaMessaggio() {
-      const eventi = DB.get('eventi', []);
-      const e = eventi.find(ev => ev.id === currentEventoId);
-      const giocatori = DB.get('giocatori', []);
-      const settings = DB.get('settings', { teamName: 'La Mia Squadra' });
-      const SEP = '----------------';
-
-      const convocatiList = giocatori
-        .filter(g => convocati[g.id])
-        .sort((a,b) => (a.numero||99)-(b.numero||99));
-
-      const lines = [];
-      lines.push('⚽ *' + (settings.teamName || 'La Mia Squadra') + '*');
-      lines.push(SEP);
-
-      if (e) {
-        const tipoEmoji = e.tipo === 'partita' ? '⚽' : '🏃';
-        const tipoLabel = e.tipo === 'partita' ? 'PARTITA' : 'ALLENAMENTO';
-        lines.push(tipoEmoji + ' *' + tipoLabel + '*');
-        if (e.data) {
-          const d = new Date(e.data + 'T00:00:00');
-          lines.push('📅 ' + d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' }));
-        }
-        if (e.ora) lines.push('🕐 Ore ' + e.ora);
-        if (e.titolo) lines.push('📍 ' + e.titolo);
-        if (e.avversario) lines.push('🆚 ' + e.avversario + (e.casaTrasferta ? ' (' + e.casaTrasferta + ')' : ''));
-        if (e.durata) lines.push('⏱ Durata: ' + e.durata + ' min');
-        if (e.note) lines.push('📝 ' + e.note);
-      }
-
-      lines.push(SEP);
-      lines.push('👥 *CONVOCATI (' + convocatiList.length + ')*');
-
-      if (convocatiList.length) {
-        convocatiList.forEach(function(g, i) {
-          lines.push((i+1) + '. ' + (g.numero ? '#'+g.numero+' ' : '') + g.cognome + ' ' + g.nome);
-        });
-      } else {
-        lines.push('Nessun giocatore selezionato');
-      }
-
-      lines.push(SEP);
-      lines.push('Presentarsi 15 minuti prima 🙏');
-
-      document.getElementById('convMessaggio').value = lines.join('\n');
-    }
-
-    function inviaWhatsApp() {
-      const msg = document.getElementById('convMessaggio').value;
-      const numero = document.getElementById('convNumero').value.replace(/[^0-9+]/g,'');
-      const encoded = encodeURIComponent(msg);
-      if (numero) {
-        window.open('https://wa.me/' + numero.replace(/[^0-9]/g,'') + '?text=' + encoded, '_blank');
-      } else {
-        // Prova prima schema nativo, poi fallback web
-        const appUrl = 'whatsapp://send?text=' + encoded;
-        const webUrl = 'https://api.whatsapp.com/send?text=' + encoded;
-        const a = document.createElement('a');
-        a.href = appUrl;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        // Fallback dopo 1.5s se l'app non si apre
-        setTimeout(() => { window.open(webUrl, '_blank'); }, 1500);
+    function lavOnTouchEnd(e){
+      if(!lavDrawMode)return;
+      lavIsDrawing=false;
+      const path=document.getElementById('lavActivePath');
+      if(path){
+        lavLines.push({d:path.getAttribute('d'),color:path.getAttribute('stroke')});
+        path.removeAttribute('id');
       }
     }
 
+    function lavOnMouseDown(e){
+      if(!lavDrawMode)return;
+      lavIsDrawing=true;
+      const wrap=document.getElementById('lavagnaWrap');
+      const r=wrap.getBoundingClientRect();
+      const x=e.clientX-r.left,y=e.clientY-r.top;
+      const svg=document.getElementById('lavagnaLines');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('id','lavActivePath');
+      path.setAttribute('stroke',lavDrawColor||'#ffeb3b');
+      path.setAttribute('stroke-width','3');
+      path.setAttribute('stroke-linecap','round');
+      path.setAttribute('stroke-linejoin','round');
+      path.setAttribute('fill','none');
+      path.setAttribute('d','M'+x+','+y);
+      svg.appendChild(path);
+    }
 
-    function updateAttivita() {
-      const giocatori = DB.get('giocatori', []);
-      const eventi = DB.get('eventi', []);
-      const el = document.getElementById('attivitaRecente');
-      if (!el) return;
+    function lavOnMouseMove(e){
+      if(!lavDrawMode||!lavIsDrawing)return;
+      const wrap=document.getElementById('lavagnaWrap');
+      const r=wrap.getBoundingClientRect();
+      const x=e.clientX-r.left,y=e.clientY-r.top;
+      const path=document.getElementById('lavActivePath');
+      if(path)path.setAttribute('d',path.getAttribute('d')+' L'+x+','+y);
+    }
 
-      const oggi = new Date();
-      const passati = eventi
-        .filter(e => new Date(e.data) <= oggi)
-        .sort((a,b) => b.data.localeCompare(a.data))
-        .slice(0, 4);
+    function lavOnMouseUp(e){
+      if(!lavDrawMode||!lavIsDrawing)return;
+      lavIsDrawing=false;
+      const path=document.getElementById('lavActivePath');
+      if(path){lavLines.push({d:path.getAttribute('d'),color:path.getAttribute('stroke')});path.removeAttribute('id')}
+    }
 
-      if (!giocatori.length && !passati.length) {
-        el.innerHTML = '<div class="placeholder"><div class="placeholder-icon">⚽</div><p>Nessuna attività ancora.<br>Inizia aggiungendo i tuoi giocatori.</p></div>';
-        return;
-      }
+    let lavDrawColor='#ffeb3b';
 
-      let html = '';
-      passati.forEach(e => {
-        const color = e.tipo === 'partita' ? '#e05252' : '#5b9bd5';
-        const emoji = e.tipo === 'partita' ? '⚽' : '🏃';
-        const allPres = DB.get('presenze', {});
-        const pres = allPres[e.id] ? Object.values(allPres[e.id]).filter(Boolean).length : null;
-        html += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #344d66">
-          <span style="font-size:18px">${emoji}</span>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:600;color:#f0f4f8">${e.titolo || (e.tipo==='partita'?'Partita':'Allenamento')}</div>
-            <div style="font-size:11px;color:#8a9bb0">${formatDateLabel(e.data)}${pres !== null ? ' · '+pres+' presenti' : ''}</div>
-          </div>
-          <div style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0"></div>
-        </div>`;
+    function lavToggleDraw(){
+      lavDrawMode=!lavDrawMode;
+      const btn=document.getElementById('btnDraw');
+      const tokens=document.getElementById('lavagnaTokens');
+      btn.style.background=lavDrawMode?'#f0c040':'#243347';
+      btn.style.borderColor=lavDrawMode?'#f0c040':'#344d66';
+      btn.style.color=lavDrawMode?'#1a1a1a':'#f0f4f8';
+      if(tokens)tokens.style.pointerEvents=lavDrawMode?'none':'auto';
+    }
+
+    function lavUndo(){
+      lavLines.pop();
+      const svg=document.getElementById('lavagnaLines');
+      if(!svg)return;
+      svg.innerHTML='';
+      lavLines.forEach(l=>{
+        const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d',l.d);p.setAttribute('stroke',l.color);
+        p.setAttribute('stroke-width','3');p.setAttribute('stroke-linecap','round');
+        p.setAttribute('stroke-linejoin','round');p.setAttribute('fill','none');
+        svg.appendChild(p);
       });
-
-      if (!html) {
-        html = '<div class="placeholder"><div class="placeholder-icon" style="font-size:32px">⚽</div><p>Nessun evento passato ancora.</p></div>';
-      }
-
-      el.innerHTML = html;
     }
 
+    function lavClearLines(){lavLines=[];const svg=document.getElementById('lavagnaLines');if(svg)svg.innerHTML=''}
+    function lavClearAll(){lavClearLines();const t=document.getElementById('lavagnaTokens');if(t)t.innerHTML='';const sel=document.querySelector('.lav-select');if(sel)sel.value=''}
 
-    // ── LAVAGNA MODULE ──
-    let lavCurrentSquadra = 'casa';
-    let lavDrawMode = false;
-    let lavIsDrawing = false;
-    let lavLastX = 0, lavLastY = 0;
-    let lavDragToken = null;
-    let lavDragOffX = 0, lavDragOffY = 0;
-    let lavReady = false;
-
-    function initLavagna() {
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const W = wrap.offsetWidth;
-      const H = wrap.offsetHeight;
-      if (W < 10 || H < 10) { setTimeout(initLavagna, 100); return; }
-
-      setupLavDraw(wrap);
-
-      // Prevent page scroll on wrap touch
-      wrap.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-      }, { passive: false });
-
-      if (!lavReady) {
-        lavReady = true;
-        setSquadra('casa');
-        applyFormation('4-3-3');
-      }
-    }
-
-    function setupLavDraw(wrap) {
-      let currentPath = null;
-      let points = [];
-
-      const getPos = (e) => {
-        const r = wrap.getBoundingClientRect();
-        const src = e.touches ? e.touches[0] : e;
-        return {
-          x: src.clientX - r.left,
-          y: src.clientY - r.top
-        };
-      };
-
-      const startDraw = (e) => {
-        if (!lavDrawMode) return;
-        e.preventDefault(); e.stopPropagation();
-        lavIsDrawing = true;
-        const p = getPos(e);
-        lavLastX = p.x; lavLastY = p.y;
-        points = [p];
-        // Create new SVG path
-        const svg = document.getElementById('lavagnaLines');
-        currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        currentPath.setAttribute('stroke', '#ffeb3b');
-        currentPath.setAttribute('stroke-width', '3');
-        currentPath.setAttribute('stroke-linecap', 'round');
-        currentPath.setAttribute('stroke-linejoin', 'round');
-        currentPath.setAttribute('fill', 'none');
-        currentPath.setAttribute('d', 'M ' + p.x + ' ' + p.y);
-        svg.appendChild(currentPath);
-      };
-
-      const doDraw = (e) => {
-        if (!lavIsDrawing || !lavDrawMode || !currentPath) return;
-        e.preventDefault();
-        const p = getPos(e);
-        points.push(p);
-        // Build smooth path
-        let d = 'M ' + points[0].x + ' ' + points[0].y;
-        for (let i = 1; i < points.length; i++) {
-          d += ' L ' + points[i].x + ' ' + points[i].y;
-        }
-        currentPath.setAttribute('d', d);
-      };
-
-      const stopDraw = () => {
-        lavIsDrawing = false;
-        currentPath = null;
-        points = [];
-      };
-
-      wrap.addEventListener('touchstart', startDraw, { passive: false });
-      wrap.addEventListener('touchmove', doDraw, { passive: false });
-      wrap.addEventListener('touchend', stopDraw);
-      wrap.addEventListener('mousedown', startDraw);
-      wrap.addEventListener('mousemove', doDraw);
-      wrap.addEventListener('mouseup', stopDraw);
-    }
-
-    function setSquadra(tipo) {
-      lavCurrentSquadra = tipo;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const p = cfg.colorPrimary || '#1a7c3e';
-      const acc = cfg.colorAccent || '#f0c040';
-      const btnC = document.getElementById('btnCasaLav');
-      const btnO = document.getElementById('btnOspiteLav');
-      const dotC = document.getElementById('dotCasa');
-      const dotO = document.getElementById('dotOspite');
-      const base = 'border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0';
-      if (dotC) dotC.style.background = p;
-      if (dotO) dotO.style.background = acc;
-      if (btnC) btnC.style.cssText = tipo === 'casa'
-        ? 'background:' + p + ';border:1px solid ' + p + ';color:#fff;' + base
-        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;' + base;
-      if (btnO) btnO.style.cssText = tipo === 'ospite'
-        ? 'background:' + acc + ';border:1px solid ' + acc + ';color:#1a1a1a;' + base
-        : 'background:#243347;border:1px solid #344d66;color:#f0f4f8;' + base;
-      // Restore dots after cssText override
-      setTimeout(() => {
-        const d1 = document.getElementById('dotCasa');
-        const d2 = document.getElementById('dotOspite');
-        if (d1) d1.style.background = p;
-        if (d2) d2.style.background = acc;
-      }, 0);
-    }
-
-    function lavToggleDraw() {
-      lavDrawMode = !lavDrawMode;
-      const btn = document.getElementById('btnDraw');
-      const tokens = document.getElementById('lavagnaTokens');
-      btn.style.background = lavDrawMode ? '#f0c040' : '#243347';
-      btn.style.borderColor = lavDrawMode ? '#f0c040' : '#344d66';
-      btn.style.color = lavDrawMode ? '#1a1a1a' : '#f0f4f8';
-      if (tokens) tokens.style.pointerEvents = lavDrawMode ? 'none' : 'auto';
-    }
-
-    function lavClearAll() {
-      lavClearLines();
-      const tokens = document.getElementById('lavagnaTokens');
-      if (tokens) tokens.innerHTML = '';
-      const sel = document.querySelector('.lav-select');
-      if (sel) sel.value = '';
-    }
-
-    function lavAddPallone() {
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      addLavToken(wrap.offsetWidth/2, wrap.offsetHeight/2, '⚽', '#f5f5f5', '#000');
-    }
-
-    function lavAddToken() {
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e', colorAccent: '#f0c040' });
-      const bg = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#f0c040');
-      const textColor = lavCurrentSquadra === 'casa' ? '#fff' : '#1a1a1a';
-      const W = wrap.offsetWidth, H = wrap.offsetHeight || 400;
-      const x = W/2 + (Math.random()-0.5)*60;
-      const y = H/2 + (Math.random()-0.5)*60;
-      addLavToken(x, y, '?', bg, textColor, '');
-    }
-
-    function lavClearLines() {
-      const svg = document.getElementById('lavagnaLines');
-      if (svg) svg.innerHTML = '';
-    }
-
-    function addLavToken(x, y, label, bg, color, sub) {
-      const container = document.getElementById('lavagnaTokens');
-      const el = document.createElement('div');
-      el.className = 'lav-token';
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.background = bg || '#1a7c3e';
-      el.style.color = color || '#fff';
-      el.textContent = label || '';
-      if (sub) {
-        const s = document.createElement('div');
-        s.className = 'lav-token-sub';
-        s.textContent = sub;
-        el.appendChild(s);
-      }
-
-      // Double tap = remove
-      let lastTap = 0;
-      el.addEventListener('touchend', (e) => {
-        const now = Date.now();
-        if (now - lastTap < 300) { el.remove(); e.preventDefault(); }
-        lastTap = now;
+    function addLavToken(x,y,label,bg,color,sub){
+      const container=document.getElementById('lavagnaTokens');
+      const el=document.createElement('div');
+      el.className='lav-token';el.style.left=x+'px';el.style.top=y+'px';
+      el.style.background=bg||'#1a7c3e';el.style.color=color||'#fff';el.textContent=label||'';
+      if(sub){const s=document.createElement('div');s.className='lav-token-sub';s.textContent=sub.length>8?sub.slice(0,7)+'.':sub;el.appendChild(s)}
+      let lastTap=0;
+      el.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTap<300){el.remove();e.preventDefault()}lastTap=now});
+      el.addEventListener('pointerdown',e=>{
+        if(lavDrawMode)return;
+        e.preventDefault();e.stopPropagation();
+        el.setPointerCapture(e.pointerId);
+        const wrap=document.getElementById('lavagnaWrap'),r=wrap.getBoundingClientRect();
+        lavDragOffX=e.clientX-r.left-parseFloat(el.style.left);
+        lavDragOffY=e.clientY-r.top-parseFloat(el.style.top);
+        lavDragToken=el;el.style.zIndex=20;
       });
-
-      // Drag
-      const onStart = (e) => {
-        if (lavDrawMode) return;
-        e.preventDefault(); e.stopPropagation();
-        const wrap = document.getElementById('lavagnaWrap');
-        const r = wrap.getBoundingClientRect();
-        const src = e.touches ? e.touches[0] : e;
-        lavDragOffX = src.clientX - r.left - parseFloat(el.style.left);
-        lavDragOffY = src.clientY - r.top - parseFloat(el.style.top);
-        lavDragToken = el;
-        el.style.zIndex = 20;
-      };
-      el.addEventListener('touchstart', onStart, { passive: false });
-      el.addEventListener('mousedown', onStart);
+      el.addEventListener('pointermove',e=>{
+        if(lavDragToken!==el)return;e.preventDefault();
+        const wrap=document.getElementById('lavagnaWrap'),r=wrap.getBoundingClientRect();
+        el.style.left=Math.max(18,Math.min(r.width-18,e.clientX-r.left-lavDragOffX))+'px';
+        el.style.top=Math.max(18,Math.min(r.height-18,e.clientY-r.top-lavDragOffY))+'px';
+      });
+      el.addEventListener('pointerup',()=>{if(lavDragToken===el){el.style.zIndex=10;lavDragToken=null}});
       container.appendChild(el);
     }
 
-    // Global drag move/end
-    document.addEventListener('touchmove', (e) => {
-      if (!lavDragToken) return;
-      e.preventDefault();
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const r = wrap.getBoundingClientRect();
-      const x = e.touches[0].clientX - r.left - lavDragOffX;
-      const y = e.touches[0].clientY - r.top - lavDragOffY;
-      lavDragToken.style.left = Math.max(17, Math.min(r.width-17, x)) + 'px';
-      lavDragToken.style.top = Math.max(17, Math.min(r.height-17, y)) + 'px';
-    }, { passive: false });
+    function lavAddToken(){renderPickGiocatori();openModal('modalPickGiocatore')}
+    function lavAddPallone(){const wrap=document.getElementById('lavagnaWrap');if(!wrap)return;addLavToken(wrap.offsetWidth/2,wrap.offsetHeight/2,'⚽','#f5f5f5','#000')}
 
-    document.addEventListener('touchend', () => {
-      if (lavDragToken) { lavDragToken.style.zIndex = 10; lavDragToken = null; }
-    });
+    function setSquadra(tipo){
+      lavCurrentSquadra=tipo;
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const p=cfg.colorPrimary||'#1a7c3e',acc=cfg.colorAccent||'#f0c040';
+      const base='border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0';
+      const btnC=document.getElementById('btnCasaLav'),btnO=document.getElementById('btnOspiteLav');
+      const dotC=document.getElementById('dotCasa'),dotO=document.getElementById('dotOspite');
+      if(dotC)dotC.style.background=p;if(dotO)dotO.style.background=acc;
+      if(btnC)btnC.style.cssText=tipo==='casa'?'background:'+p+';border:1px solid '+p+';color:#fff;'+base:'background:#243347;border:1px solid #344d66;color:#f0f4f8;'+base;
+      if(btnO)btnO.style.cssText=tipo==='ospite'?'background:'+acc+';border:1px solid '+acc+';color:#1a1a1a;'+base:'background:#243347;border:1px solid #344d66;color:#f0f4f8;'+base;
+      setTimeout(()=>{const d1=document.getElementById('dotCasa'),d2=document.getElementById('dotOspite');if(d1)d1.style.background=p;if(d2)d2.style.background=acc},0);
+    }
 
-    document.addEventListener('mousemove', (e) => {
-      if (!lavDragToken) return;
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      const r = wrap.getBoundingClientRect();
-      const x = e.clientX - r.left - lavDragOffX;
-      const y = e.clientY - r.top - lavDragOffY;
-      lavDragToken.style.left = Math.max(17, Math.min(r.width-17, x)) + 'px';
-      lavDragToken.style.top = Math.max(17, Math.min(r.height-17, y)) + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (lavDragToken) { lavDragToken.style.zIndex = 10; lavDragToken = null; }
-    });
-
-    function applyFormation(formation) {
-      if (!formation) return;
-      const wrap = document.getElementById('lavagnaWrap');
-      if (!wrap) return;
-      document.getElementById('lavagnaTokens').innerHTML = '';
-
-      const W = wrap.offsetWidth;
-      const H = wrap.offsetHeight || 400;
-      const cfg = DB.get('settings', { colorPrimary: '#1a7c3e' });
-      // Casa = colore primario, Ospite = colore secondario
-      const color = lavCurrentSquadra === 'casa' ? cfg.colorPrimary : (cfg.colorAccent || '#e05252');
-      const m = 28;
-
-      // Portiere (colore diverso)
-      addLavToken(W/2, H - m - 20, '1', '#d4820a', '#fff', 'P');
-
-      const lines = formation.split('-').map(Number);
-      const fieldH = H * 0.78;
-      const startY = H - m - 60;
-      const stepY = (fieldH - 80) / lines.length;
-
-      lines.forEach((count, i) => {
-        const y = startY - (i + 1) * stepY;
-        const stepX = (W - m*2) / (count + 1);
-        const role = i === lines.length-1 ? 'A' : i === lines.length-2 ? 'C' : 'D';
-        for (let j = 0; j < count; j++) {
-          const x = m + stepX * (j + 1);
-          const textCol = lavCurrentSquadra === 'ospite' ? '#1a1a1a' : '#fff';
-          addLavToken(x, y, String(i*10+j+2), color, textCol, role);
-        }
+    function applyFormation(formation){
+      if(!formation)return;
+      const wrap=document.getElementById('lavagnaWrap');if(!wrap)return;
+      document.getElementById('lavagnaTokens').innerHTML='';
+      const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const color=lavCurrentSquadra==='casa'?cfg.colorPrimary:(cfg.colorAccent||'#f0c040');
+      const textCol=lavCurrentSquadra==='ospite'?'#1a1a1a':'#fff',m=28;
+      addLavToken(W/2,H-m-20,'1','#d4820a','#fff','P');
+      const lines=formation.split('-').map(Number),startY=H-m-60,stepY=(H*0.78-80)/lines.length;
+      lines.forEach((count,i)=>{
+        const y=startY-(i+1)*stepY,stepX=(W-m*2)/(count+1);
+        const role=i===lines.length-1?'A':i===lines.length-2?'C':'D';
+        for(let j=0;j<count;j++)addLavToken(m+stepX*(j+1),y,String(i*10+j+2),color,textCol,role);
       });
     }
 
-    
-        // ── PWA SERVICE WORKER ──
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+    // ── PICK GIOCATORE LAVAGNA ──
+    function switchPickTab(tab){
+      const isRosa=tab==='rosa';
+      document.getElementById('pickTabRosa').style.display=isRosa?'block':'none';
+      document.getElementById('pickTabCustom').style.display=isRosa?'none':'block';
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
+      document.getElementById('pickBtnRosa').style.cssText=isRosa?'background:'+cfg.colorPrimary+';border-color:'+cfg.colorPrimary+';color:#fff':'';
+      document.getElementById('pickBtnCustom').style.cssText=!isRosa?'background:'+cfg.colorPrimary+';border-color:'+cfg.colorPrimary+';color:#fff':'';
     }
 
-    // ── INIT ──
-    loadSettings();
-    updateHomeStats();
-    renderRosa();
-    renderCalendario();
-    updateAttivita();
+    function renderPickGiocatori(){
+      const gs=DB.get('giocatori',[]);
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
+      if(!gs.length){document.getElementById('pickGiocatoriList').innerHTML='<div class="placeholder" style="padding:20px 0"><p>Nessun giocatore nella rosa.</p></div>';return}
+      const sorted=[...gs].sort((a,b)=>RUOLI_ORDER.indexOf(a.ruolo)-RUOLI_ORDER.indexOf(b.ruolo)||(a.numero||99)-(b.numero||99));
+      document.getElementById('pickGiocatoriList').innerHTML=sorted.map(g=>`
+        <div class="pick-giocatore-row" onclick="addGiocatoreToken('${g.id}')">
+          <div class="pick-num" style="background:${colors[g.ruolo]||cfg.colorPrimary}">${g.numero||'?'}</div>
+          <div class="pick-nome">${g.cognome} ${g.nome}</div>
+          <span class="pick-ruolo ruolo-${g.ruolo}">${g.ruolo}</span>
+        </div>`).join('');
+    }
 
-    document.getElementById('colorPrimary').addEventListener('input', e => {
-      applyTheme({ ...DB.get('settings', {}), colorPrimary: e.target.value });
-    });
-    document.getElementById('colorAccent').addEventListener('input', e => {
-      applyTheme({ ...DB.get('settings', {}), colorAccent: e.target.value });
-    });
+    function addGiocatoreToken(id){
+      const g=DB.get('giocatori',[]).find(p=>p.id===id);if(!g)return;
+      const wrap=document.getElementById('lavagnaWrap');
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
+      const isOspite=lavCurrentSquadra==='ospite';
+      const bg=isOspite?(cfg.colorAccent||'#f0c040'):(colors[g.ruolo]||cfg.colorPrimary);
+      const textCol=isOspite?'#1a1a1a':'#fff';
+      const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
+      addLavToken(W/2+(Math.random()-.5)*80,H/2+(Math.random()-.5)*80,String(g.numero||g.cognome.slice(0,3).toUpperCase()),bg,textCol,g.cognome.toUpperCase());
+      closeModal('modalPickGiocatore');
+    }
+
+    function addCustomToken(){
+      const label=document.getElementById('pickCustomLabel').value.trim()||'?';
+      const wrap=document.getElementById('lavagnaWrap');
+      const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
+      const bg=lavCurrentSquadra==='casa'?cfg.colorPrimary:(cfg.colorAccent||'#f0c040');
+      const textCol=lavCurrentSquadra==='casa'?'#fff':'#1a1a1a';
+      const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
+      addLavToken(W/2+(Math.random()-.5)*60,H/2+(Math.random()-.5)*60,label,bg,textCol,'');
+      document.getElementById('pickCustomLabel').value='';closeModal('modalPickGiocatore');
+    }
+
+    // ── PWA ──
+    if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+    // ── INIT ──
+    loadSettings();updateHomeStats();renderRosa();renderCalendario();
   </script>
 </body>
 </html>
