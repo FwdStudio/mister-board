@@ -412,7 +412,7 @@
     function darken(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r*(1-pct/100),g*(1-pct/100),b*(1-pct/100))}
     const DB={get:(k,fb=null)=>{try{return JSON.parse(localStorage.getItem(k))??fb}catch{return fb}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 
-    // ── THEME ──
+        // ── THEME ──
     function applyTheme(s){
       const p=s.colorPrimary||'#1a7c3e',pL=lighten(p,22),pD=darken(p,15),acc=s.colorAccent||'#f0c040';
       const root=document.documentElement;
@@ -436,26 +436,34 @@
         return(0.299*r+0.587*g+0.114*b)/255>0.55?'rgba(0,0,0,0.6)':'rgba(255,255,255,0.75)';
       }
       
-      // Applica lo sfondo corretto e calcola il contrasto per tutte e 4 le card
-      [
-        [cP, p],
-        [cS, acc],
-        [cPD, pD],
-        [darken(acc,15), acc] // Corretto il riferimento per mantenere la variante scura dell'accento
-      ].forEach(([card, bg], index) => {
-        // Gestione speciale per cSD che usa una variante scura del colore accento
-        let targetCard = card;
-        let targetBg = bg;
-        if(index === 3) {
-          targetCard = cSD;
-          targetBg = darken(acc,15);
-        }
-        
-        if(!targetCard) return;
-        targetCard.style.background = targetBg;
-        targetCard.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(targetBg));
-        targetCard.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(targetBg));
-      });
+      // 1. Card Giocatori
+      if(cP) {
+        cP.style.background = p;
+        cP.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(p));
+        cP.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(p));
+      }
+      
+      // 2. Card Partite
+      if(cS) {
+        cS.style.background = acc;
+        cS.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(acc));
+        cS.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(acc));
+      }
+      
+      // 3. Card Allenamenti
+      if(cPD) {
+        cPD.style.background = pD;
+        cPD.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(pD));
+        cPD.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(pD));
+      }
+      
+      // 4. Card % Presenze (Risoluzione diretta del problema)
+      if(cSD) {
+        const bgScuroAccento = darken(acc, 15);
+        cSD.style.background = bgScuroAccento;
+        cSD.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(bgScuroAccento));
+        cSD.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(bgScuroAccento));
+      }
 
       document.querySelectorAll('.nav-item').forEach(item=>{
         const isA=item.classList.contains('active');
@@ -472,12 +480,15 @@
         btnSave.style.background = p;
         btnSave.style.color = contrastColor(p);
       }
+      
+      // Corretti i refusi di sintassi (.forEach=el=>) che causavano crash silenziosi nel rendering del tema
       document.querySelectorAll('.screen-title').forEach(el=>el.style.color='#f0f4f8');
-      document.querySelectorAll('.screen-subtitle').forEach=el=>el.style.color='#8a9bb0';
+      document.querySelectorAll('.screen-subtitle').forEach(el=>el.style.color='#8a9bb0');
       document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{el.style.background='#243347';el.style.borderColor='#344d66'});
       document.querySelector('.app-header').style.background='#243347';
       document.querySelector('.bottom-nav').style.background='#243347';
-    }    
+    }
+
 
     // ── NAVIGATION ──
     function navigate(screenId,navEl){
