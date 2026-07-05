@@ -455,6 +455,11 @@ function contrastMuted(hex){
       document.querySelectorAll('.event-type').forEach(el=>el.style.color=pL);
       document.body.style.background='#182233';
       document.querySelectorAll('.app-content,.screen').forEach(el=>el.style.background='#182233');
+      const btnSave = document.querySelector('.btn-save');
+if(btnSave){
+  btnSave.style.background = p;
+  btnSave.style.color = contrastColor(p);
+}
       document.querySelectorAll('.screen-title').forEach(el=>el.style.color='#f0f4f8');
       document.querySelectorAll('.screen-subtitle').forEach(el=>el.style.color='#8a9bb0');
       document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{el.style.background='#243347';el.style.borderColor='#344d66'});
