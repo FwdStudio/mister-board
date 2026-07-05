@@ -425,8 +425,25 @@
       meta.content=p;
       const cP=document.querySelector('.card-primary'),cS=document.querySelector('.card-secondary');
       const cPD=document.querySelector('.card-primary-dark'),cSD=document.querySelector('.card-secondary-dark');
-      if(cP)cP.style.background=p;
-      if(cS){cS.style.background=acc;cS.querySelector('.stat-value').style.color='#ffffff';cS.querySelector('.stat-label').style.color='rgba(255,255,255,0.75)'}
+      function contrastColor(hex){
+  const [r,g,b]=hexToRgb(hex);
+  return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1a1a1a':'#ffffff';
+}
+function contrastMuted(hex){
+  const [r,g,b]=hexToRgb(hex);
+  return(0.299*r+0.587*g+0.114*b)/255>0.55?'rgba(0,0,0,0.6)':'rgba(255,255,255,0.75)';
+}
+[
+  [cP, p],
+  [cS, acc],
+  [cPD, pD],
+  [cSD, darken(acc,15)]
+].forEach(([card, bg]) => {
+  if(!card) return;
+  card.style.background = bg;
+  card.querySelector('.stat-value').style.color = contrastColor(bg);
+  card.querySelector('.stat-label').style.color = contrastMuted(bg);
+});
       if(cPD)cPD.style.background=pD;
       if(cSD){cSD.style.background=darken(acc,15);cSD.querySelectorAll('.stat-value,.stat-label').forEach(el=>el.style.color='#fff')}
       document.querySelectorAll('.nav-item').forEach(item=>{
