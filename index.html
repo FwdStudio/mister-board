@@ -423,29 +423,40 @@
       let meta=document.querySelector('meta[name="theme-color"]');
       if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta);}
       meta.content=p;
+      
       const cP=document.querySelector('.card-primary'),cS=document.querySelector('.card-secondary');
       const cPD=document.querySelector('.card-primary-dark'),cSD=document.querySelector('.card-secondary-dark');
+      
       function contrastColor(hex){
-  const [r,g,b]=hexToRgb(hex);
-  return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1a1a1a':'#ffffff';
-}
-function contrastMuted(hex){
-  const [r,g,b]=hexToRgb(hex);
-  return(0.299*r+0.587*g+0.114*b)/255>0.55?'rgba(0,0,0,0.6)':'rgba(255,255,255,0.75)';
-}
-[
-  [cP, p],
-  [cS, acc],
-  [cPD, pD],
-  [cSD, acc]
-].forEach(([card, bg]) => {
-  if(!card) return;
-  card.style.background = bg;
-  card.querySelector('.stat-value').style.color = contrastColor(bg);
-  card.querySelector('.stat-label').style.color = contrastMuted(bg);
-});
-      if(cPD)cPD.style.background=pD;
-      if(cSD){cSD.style.background=darken(acc,15);cSD.querySelectorAll('.stat-value,.stat-label').forEach(el=>el.style.color='#fff')}
+        const [r,g,b]=hexToRgb(hex);
+        return(0.299*r+0.587*g+0.114*b)/255>0.55?'#1a1a1a':'#ffffff';
+      }
+      function contrastMuted(hex){
+        const [r,g,b]=hexToRgb(hex);
+        return(0.299*r+0.587*g+0.114*b)/255>0.55?'rgba(0,0,0,0.6)':'rgba(255,255,255,0.75)';
+      }
+      
+      // Applica lo sfondo corretto e calcola il contrasto per tutte e 4 le card
+      [
+        [cP, p],
+        [cS, acc],
+        [cPD, pD],
+        [darken(acc,15), acc] // Corretto il riferimento per mantenere la variante scura dell'accento
+      ].forEach(([card, bg], index) => {
+        // Gestione speciale per cSD che usa una variante scura del colore accento
+        let targetCard = card;
+        let targetBg = bg;
+        if(index === 3) {
+          targetCard = cSD;
+          targetBg = darken(acc,15);
+        }
+        
+        if(!targetCard) return;
+        targetCard.style.background = targetBg;
+        targetCard.querySelectorAll('.stat-value').forEach(el => el.style.color = contrastColor(targetBg));
+        targetCard.querySelectorAll('.stat-label').forEach(el => el.style.color = contrastMuted(targetBg));
+      });
+
       document.querySelectorAll('.nav-item').forEach(item=>{
         const isA=item.classList.contains('active');
         const svg=item.querySelector('svg'),lbl=item.querySelector('.nav-label');
@@ -455,17 +466,18 @@ function contrastMuted(hex){
       document.querySelectorAll('.event-type').forEach(el=>el.style.color=pL);
       document.body.style.background='#182233';
       document.querySelectorAll('.app-content,.screen').forEach(el=>el.style.background='#182233');
+      
       const btnSave = document.querySelector('.btn-save');
-if(btnSave){
-  btnSave.style.background = p;
-  btnSave.style.color = contrastColor(p);
-}
+      if(btnSave){
+        btnSave.style.background = p;
+        btnSave.style.color = contrastColor(p);
+      }
       document.querySelectorAll('.screen-title').forEach(el=>el.style.color='#f0f4f8');
-      document.querySelectorAll('.screen-subtitle').forEach(el=>el.style.color='#8a9bb0');
+      document.querySelectorAll('.screen-subtitle').forEach=el=>el.style.color='#8a9bb0';
       document.querySelectorAll('.card,.next-event,.settings-row').forEach(el=>{el.style.background='#243347';el.style.borderColor='#344d66'});
       document.querySelector('.app-header').style.background='#243347';
       document.querySelector('.bottom-nav').style.background='#243347';
-    }
+    }    
 
     // ── NAVIGATION ──
     function navigate(screenId,navEl){
