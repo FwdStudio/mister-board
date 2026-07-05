@@ -437,7 +437,7 @@ function contrastMuted(hex){
   [cP, p],
   [cS, acc],
   [cPD, pD],
-  [cSD, darken(acc,15)]
+  [cSD, acc]
 ].forEach(([card, bg]) => {
   if(!card) return;
   card.style.background = bg;
