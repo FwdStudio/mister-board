@@ -469,7 +469,10 @@
       document.querySelectorAll('.event-type').forEach(el=>el.style.color=pL);
       document.body.style.background='#182233';
       document.querySelectorAll('.app-content,.screen').forEach(el=>el.style.background='#182233');
-      
+      const textOnP = contrastColor(p);
+document.querySelectorAll('.btn-add,.btn-confirm,.filter-btn.active').forEach(el=>{
+  el.style.background=p; el.style.color=textOnP;
+});
       const btnSave = document.querySelector('.btn-save');
       if(btnSave){
         btnSave.style.setProperty('background', p, 'important');
@@ -1045,10 +1048,12 @@
       addLavToken(W/2,H-m-20,'1','#d4820a','#fff','P');
       const lines=formation.split('-').map(Number),startY=H-m-60,stepY=(H*0.78-80)/lines.length;
       lines.forEach((count,i)=>{
-        const y=startY-(i+1)*stepY,stepX=(W-m*2)/(count+1);
-        const role=i===lines.length-1?'A':i===lines.length-2?'C':'D';
-        for(let j=0;j<count;j++)addLavToken(m+stepX*(j+1),y,String(i*10+j+2),color,textCol,role);
-      });
+        let num=2;
+lines.forEach((count,i)=>{
+  const y=startY-(i+1)*stepY,stepX=(W-m*2)/(count+1);
+  const role=i===lines.length-1?'A':i===lines.length-2?'C':'D';
+  for(let j=0;j<count;j++){addLavToken(m+stepX*(j+1),y,String(num),color,textCol,role);num++;}
+});
     }
 
     // ── PICK GIOCATORE LAVAGNA ──
