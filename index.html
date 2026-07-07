@@ -423,6 +423,10 @@
       let meta=document.querySelector('meta[name="theme-color"]');
       if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta);}
       meta.content=p;
+      document.querySelectorAll('.btn-add,.btn-confirm,.btn-save,.filter-btn.active').forEach(el=>{
+  el.style.color = (0.299*hexToRgb(p)[0]+0.587*hexToRgb(p)[1]+0.114*hexToRgb(p)[2])/255 > 0.55 ? '#1a1a1a' : '#fff';
+});
+
       
       function contrastColor(hex){
         const [r,g,b]=hexToRgb(hex);
