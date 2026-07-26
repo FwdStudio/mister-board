@@ -196,6 +196,14 @@
   </style>
 </head>
 <body>
+  <div id="fwd-activation-screen" style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:32px 24px;text-align:center;background:#182233;color:#f0f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:10px">Attiva Mister Board</h2>
+    <p style="font-size:14px;color:#8a9bb0;margin-bottom:24px;max-width:320px">Inserisci il codice ricevuto via email dopo l'acquisto.</p>
+    <input id="fwd-license-input" placeholder="XXXX-XXXX-XXXX-XXXX" style="width:100%;max-width:320px;background:#243347;border:1px solid #344d66;border-radius:10px;color:#f0f4f8;font-size:15px;padding:12px 14px;outline:none;text-align:center;margin-bottom:14px"/>
+    <button id="fwd-activate-btn" style="width:100%;max-width:320px;background:#1a7c3e;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">Attiva</button>
+    <p id="fwd-activation-error" style="color:#e05252;font-size:13px;margin-top:14px;min-height:18px"></p>
+  </div>
+  <div id="app-content" style="display:none">
   <header class="app-header">
     <span class="team-name" id="headerTeamName">La Mia Squadra</span>
     <span class="season-badge" id="headerSeason">2025/26</span>
@@ -404,6 +412,8 @@
     <div class="nav-item" onclick="navigate('lavagna',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg></div><span class="nav-label">Lavagna</span></div>
     <div class="nav-item" onclick="navigate('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><span class="nav-label">Impostazioni</span></div>
   </nav>
+  </div>
+  <script src="attivazione-licenza.js"></script>
   <script>
     // ── UTILS ──
     function hexToRgb(hex){return[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16))}
@@ -1108,6 +1118,34 @@
 
     // ── INIT ──
     loadSettings();updateHomeStats();renderRosa();renderCalendario();
+
+    // ── FWD LICENSE GATE ──
+    (function(){
+      const gate=document.getElementById('fwd-activation-screen');
+      const app=document.getElementById('app-content');
+      if(window.FwdLicense && window.FwdLicense.isUnlocked()){
+        gate.style.display='none';
+        app.style.display='block';
+      } else {
+        app.style.display='none';
+        const btn=document.getElementById('fwd-activate-btn');
+        btn.addEventListener('click', async ()=>{
+          const key=document.getElementById('fwd-license-input').value.trim();
+          const err=document.getElementById('fwd-activation-error');
+          err.textContent='';
+          if(!key){err.textContent='Inserisci un codice.';return}
+          btn.disabled=true;btn.textContent='Verifica in corso...';
+          try{
+            await window.FwdLicense.activateLicense(key);
+            gate.style.display='none';
+            app.style.display='block';
+          }catch(e){
+            err.textContent=e.message;
+            btn.disabled=false;btn.textContent='Attiva';
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>
