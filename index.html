@@ -193,17 +193,22 @@
     .pick-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
     .pick-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
     .pick-ruolo{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+    /* DEMO */
+    .demo-banner{background:linear-gradient(135deg,#c8a020,#f0c040);color:#1a1a1a;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;cursor:pointer}
+    .demo-banner-icon{font-size:20px;flex-shrink:0}
+    .lock-overlay{position:fixed;inset:0;background:rgba(10,15,25,.92);z-index:150;display:none;align-items:center;justify-content:center;padding:24px}
+    .lock-overlay.open{display:flex}
+    .lock-box{background:#243347;border:1px solid #344d66;border-radius:20px;padding:28px 24px;max-width:340px;text-align:center}
+    .lock-icon{font-size:40px;margin-bottom:14px}
+    .lock-title{font-size:18px;font-weight:800;color:#f0f4f8;margin-bottom:8px}
+    .lock-text{font-size:14px;color:#8a9bb0;line-height:1.5;margin-bottom:18px}
+    .license-status{font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px;margin-top:10px;display:none}
+    .license-status.ok{display:block;background:rgba(50,180,100,.15);color:#50c878}
+    .license-status.err{display:block;background:rgba(220,80,80,.15);color:#e05050}
+    .license-status.pending{display:block;background:rgba(90,120,200,.15);color:#7a9fef}
   </style>
 </head>
 <body>
-  <div id="fwd-activation-screen" style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:32px 24px;text-align:center;background:#182233;color:#f0f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:10px">Attiva Mister Board</h2>
-    <p style="font-size:14px;color:#8a9bb0;margin-bottom:24px;max-width:320px">Inserisci il codice ricevuto via email dopo l'acquisto.</p>
-    <input id="fwd-license-input" placeholder="XXXX-XXXX-XXXX-XXXX" style="width:100%;max-width:320px;background:#243347;border:1px solid #344d66;border-radius:10px;color:#f0f4f8;font-size:15px;padding:12px 14px;outline:none;text-align:center;margin-bottom:14px"/>
-    <button id="fwd-activate-btn" style="width:100%;max-width:320px;background:#1a7c3e;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">Attiva</button>
-    <p id="fwd-activation-error" style="color:#e05252;font-size:13px;margin-top:14px;min-height:18px"></p>
-  </div>
-  <div id="app-content" style="display:none">
   <header class="app-header">
     <span class="team-name" id="headerTeamName">La Mia Squadra</span>
     <span class="season-badge" id="headerSeason">2025/26</span>
@@ -211,6 +216,10 @@
   <main class="app-content">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
+      <div class="demo-banner" id="demoBanner" onclick="openModal('modalLicenza')" style="display:none">
+        <span class="demo-banner-icon">🔓</span>
+        <span>Stai usando la versione demo. Tocca qui per sbloccare tutte le funzioni.</span>
+      </div>
       <div class="stat-grid">
         <div class="stat-card card-primary"><span class="stat-icon">👥</span><span class="stat-value" id="statGiocatori">0</span><span class="stat-label">Giocatori</span></div>
         <div class="stat-card card-secondary"><span class="stat-icon">⚽</span><span class="stat-value" id="statPartite">0</span><span class="stat-label">Partite</span></div>
@@ -327,9 +336,26 @@
         <div class="settings-row"><label>Colore primario</label><div class="color-row"><div class="color-swatch"><input type="color" id="colorPrimary" value="#1a7c3e"/></div></div></div>
         <div class="settings-row"><label>Colore secondario</label><div class="color-row"><div class="color-swatch"><input type="color" id="colorAccent" value="#f0c040"/></div></div></div>
       </div>
+      <div class="settings-section">
+        <div class="settings-label">Licenza</div>
+        <div class="settings-row" id="licenzaRow" onclick="openModal('modalLicenza')" style="cursor:pointer">
+          <label id="licenzaLabel">Versione demo</label>
+          <span style="color:var(--primary-light);font-weight:700;font-size:13px">Attiva ›</span>
+        </div>
+      </div>
       <button class="btn-save" onclick="saveSettings()">Salva impostazioni</button>
     </section>
   </main>
+  <!-- OVERLAY DI BLOCCO (Lavagna) -->
+  <div class="lock-overlay" id="lockOverlayLavagna">
+    <div class="lock-box">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">Lavagna tattica bloccata</div>
+      <div class="lock-text">La lavagna tattica è disponibile solo nella versione completa. Sblocca Mister Board per usare moduli, pedine e disegno libero.</div>
+      <button class="btn-confirm" style="width:100%" onclick="closeLockOverlay('lockOverlayLavagna');openModal('modalLicenza')">Sblocca ora</button>
+      <button class="btn-cancel" style="width:100%;margin-top:8px;background:none;color:#8a9bb0" onclick="closeLockOverlay('lockOverlayLavagna')">Torna indietro</button>
+    </div>
+  </div>
   <!-- MODALS -->
   <div class="modal-overlay" id="modalGiocatore" onclick="closeModalOutside(event,'modalGiocatore')">
     <div class="modal"><div class="modal-header"><span class="modal-title" id="modalGiocatoreTitle">Nuovo Giocatore</span><button class="modal-close" onclick="closeModal('modalGiocatore')">✕</button></div>
@@ -404,6 +430,15 @@
       </div>
     </div></div>
   </div>
+  <div class="modal-overlay" id="modalLicenza" onclick="closeModalOutside(event,'modalLicenza')">
+    <div class="modal modal-sm"><div class="modal-header"><span class="modal-title">🔑 Licenza Mister Board</span><button class="modal-close" onclick="closeModal('modalLicenza')">✕</button></div>
+    <div class="modal-body">
+      <p style="color:#8a9bb0;font-size:13px;line-height:1.5;margin-bottom:14px">Inserisci la chiave di licenza ricevuta via email dopo l'acquisto per sbloccare tutte le funzioni.</p>
+      <div class="form-group"><label class="form-label">Codice licenza</label><input type="text" class="form-input" id="licenseKeyInput" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"/></div>
+      <div class="license-status" id="licenseStatus"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalLicenza')">Annulla</button><button class="btn-confirm" id="btnAttivaLicenza" onclick="attivaLicenza()">Attiva</button></div></div>
+  </div>
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="navigate('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div><span class="nav-label">Home</span></div>
@@ -412,8 +447,6 @@
     <div class="nav-item" onclick="navigate('lavagna',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg></div><span class="nav-label">Lavagna</span></div>
     <div class="nav-item" onclick="navigate('settings',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><span class="nav-label">Impostazioni</span></div>
   </nav>
-  </div>
-  <script src="attivazione-licenza.js"></script>
   <script>
     // ── UTILS ──
     function hexToRgb(hex){return[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16))}
@@ -421,6 +454,67 @@
     function lighten(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r+(255-r)*pct/100,g+(255-g)*pct/100,b+(255-b)*pct/100)}
     function darken(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r*(1-pct/100),g*(1-pct/100),b*(1-pct/100))}
     const DB={get:(k,fb=null)=>{try{return JSON.parse(localStorage.getItem(k))??fb}catch{return fb}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+
+    // ── LICENSING ──
+    const LS_STORE_ID = 'INSERISCI_STORE_ID';
+    const LS_PRODUCT_ID = 'INSERISCI_PRODUCT_ID';
+    const DEMO_LIMITS = { maxGiocatori: 5, maxEventi: 2 };
+
+    function isLicensed(){
+      const lic = DB.get('license', null);
+      return !!(lic && lic.valid);
+    }
+    function isDemoMode(){ return !isLicensed(); }
+
+    async function attivaLicenza(){
+      const input = document.getElementById('licenseKeyInput');
+      const statusEl = document.getElementById('licenseStatus');
+      const key = input.value.trim();
+      if(!key){statusEl.className='license-status err';statusEl.textContent='Inserisci una chiave di licenza.';return}
+      statusEl.className='license-status pending';statusEl.textContent='Verifica in corso...';
+      try{
+        const res = await fetch('https://api.lemonsqueezy.com/v1/licenses/validate',{
+          method:'POST',
+          headers:{'Accept':'application/json','Content-Type':'application/x-www-form-urlencoded'},
+          body:'license_key='+encodeURIComponent(key)
+        });
+        const data = await res.json();
+        if(!data.valid){
+          statusEl.className='license-status err';
+          statusEl.textContent='Chiave non valida o scaduta. Controlla di averla copiata correttamente.';
+          return;
+        }
+        // opzionale: verifica che la chiave appartenga proprio a questo prodotto
+        if(LS_PRODUCT_ID!=='INSERISCI_PRODUCT_ID' && data.meta && data.meta.product_id && String(data.meta.product_id)!==String(LS_PRODUCT_ID)){
+          statusEl.className='license-status err';
+          statusEl.textContent='Questa chiave non appartiene a Mister Board.';
+          return;
+        }
+        DB.set('license',{key, valid:true, activatedAt:Date.now()});
+        statusEl.className='license-status ok';
+        statusEl.textContent='Licenza attivata! Tutte le funzioni sono sbloccate.';
+        setTimeout(()=>{closeModal('modalLicenza');refreshLicenseUI();renderRosa();renderCalendario()},1000);
+      }catch(err){
+        statusEl.className='license-status err';
+        statusEl.textContent='Impossibile verificare la chiave ora. Controlla la connessione e riprova.';
+      }
+    }
+
+    function refreshLicenseUI(){
+      const licensed = isLicensed();
+      const banner = document.getElementById('demoBanner');
+      const licenzaLabel = document.getElementById('licenzaLabel');
+      const licenzaRow = document.getElementById('licenzaRow');
+      if(banner) banner.style.display = licensed ? 'none' : 'flex';
+      if(licenzaLabel) licenzaLabel.textContent = licensed ? '✅ Versione completa attiva' : 'Versione demo';
+      if(licenzaRow) licenzaRow.style.cursor = licensed ? 'default' : 'pointer';
+      const colorInputs=[document.getElementById('colorPrimary'),document.getElementById('colorAccent')];
+      colorInputs.forEach(el=>{if(el)el.disabled=!licensed});
+      document.querySelectorAll('.color-swatch').forEach(el=>el.style.opacity=licensed?'1':'.4');
+    }
+
+    function openLockOverlay(id){document.getElementById(id).classList.add('open')}
+    function closeLockOverlay(id){document.getElementById(id).classList.remove('open')}
 
             // ── THEME ──
     function applyTheme(s){
@@ -509,6 +603,10 @@
 
     // ── NAVIGATION ──
     function navigate(screenId,navEl){
+      if(screenId==='lavagna' && isDemoMode()){
+        openLockOverlay('lockOverlayLavagna');
+        return;
+      }
       document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
       document.getElementById('screen-'+screenId).classList.add('active');
@@ -532,14 +630,28 @@
       document.getElementById('colorPrimary').value=s.colorPrimary||'#1a7c3e';
       document.getElementById('colorAccent').value=s.colorAccent||'#f0c040';
       applyTheme(s);
+      refreshLicenseUI();
     }
     function saveSettings(){
-      const s={teamName:document.getElementById('settingTeamName').value||'La Mia Squadra',season:document.getElementById('settingSeason').value||'2025/26',category:document.getElementById('settingCategory').value||'',colorPrimary:document.getElementById('colorPrimary').value,colorAccent:document.getElementById('colorAccent').value};
+      const licensed=isLicensed();
+      const prev=DB.get('settings',{});
+      const s={
+        teamName:document.getElementById('settingTeamName').value||'La Mia Squadra',
+        season:document.getElementById('settingSeason').value||'2025/26',
+        category:document.getElementById('settingCategory').value||'',
+        colorPrimary: licensed ? document.getElementById('colorPrimary').value : (prev.colorPrimary||'#1a7c3e'),
+        colorAccent: licensed ? document.getElementById('colorAccent').value : (prev.colorAccent||'#f0c040')
+      };
       DB.set('settings',s);applyTheme(s);
+      if(!licensed){
+        document.getElementById('colorPrimary').value=s.colorPrimary;
+        document.getElementById('colorAccent').value=s.colorAccent;
+      }
       const btn=document.querySelector('.btn-save');btn.textContent='✓ Salvato';setTimeout(()=>btn.textContent='Salva impostazioni',1500);
     }
-    document.getElementById('colorPrimary').addEventListener('input',e=>applyTheme({...DB.get('settings',{}),colorPrimary:e.target.value}));
-    document.getElementById('colorAccent').addEventListener('input',e=>applyTheme({...DB.get('settings',{}),colorAccent:e.target.value}));
+    document.getElementById('colorPrimary').addEventListener('input',e=>{if(!isLicensed()){e.target.value=DB.get('settings',{}).colorPrimary||'#1a7c3e';openLockOverlaySettings();return}applyTheme({...DB.get('settings',{}),colorPrimary:e.target.value})});
+    document.getElementById('colorAccent').addEventListener('input',e=>{if(!isLicensed()){e.target.value=DB.get('settings',{}).colorAccent||'#f0c040';openLockOverlaySettings();return}applyTheme({...DB.get('settings',{}),colorAccent:e.target.value})});
+    function openLockOverlaySettings(){openModal('modalLicenza')}
 
     // ── ROSA ──
     const RUOLI={P:'Portiere',D:'Difensore',C:'Centrocampista',A:'Attaccante'};
@@ -549,7 +661,7 @@
     function renderRosa(){
       const giocatori=DB.get('giocatori',[]);
       const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
-      document.getElementById('rosaSubtitle').textContent=giocatori.length+' giocator'+(giocatori.length===1?'e':'i');
+      document.getElementById('rosaSubtitle').textContent=giocatori.length+' giocator'+(giocatori.length===1?'e':'i')+(isDemoMode()?' (demo: max '+DEMO_LIMITS.maxGiocatori+')':'');
       const filtered=currentFilter==='tutti'?giocatori:giocatori.filter(g=>g.ruolo===currentFilter);
       if(!filtered.length){document.getElementById('rosaList').innerHTML='';document.getElementById('rosaEmpty').style.display='block';return}
       document.getElementById('rosaEmpty').style.display='none';
@@ -582,6 +694,10 @@
     }
 
     function openModalGiocatore(){
+      if(isDemoMode() && DB.get('giocatori',[]).length>=DEMO_LIMITS.maxGiocatori){
+        openModal('modalLicenza');
+        return;
+      }
       document.getElementById('modalGiocatoreTitle').textContent='Nuovo Giocatore';
       ['gId','gNome','gCognome','gNumero','gAnno','gNote'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('gRuolo').value='C';
@@ -602,8 +718,11 @@
       const nome=document.getElementById('gNome').value.trim(),cognome=document.getElementById('gCognome').value.trim();
       if(!nome&&!cognome)return;
       const id=document.getElementById('gId').value;
-      const g={id:id||Date.now().toString(),nome,cognome,numero:parseInt(document.getElementById('gNumero').value)||null,ruolo:document.getElementById('gRuolo').value,anno:parseInt(document.getElementById('gAnno').value)||null,note:document.getElementById('gNote').value.trim()};
       let gs=DB.get('giocatori',[]);
+      if(!id && isDemoMode() && gs.length>=DEMO_LIMITS.maxGiocatori){
+        closeModal('modalGiocatore');openModal('modalLicenza');return;
+      }
+      const g={id:id||Date.now().toString(),nome,cognome,numero:parseInt(document.getElementById('gNumero').value)||null,ruolo:document.getElementById('gRuolo').value,anno:parseInt(document.getElementById('gAnno').value)||null,note:document.getElementById('gNote').value.trim()};
       if(id)gs=gs.map(p=>p.id===id?g:p);else gs.push(g);
       DB.set('giocatori',gs);closeModal('modalGiocatore');renderRosa();updateHomeStats();
     }
@@ -703,7 +822,7 @@
     function renderEventsList(){
       const eventi=DB.get('eventi',[]);
       const filtered=calSelectedDate?eventi.filter(e=>e.data===calSelectedDate):eventi.filter(e=>{const d=new Date(e.data);return d.getFullYear()===calYear&&d.getMonth()===calMonth}).sort((a,b)=>a.data.localeCompare(b.data));
-      document.getElementById('calEventsTitle').textContent=calSelectedDate?formatDateLabel(calSelectedDate):'Eventi di '+MESI[calMonth];
+      document.getElementById('calEventsTitle').textContent=calSelectedDate?formatDateLabel(calSelectedDate):'Eventi di '+MESI[calMonth]+(isDemoMode()?' (demo: max '+DEMO_LIMITS.maxEventi+' totali)':'');
       const list=document.getElementById('calEventsList');
       if(!filtered.length){list.innerHTML='<div class="placeholder" style="padding:24px 0"><div class="placeholder-icon" style="font-size:32px">📅</div><p>Nessun evento</p></div>';return}
       list.innerHTML=filtered.map(e=>{
@@ -727,6 +846,10 @@
     function setCasaTrasferta(val){casaTrasferta=val;document.getElementById('btnCasa').classList.toggle('active',val==='casa');document.getElementById('btnTrasferta').classList.toggle('active',val==='trasferta')}
 
     function openModalEvento(prefilledDate){
+      if(isDemoMode() && DB.get('eventi',[]).length>=DEMO_LIMITS.maxEventi){
+        openModal('modalLicenza');
+        return;
+      }
       document.getElementById('modalEventoTitle').textContent='Nuovo Evento';
       document.getElementById('eId').value='';document.getElementById('eTipo').value='allenamento';
       document.getElementById('eData').value=prefilledDate||new Date().toISOString().split('T')[0];
@@ -738,8 +861,11 @@
     function salvaEvento(){
       const data=document.getElementById('eData').value;if(!data)return;
       const id=document.getElementById('eId').value;
-      const e={id:id||Date.now().toString(),tipo:document.getElementById('eTipo').value,data,ora:document.getElementById('eOra').value,durata:document.getElementById('eDurata').value,titolo:document.getElementById('eTitolo').value.trim(),avversario:document.getElementById('eAvversario').value.trim(),casaTrasferta,note:document.getElementById('eNote').value.trim()};
       let eventi=DB.get('eventi',[]);
+      if(!id && isDemoMode() && eventi.length>=DEMO_LIMITS.maxEventi){
+        closeModal('modalEvento');openModal('modalLicenza');return;
+      }
+      const e={id:id||Date.now().toString(),tipo:document.getElementById('eTipo').value,data,ora:document.getElementById('eOra').value,durata:document.getElementById('eDurata').value,titolo:document.getElementById('eTitolo').value.trim(),avversario:document.getElementById('eAvversario').value.trim(),casaTrasferta,note:document.getElementById('eNote').value.trim()};
       if(id)eventi=eventi.map(ev=>ev.id===id?e:ev);else eventi.push(e);
       DB.set('eventi',eventi);closeModal('modalEvento');calSelectedDate=null;renderCalendario();updateHomeStats();
     }
@@ -1118,34 +1244,6 @@
 
     // ── INIT ──
     loadSettings();updateHomeStats();renderRosa();renderCalendario();
-
-    // ── FWD LICENSE GATE ──
-    (function(){
-      const gate=document.getElementById('fwd-activation-screen');
-      const app=document.getElementById('app-content');
-      if(window.FwdLicense && window.FwdLicense.isUnlocked()){
-        gate.style.display='none';
-        app.style.display='block';
-      } else {
-        app.style.display='none';
-        const btn=document.getElementById('fwd-activate-btn');
-        btn.addEventListener('click', async ()=>{
-          const key=document.getElementById('fwd-license-input').value.trim();
-          const err=document.getElementById('fwd-activation-error');
-          err.textContent='';
-          if(!key){err.textContent='Inserisci un codice.';return}
-          btn.disabled=true;btn.textContent='Verifica in corso...';
-          try{
-            await window.FwdLicense.activateLicense(key);
-            gate.style.display='none';
-            app.style.display='block';
-          }catch(e){
-            err.textContent=e.message;
-            btn.disabled=false;btn.textContent='Attiva';
-          }
-        });
-      }
-    })();
   </script>
 </body>
 </html>
