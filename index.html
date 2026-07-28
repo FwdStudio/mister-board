@@ -352,7 +352,8 @@
       <div class="lock-icon">🔒</div>
       <div class="lock-title">Lavagna tattica bloccata</div>
       <div class="lock-text">La lavagna tattica è disponibile solo nella versione completa. Sblocca Mister Board per usare moduli, pedine e disegno libero.</div>
-      <button class="btn-confirm" style="width:100%" onclick="closeLockOverlay('lockOverlayLavagna');openModal('modalLicenza')">Sblocca ora</button>
+      <a href="" id="linkAcquistaLicenzaLavagna" target="_blank" rel="noopener" class="btn-confirm" style="display:block;width:100%;text-decoration:none;text-align:center;box-sizing:border-box">🛒 Acquista la versione completa</a>
+      <button class="btn-cancel" style="width:100%;margin-top:8px;background:none;color:#8a9bb0" onclick="closeLockOverlay('lockOverlayLavagna');openModal('modalLicenza')">Ho già una licenza</button>
       <button class="btn-cancel" style="width:100%;margin-top:8px;background:none;color:#8a9bb0" onclick="closeLockOverlay('lockOverlayLavagna')">Torna indietro</button>
     </div>
   </div>
@@ -436,6 +437,10 @@
       <p style="color:#8a9bb0;font-size:13px;line-height:1.5;margin-bottom:14px">Inserisci la chiave di licenza ricevuta via email dopo l'acquisto per sbloccare tutte le funzioni.</p>
       <div class="form-group"><label class="form-label">Codice licenza</label><input type="text" class="form-input" id="licenseKeyInput" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"/></div>
       <div class="license-status" id="licenseStatus"></div>
+      <div style="border-top:1px solid #344d66;margin-top:16px;padding-top:14px;text-align:center">
+        <p style="color:#8a9bb0;font-size:12px;margin-bottom:10px">Non hai ancora una licenza?</p>
+        <a href="" id="linkAcquistaLicenza" target="_blank" rel="noopener" class="btn-confirm" style="display:block;text-decoration:none;text-align:center">🛒 Acquista la versione completa</a>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalLicenza')">Annulla</button><button class="btn-confirm" id="btnAttivaLicenza" onclick="attivaLicenza()">Attiva</button></div></div>
   </div>
@@ -458,6 +463,7 @@
     // ── LICENSING ──
     const LS_STORE_ID = 'INSERISCI_STORE_ID';
     const LS_PRODUCT_ID = 'INSERISCI_PRODUCT_ID';
+    const LS_CHECKOUT_URL = 'INSERISCI_LINK_CHECKOUT_LEMONSQUEEZY';
     const DEMO_LIMITS = { maxGiocatori: 5, maxEventi: 2 };
 
     function isLicensed(){
@@ -1243,6 +1249,7 @@
     if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
     // ── INIT ──
+    document.querySelectorAll('#linkAcquistaLicenza, #linkAcquistaLicenzaLavagna').forEach(el=>{el.href=LS_CHECKOUT_URL});
     loadSettings();updateHomeStats();renderRosa();renderCalendario();
   </script>
 </body>
