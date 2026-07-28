@@ -444,6 +444,14 @@
     </div>
     <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalLicenza')">Annulla</button><button class="btn-confirm" id="btnAttivaLicenza" onclick="attivaLicenza()">Attiva</button></div></div>
   </div>
+  <div class="modal-overlay" id="modalEditToken" onclick="closeModalOutside(event,'modalEditToken')">
+    <div class="modal modal-sm"><div class="modal-header"><span class="modal-title">Modifica pedina</span><button class="modal-close" onclick="closeModal('modalEditToken')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Numero / Testo</label><input type="text" class="form-input" id="editTokenLabel" maxlength="4" placeholder="Es. 10"/></div>
+      <div class="form-group"><label class="form-label">Nome (opzionale)</label><input type="text" class="form-input" id="editTokenSub" maxlength="20" placeholder="Es. Rossi"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" style="color:#e05252" onclick="eliminaTokenCorrente()">🗑 Elimina</button><button class="btn-confirm" onclick="salvaEditToken()">Salva</button></div></div>
+  </div>
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="navigate('home',this)"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div><span class="nav-label">Home</span></div>
@@ -1137,14 +1145,21 @@
     function lavClearLines(){lavLines=[];const svg=document.getElementById('lavagnaLines');if(svg)svg.innerHTML=''}
     function lavClearAll(){lavClearLines();const t=document.getElementById('lavagnaTokens');if(t)t.innerHTML='';const sel=document.querySelector('.lav-select');if(sel)sel.value=''}
 
+    let currentEditTokenEl=null;
+
     function addLavToken(x,y,label,bg,color,sub){
       const container=document.getElementById('lavagnaTokens');
       const el=document.createElement('div');
       el.className='lav-token';el.style.left=x+'px';el.style.top=y+'px';
-      el.style.background=bg||'#1a7c3e';el.style.color=color||'#fff';el.textContent=label||'';
-      if(sub){const s=document.createElement('div');s.className='lav-token-sub';s.textContent=sub.length>8?sub.slice(0,7)+'.':sub;el.appendChild(s)}
-      let lastTap=0;
-      el.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTap<300){el.remove();e.preventDefault()}lastTap=now});
+      el.style.background=bg||'#1a7c3e';el.style.color=color||'#fff';
+      el.dataset.label=label||'';el.dataset.sub=sub||'';
+      const labelSpan=document.createElement('span');
+      labelSpan.className='lav-token-label';
+      labelSpan.style.pointerEvents='none';
+      labelSpan.textContent=label||'';
+      el.appendChild(labelSpan);
+      if(sub){const s=document.createElement('div');s.className='lav-token-sub';s.style.pointerEvents='none';s.textContent=sub.length>8?sub.slice(0,7)+'.':sub;el.appendChild(s)}
+      let downX=0,downY=0,moved=false;
       el.addEventListener('pointerdown',e=>{
         if(lavDrawMode)return;
         e.preventDefault();e.stopPropagation();
@@ -1152,16 +1167,54 @@
         const wrap=document.getElementById('lavagnaWrap'),r=wrap.getBoundingClientRect();
         lavDragOffX=e.clientX-r.left-parseFloat(el.style.left);
         lavDragOffY=e.clientY-r.top-parseFloat(el.style.top);
+        downX=e.clientX;downY=e.clientY;moved=false;
         lavDragToken=el;el.style.zIndex=20;
       });
       el.addEventListener('pointermove',e=>{
         if(lavDragToken!==el)return;e.preventDefault();
+        if(Math.abs(e.clientX-downX)>6||Math.abs(e.clientY-downY)>6)moved=true;
         const wrap=document.getElementById('lavagnaWrap'),r=wrap.getBoundingClientRect();
         el.style.left=Math.max(18,Math.min(r.width-18,e.clientX-r.left-lavDragOffX))+'px';
         el.style.top=Math.max(18,Math.min(r.height-18,e.clientY-r.top-lavDragOffY))+'px';
       });
-      el.addEventListener('pointerup',()=>{if(lavDragToken===el){el.style.zIndex=10;lavDragToken=null}});
+      el.addEventListener('pointerup',()=>{
+        if(lavDragToken===el){
+          el.style.zIndex=10;lavDragToken=null;
+          if(!moved)openEditToken(el);
+        }
+      });
       container.appendChild(el);
+    }
+
+    function openEditToken(el){
+      currentEditTokenEl=el;
+      document.getElementById('editTokenLabel').value=el.dataset.label||'';
+      document.getElementById('editTokenSub').value=el.dataset.sub||'';
+      openModal('modalEditToken');
+    }
+
+    function salvaEditToken(){
+      if(!currentEditTokenEl)return;
+      const label=document.getElementById('editTokenLabel').value.trim()||'?';
+      const sub=document.getElementById('editTokenSub').value.trim();
+      currentEditTokenEl.dataset.label=label;
+      currentEditTokenEl.dataset.sub=sub;
+      const labelSpan=currentEditTokenEl.querySelector('.lav-token-label');
+      if(labelSpan)labelSpan.textContent=label;
+      let subDiv=currentEditTokenEl.querySelector('.lav-token-sub');
+      if(sub){
+        if(!subDiv){subDiv=document.createElement('div');subDiv.className='lav-token-sub';subDiv.style.pointerEvents='none';currentEditTokenEl.appendChild(subDiv);}
+        subDiv.textContent=sub.length>8?sub.slice(0,7)+'.':sub;
+      }else if(subDiv){
+        subDiv.remove();
+      }
+      currentEditTokenEl=null;
+      closeModal('modalEditToken');
+    }
+
+    function eliminaTokenCorrente(){
+      if(currentEditTokenEl){currentEditTokenEl.remove();currentEditTokenEl=null}
+      closeModal('modalEditToken');
     }
 
     function lavAddToken(){renderPickGiocatori();openModal('modalPickGiocatore')}
@@ -1190,10 +1243,14 @@
       const textCol=lavCurrentSquadra==='ospite'?'#1a1a1a':'#fff',m=28;
       addLavToken(W/2,H-m-20,'1','#d4820a','#fff','P');
       const lines=formation.split('-').map(Number),startY=H-m-60,stepY=(H*0.78-80)/lines.length;
+      let numero=2;
       lines.forEach((count,i)=>{
         const y=startY-(i+1)*stepY,stepX=(W-m*2)/(count+1);
         const role=i===lines.length-1?'A':i===lines.length-2?'C':'D';
-        for(let j=0;j<count;j++)addLavToken(m+stepX*(j+1),y,String(i*10+j+2),color,textCol,role);
+        for(let j=0;j<count;j++){
+          addLavToken(m+stepX*(j+1),y,String(numero),color,textCol,role);
+          numero++;
+        }
       });
     }
 
