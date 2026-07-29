@@ -294,6 +294,10 @@
             <option value="5-3-2">5-3-2</option>
           </select>
         </div>
+        <div class="lav-row">
+          <button class="lav-btn" onclick="apriSalvaSchema()">💾 Salva schema</button>
+          <button class="lav-btn" onclick="apriSchemiSalvati()">📂 Schemi salvati</button>
+        </div>
       </div>
       <div class="lavagna-wrap" id="lavagnaWrap"
         ontouchstart="lavOnTouchStart(event)"
@@ -451,6 +455,17 @@
       <div class="form-group"><label class="form-label">Nome (opzionale)</label><input type="text" class="form-input" id="editTokenSub" maxlength="20" placeholder="Es. Rossi"/></div>
     </div>
     <div class="modal-footer"><button class="btn-cancel" style="color:#e05252" onclick="eliminaTokenCorrente()">🗑 Elimina</button><button class="btn-confirm" onclick="salvaEditToken()">Salva</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalSalvaSchema" onclick="closeModalOutside(event,'modalSalvaSchema')">
+    <div class="modal modal-sm"><div class="modal-header"><span class="modal-title">💾 Salva schema</span><button class="modal-close" onclick="closeModal('modalSalvaSchema')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nome schema</label><input type="text" class="form-input" id="nomeSchemaInput" placeholder="Es. 4-3-3 pressing alto" maxlength="40"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalSalvaSchema')">Annulla</button><button class="btn-confirm" onclick="salvaSchema()">Salva</button></div></div>
+  </div>
+  <div class="modal-overlay" id="modalSchemiSalvati" onclick="closeModalOutside(event,'modalSchemiSalvati')">
+    <div class="modal"><div class="modal-header"><span class="modal-title">📂 Schemi salvati</span><button class="modal-close" onclick="closeModal('modalSchemiSalvati')">✕</button></div>
+    <div class="modal-body"><div id="schemiList"></div></div></div>
   </div>
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
@@ -1252,6 +1267,62 @@
           numero++;
         }
       });
+    }
+
+    // ── SCHEMI SALVATI ──
+    function apriSalvaSchema(){document.getElementById('nomeSchemaInput').value='';openModal('modalSalvaSchema')}
+
+    function salvaSchema(){
+      const nome=document.getElementById('nomeSchemaInput').value.trim();
+      if(!nome)return;
+      const tokens=Array.from(document.querySelectorAll('#lavagnaTokens .lav-token')).map(el=>({
+        x:parseFloat(el.style.left),y:parseFloat(el.style.top),
+        label:el.dataset.label||'',sub:el.dataset.sub||'',
+        bg:el.style.background,color:el.style.color
+      }));
+      const schemi=DB.get('schemi',[]);
+      schemi.push({id:Date.now().toString(),nome,tokens,lines:[...lavLines],createdAt:Date.now()});
+      DB.set('schemi',schemi);
+      closeModal('modalSalvaSchema');
+    }
+
+    function apriSchemiSalvati(){renderSchemiList();openModal('modalSchemiSalvati')}
+
+    function renderSchemiList(){
+      const schemi=DB.get('schemi',[]);
+      const el=document.getElementById('schemiList');
+      if(!schemi.length){el.innerHTML='<div class="placeholder" style="padding:24px 0"><div class="placeholder-icon" style="font-size:32px">📂</div><p>Nessuno schema salvato ancora.</p></div>';return}
+      el.innerHTML=schemi.slice().reverse().map(s=>`
+        <div class="evento-card" style="cursor:default">
+          <div class="evento-info"><div class="evento-titolo">${s.nome}</div><div class="evento-meta">${s.tokens.length} pedine</div></div>
+          <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
+            <button class="btn-confirm" style="padding:8px 12px;font-size:12px;flex:none" onclick="caricaSchema('${s.id}')">Carica</button>
+            <button class="btn-delete-g" onclick="eliminaSchema('${s.id}')">🗑</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function caricaSchema(id){
+      const schemi=DB.get('schemi',[]);
+      const s=schemi.find(x=>x.id===id);if(!s)return;
+      document.getElementById('lavagnaTokens').innerHTML='';
+      lavClearLines();
+      s.tokens.forEach(t=>addLavToken(t.x,t.y,t.label,t.bg,t.color,t.sub));
+      lavLines=(s.lines||[]).map(l=>({...l}));
+      const svg=document.getElementById('lavagnaLines');
+      lavLines.forEach(l=>{
+        const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d',l.d);p.setAttribute('stroke',l.color);
+        p.setAttribute('stroke-width','3');p.setAttribute('stroke-linecap','round');
+        p.setAttribute('stroke-linejoin','round');p.setAttribute('fill','none');
+        svg.appendChild(p);
+      });
+      closeModal('modalSchemiSalvati');
+    }
+
+    function eliminaSchema(id){
+      DB.set('schemi',DB.get('schemi',[]).filter(s=>s.id!==id));
+      renderSchemiList();
     }
 
     // ── PICK GIOCATORE LAVAGNA ──
