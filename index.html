@@ -242,6 +242,7 @@
         <div><div class="screen-title">Rosa</div><div class="screen-subtitle" id="rosaSubtitle">0 giocatori</div></div>
         <button class="btn-add" onclick="openModalGiocatore()">+ Aggiungi</button>
       </div>
+      <button class="lav-btn" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px" onclick="apriImportaGiocatori()">📋 Importa lista giocatori</button>
       <div class="ruolo-filter">
         <button class="filter-btn active" onclick="filterRosa('tutti',this)">Tutti</button>
         <button class="filter-btn" onclick="filterRosa('P',this)">Portieri</button>
@@ -466,6 +467,14 @@
   <div class="modal-overlay" id="modalSchemiSalvati" onclick="closeModalOutside(event,'modalSchemiSalvati')">
     <div class="modal"><div class="modal-header"><span class="modal-title">📂 Schemi salvati</span><button class="modal-close" onclick="closeModal('modalSchemiSalvati')">✕</button></div>
     <div class="modal-body"><div id="schemiList"></div></div></div>
+  </div>
+  <div class="modal-overlay" id="modalImportaGiocatori" onclick="closeModalOutside(event,'modalImportaGiocatori')">
+    <div class="modal"><div class="modal-header"><span class="modal-title">📋 Importa giocatori</span><button class="modal-close" onclick="closeModal('modalImportaGiocatori')">✕</button></div>
+    <div class="modal-body">
+      <p style="color:#8a9bb0;font-size:13px;line-height:1.5;margin-bottom:14px">Scrivi o incolla un nome per riga (es. "Marco Rossi"). Verranno creati come Centrocampisti senza numero — potrai modificare ruolo, numero e altri dettagli entrando nel singolo giocatore.</p>
+      <div class="form-group"><label class="form-label">Nomi (uno per riga)</label><textarea class="form-input" id="importaGiocatoriInput" style="height:160px;resize:none" placeholder="Marco Rossi&#10;Luca Bianchi&#10;Andrea Verdi"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modalImportaGiocatori')">Annulla</button><button class="btn-confirm" onclick="importaGiocatori()">Importa</button></div></div>
   </div>
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
@@ -724,6 +733,27 @@
       const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
       btn.style.background=cfg.colorPrimary;btn.style.borderColor=cfg.colorPrimary;btn.style.color=getContrastColor(cfg.colorPrimary);
       renderRosa();
+    }
+
+    function apriImportaGiocatori(){document.getElementById('importaGiocatoriInput').value='';openModal('modalImportaGiocatori')}
+
+    function importaGiocatori(){
+      const raw=document.getElementById('importaGiocatoriInput').value;
+      const righe=raw.split('\n').map(r=>r.trim()).filter(Boolean);
+      if(!righe.length){closeModal('modalImportaGiocatori');return}
+      let gs=DB.get('giocatori',[]);
+      let bloccati=0;
+      righe.forEach(riga=>{
+        if(isDemoMode() && gs.length>=DEMO_LIMITS.maxGiocatori){bloccati++;return}
+        const parti=riga.split(/\s+/);
+        const nome=parti[0]||riga;
+        const cognome=parti.slice(1).join(' ');
+        gs.push({id:Date.now().toString()+Math.random().toString(36).slice(2,6),nome,cognome,numero:null,ruolo:'C',anno:null,note:''});
+      });
+      DB.set('giocatori',gs);
+      closeModal('modalImportaGiocatori');
+      renderRosa();updateHomeStats();
+      if(bloccati>0)openModal('modalLicenza');
     }
 
     function openModalGiocatore(){
