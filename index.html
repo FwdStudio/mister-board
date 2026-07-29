@@ -481,6 +481,10 @@
     function rgbToHex(r,g,b){return'#'+[r,g,b].map(v=>Math.min(255,Math.max(0,Math.round(v))).toString(16).padStart(2,'0')).join('')}
     function lighten(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r+(255-r)*pct/100,g+(255-g)*pct/100,b+(255-b)*pct/100)}
     function darken(hex,pct){const[r,g,b]=hexToRgb(hex);return rgbToHex(r*(1-pct/100),g*(1-pct/100),b*(1-pct/100))}
+    function getContrastColor(hex){
+      const [r,g,b]=hexToRgb(hex);
+      return (0.299*r+0.587*g+0.114*b)/255>0.55?'#1a1a1a':'#ffffff';
+    }
     const DB={get:(k,fb=null)=>{try{return JSON.parse(localStorage.getItem(k))??fb}catch{return fb}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 
     // ── LICENSING ──
@@ -703,7 +707,7 @@
         players.forEach(g=>{
           const bg=colors[g.ruolo]||cfg.colorPrimary;
           html+=`<div class="giocatore-card" onclick="openGiocatoreDetail('${g.id}')">
-            <div class="giocatore-numero" style="background:${bg}">${g.numero||'–'}</div>
+            <div class="giocatore-numero" style="background:${bg};color:${getContrastColor(bg)}">${g.numero||'–'}</div>
             <div class="giocatore-info"><div class="giocatore-nome">${g.cognome} ${g.nome}</div><div class="giocatore-meta">${RUOLI[g.ruolo]}${g.anno?' · '+g.anno:''}${g.note?' · '+g.note:''}</div></div>
             <span class="giocatore-ruolo-badge ruolo-${g.ruolo}">${g.ruolo}</span>
             <button class="btn-delete-g" onclick="event.stopPropagation();askDeleteGiocatore('${g.id}','${g.nome} ${g.cognome}')">🗑</button>
@@ -718,7 +722,7 @@
       document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.borderColor='';b.style.color=''});
       btn.classList.add('active');
       const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
-      btn.style.background=cfg.colorPrimary;btn.style.borderColor=cfg.colorPrimary;btn.style.color='#fff';
+      btn.style.background=cfg.colorPrimary;btn.style.borderColor=cfg.colorPrimary;btn.style.color=getContrastColor(cfg.colorPrimary);
       renderRosa();
     }
 
@@ -778,7 +782,7 @@
       const media=hasVal?Math.round(VAL_CRITERI.map(c=>currentValutazione[c.key]).reduce((a,b)=>a+b,0)/VAL_CRITERI.length*10)/10:'–';
       document.getElementById('gdInfo').innerHTML=`
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-          <div style="width:52px;height:52px;border-radius:14px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0">${g.numero||'–'}</div>
+          <div style="width:52px;height:52px;border-radius:14px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:${getContrastColor(bg)};flex-shrink:0">${g.numero||'–'}</div>
           <div><div style="font-size:18px;font-weight:800;color:#f0f4f8">${g.cognome} ${g.nome}</div><div style="font-size:13px;color:#8a9bb0">${RUOLI[g.ruolo]}${g.anno?' · '+g.anno:''}${g.note?' · '+g.note:''}</div></div>
         </div>
         <div class="gd-stat-row">
@@ -842,6 +846,11 @@
         html+=`<div class="cal-day${isToday?' today':''}" onclick="selectDay('${ds}')"><div class="day-num">${d}</div><div class="day-dots">${dots}</div></div>`;
       }
       document.getElementById('calDays').innerHTML=html;
+      const todayNum=document.querySelector('.cal-day.today .day-num');
+      if(todayNum){
+        const cfg=DB.get('settings',{colorPrimary:'#1a7c3e'});
+        todayNum.style.color=getContrastColor(cfg.colorPrimary);
+      }
       renderEventsList();
     }
 
@@ -931,7 +940,7 @@
         html+=`<div class="ruolo-section-title">${RUOLI[ruolo]}</div>`;
         gruppo.forEach(g=>{
           const isP=!!currentPresenze[g.id],bg=colors[g.ruolo]||cfg.colorPrimary;
-          html+=`<div class="presenza-row" onclick="togglePresenza('${g.id}')"><div class="presenza-checkbox${isP?' checked':''}"></div><div class="presenza-num" style="background:${bg}">${g.numero||'–'}</div><div class="presenza-nome">${g.cognome} ${g.nome}</div><span class="presenza-ruolo ruolo-${g.ruolo}">${g.ruolo}</span></div>`;
+          html+=`<div class="presenza-row" onclick="togglePresenza('${g.id}')"><div class="presenza-checkbox${isP?' checked':''}"></div><div class="presenza-num" style="background:${bg};color:${getContrastColor(bg)}">${g.numero||'–'}</div><div class="presenza-nome">${g.cognome} ${g.nome}</div><span class="presenza-ruolo ruolo-${g.ruolo}">${g.ruolo}</span></div>`;
         });
       });
       document.getElementById('presenzeList').innerHTML=html;
@@ -1255,7 +1264,7 @@
       const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
       const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
       const color=lavCurrentSquadra==='casa'?cfg.colorPrimary:(cfg.colorAccent||'#f0c040');
-      const textCol=lavCurrentSquadra==='ospite'?'#1a1a1a':'#fff',m=28;
+      const textCol=getContrastColor(color),m=28;
       addLavToken(W/2,H-m-20,'1','#d4820a','#fff','P');
       const lines=formation.split('-').map(Number),startY=H-m-60,stepY=(H*0.78-80)/lines.length;
       let numero=2;
@@ -1343,7 +1352,7 @@
       const sorted=[...gs].sort((a,b)=>RUOLI_ORDER.indexOf(a.ruolo)-RUOLI_ORDER.indexOf(b.ruolo)||(a.numero||99)-(b.numero||99));
       document.getElementById('pickGiocatoriList').innerHTML=sorted.map(g=>`
         <div class="pick-giocatore-row" onclick="addGiocatoreToken('${g.id}')">
-          <div class="pick-num" style="background:${colors[g.ruolo]||cfg.colorPrimary}">${g.numero||'?'}</div>
+          <div class="pick-num" style="background:${colors[g.ruolo]||cfg.colorPrimary};color:${getContrastColor(colors[g.ruolo]||cfg.colorPrimary)}">${g.numero||'?'}</div>
           <div class="pick-nome">${g.cognome} ${g.nome}</div>
           <span class="pick-ruolo ruolo-${g.ruolo}">${g.ruolo}</span>
         </div>`).join('');
@@ -1356,7 +1365,7 @@
       const colors={P:'#5a78c8',D:'#32b464',C:cfg.colorAccent,A:'#dc5050'};
       const isOspite=lavCurrentSquadra==='ospite';
       const bg=isOspite?(cfg.colorAccent||'#f0c040'):(colors[g.ruolo]||cfg.colorPrimary);
-      const textCol=isOspite?'#1a1a1a':'#fff';
+      const textCol=getContrastColor(bg);
       const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
       addLavToken(W/2+(Math.random()-.5)*80,H/2+(Math.random()-.5)*80,String(g.numero||g.cognome.slice(0,3).toUpperCase()),bg,textCol,g.cognome.toUpperCase());
       closeModal('modalPickGiocatore');
@@ -1367,7 +1376,7 @@
       const wrap=document.getElementById('lavagnaWrap');
       const cfg=DB.get('settings',{colorPrimary:'#1a7c3e',colorAccent:'#f0c040'});
       const bg=lavCurrentSquadra==='casa'?cfg.colorPrimary:(cfg.colorAccent||'#f0c040');
-      const textCol=lavCurrentSquadra==='casa'?'#fff':'#1a1a1a';
+      const textCol=getContrastColor(bg);
       const W=wrap.offsetWidth,H=wrap.offsetHeight||400;
       addLavToken(W/2+(Math.random()-.5)*60,H/2+(Math.random()-.5)*60,label,bg,textCol,'');
       document.getElementById('pickCustomLabel').value='';closeModal('modalPickGiocatore');
