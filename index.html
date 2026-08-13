@@ -1,14 +1,29 @@
-<!DOCTYPE html>
-<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  
+  <!-- SEO -->
+  <meta name="description" content="Mister Board è l'app per allenatori: gestisci rosa, convocazioni, presenze e schemi tattici da telefono o PC. Prova la demo gratis e acquista la versione completa a 9,90€." />
+  <link rel="canonical" href="https://fwdstudio.github.io/mister-board/" />
+  
+  <!-- PWA / iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Mister Board" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>Mister Board</title>
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Mister Board – App per gestire squadra e convocazioni" />
+  <meta property="og:description" content="Rosa, convocazioni, presenze e schemi tattici in un'unica PWA per allenatori." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fwdstudio.github.io/mister-board/" />
+  <!-- Se non vuoi creare un'og-image dedicata, puoi omettere la riga sotto o lasciarla commentata -->
+  <!-- <meta property="og:image" content="https://fwdstudio.github.io/mister-board/og-image.jpg" /> -->
+  <meta name="twitter:card" content="summary" />
+  
+  <title>Mister Board – App per gestire squadra, convocazioni e schemi</title>
+
   <style>
     :root {
       --primary: #1a7c3e; --primary-dark: #125c2d; --primary-light: #22a050;
@@ -136,76 +151,6 @@
     .presenza-checkbox.checked::after{content:'✓';color:#fff;font-size:13px;font-weight:700}
     .presenza-num{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
     .presenza-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
-    .presenza-ruolo{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-    .detail-info-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;color:#8a9bb0}
-    .detail-info-row strong{color:#f0f4f8}
-    .presenze-summary{background:#182233;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-    .presenze-summary-num{font-size:22px;font-weight:800;color:var(--primary-light)}
-    .presenze-summary-label{font-size:12px;color:#8a9bb0}
-    .radar-container{display:flex;justify-content:center;margin-bottom:20px;background:#182233;border-radius:16px;padding:16px}
-    .val-slider-row{margin-bottom:14px}
-    .val-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .val-slider-label{font-size:13px;font-weight:600;color:#f0f4f8}
-    .val-slider-value{font-size:15px;font-weight:800;color:var(--primary-light);min-width:28px;text-align:right}
-    .val-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:#344d66;outline:none;cursor:pointer}
-    .val-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--primary);cursor:pointer;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-    .gd-stat-row{display:flex;gap:8px;margin-bottom:12px}
-    .gd-stat{flex:1;background:#182233;border-radius:10px;padding:10px;text-align:center}
-    .gd-stat-val{font-size:20px;font-weight:800;color:#f0f4f8}
-    .gd-stat-lbl{font-size:11px;color:#8a9bb0;margin-top:2px}
-    .btn-whatsapp{width:100%;background:#25d366;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-    .conv-giocatore-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #344d66;cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .conv-giocatore-row:last-child{border-bottom:none}
-    .conv-check{width:20px;height:20px;border-radius:5px;border:2px solid #344d66;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
-    .conv-check.checked{background:#25d366;border-color:#25d366;color:#fff}
-    .conv-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
-    .conv-ruolo{font-size:11px;color:#8a9bb0}
-    /* LAVAGNA */
-    .lavagna-toolbar{display:flex;flex-direction:column;gap:6px;padding:8px 12px;background:#182233;border-bottom:1px solid #344d66;flex-shrink:0}
-    .lav-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
-    .lav-row::-webkit-scrollbar{display:none}
-    .lav-btn{background:#243347;border:1px solid #344d66;color:#f0f4f8;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-    .lav-select{flex:1;background:#243347;border:1px solid #344d66;color:#f0f4f8;border-radius:8px;padding:6px 10px;font-size:13px;-webkit-appearance:none;outline:none}
-    .lavagna-wrap{position:relative;width:100%;flex:1;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
-    .css-field{position:absolute;inset:0;background:#2d7a3e;z-index:1}
-    .field-inner{position:absolute;inset:14px;border:2px solid rgba(255,255,255,.7)}
-    .field-line-mid{position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(255,255,255,.7);transform:translateY(-50%)}
-    .field-circle-center{position:absolute;left:50%;top:50%;width:18%;padding-top:18%;border-radius:50%;border:2px solid rgba(255,255,255,.7);transform:translate(-50%,-50%)}
-    .field-dot-center{position:absolute;left:50%;top:50%;width:6px;height:6px;background:rgba(255,255,255,.8);border-radius:50%;transform:translate(-50%,-50%);z-index:2}
-    .field-area-top-big{position:absolute;left:20%;right:20%;top:0;height:16%;border:2px solid rgba(255,255,255,.7);border-top:none}
-    .field-area-top-small{position:absolute;left:33%;right:33%;top:0;height:7%;border:2px solid rgba(255,255,255,.7);border-top:none}
-    .field-area-bot-big{position:absolute;left:20%;right:20%;bottom:0;height:16%;border:2px solid rgba(255,255,255,.7);border-bottom:none}
-    .field-area-bot-small{position:absolute;left:33%;right:33%;bottom:0;height:7%;border:2px solid rgba(255,255,255,.7);border-bottom:none}
-    .field-corner{position:absolute;width:14px;height:14px;border:2px solid rgba(255,255,255,.7);border-radius:0}
-    .field-corner-tl{top:-2px;left:-2px;border-radius:0 0 100% 0;border-top:none;border-left:none}
-    .field-corner-tr{top:-2px;right:-2px;border-radius:0 0 0 100%;border-top:none;border-right:none}
-    .field-corner-bl{bottom:-2px;left:-2px;border-radius:0 100% 0 0;border-bottom:none;border-left:none}
-    .field-corner-br{bottom:-2px;right:-2px;border-radius:100% 0 0 0;border-bottom:none;border-right:none}
-    .lav-token{position:absolute;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.4);z-index:10;touch-action:none;user-select:none;-webkit-user-select:none}
-    .lav-token-sub{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none}
-    #screen-lavagna{display:none;flex-direction:column;position:fixed;top:52px;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));overflow:hidden}
-    #screen-lavagna.active{display:flex}
-    /* PICK */
-    .lav-pick-btn{flex:1;background:#243347;border:1px solid #344d66;color:#8a9bb0;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer}
-    .lav-pick-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
-    .pick-giocatore-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #344d66;cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .pick-giocatore-row:last-child{border-bottom:none}
-    .pick-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
-    .pick-nome{flex:1;font-size:14px;font-weight:600;color:#f0f4f8}
-    .pick-ruolo{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-    /* DEMO */
-    .demo-banner{background:linear-gradient(135deg,#c8a020,#f0c040);color:#1a1a1a;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;cursor:pointer}
-    .demo-banner-icon{font-size:20px;flex-shrink:0}
-    .lock-overlay{position:fixed;inset:0;background:rgba(10,15,25,.92);z-index:150;display:none;align-items:center;justify-content:center;padding:24px}
-    .lock-overlay.open{display:flex}
-    .lock-box{background:#243347;border:1px solid #344d66;border-radius:20px;padding:28px 24px;max-width:340px;text-align:center}
-    .lock-icon{font-size:40px;margin-bottom:14px}
-    .lock-title{font-size:18px;font-weight:800;color:#f0f4f8;margin-bottom:8px}
-    .lock-text{font-size:14px;color:#8a9bb0;line-height:1.5;margin-bottom:18px}
-    .license-status{font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px;margin-top:10px;display:none}
-    .license-status.ok{display:block;background:rgba(50,180,100,.15);color:#50c878}
-    .license-status.err{display:block;background:rgba(220,80,80,.15);color:#e05050}
-    .license-status.pending{display:block;background:rgba(90,120,200,.15);color:#7a9fef}
   </style>
 </head>
 <body>
