@@ -415,7 +415,7 @@
     <div class="modal"><div class="modal-header"><span class="modal-title" id="modalEventoTitle">Nuovo Evento</span><button class="modal-close" onclick="closeModal('modalEvento')">✕</button></div>
     <div class="modal-body"><input type="hidden" id="eId"/>
       <div class="form-row"><div class="form-group"><label class="form-label">Tipo</label><select class="form-input" id="eTipo" onchange="toggleAvversario()"><option value="allenamento">🏃 Allenamento</option><option value="partita">⚽ Partita</option></select></div><div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="eData"/></div></div>
-      <div class="form-row"><div class="form-group"><label class="form-label">Ora inizio</label><input type="time" class="form-input" id="eOra"/></div><div class="form-group"><label class="form-label">Durata (min)</label><input type="number" class="form-input" id="eDurata" placeholder="90"/></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Ora inizio</label><input type="time" class="form-input" id="eOra"/></div><div class="form-group"><label class="form-label">Orario di ritrovo</label><input type="time" class="form-input" id="eRitrovo"/></div></div>
       <div class="form-group"><label class="form-label">Titolo / Luogo</label><input type="text" class="form-input" id="eTitolo" placeholder="Campo Sportivo..."/></div>
       <div class="form-group" id="avversarioGroup"><label class="form-label">Avversario</label><input type="text" class="form-input" id="eAvversario" placeholder="Nome squadra avversaria"/></div>
       <div class="form-group" id="casaTrasfertaGroup"><label class="form-label">Casa / Trasferta</label><div style="display:flex;gap:8px"><button class="toggle-btn active" id="btnCasa" onclick="setCasaTrasferta('casa')">🏠 Casa</button><button class="toggle-btn" id="btnTrasferta" onclick="setCasaTrasferta('trasferta')">🚌 Trasferta</button></div></div>
@@ -920,7 +920,7 @@
       if(!filtered.length){list.innerHTML='<div class="placeholder" style="padding:24px 0"><div class="placeholder-icon" style="font-size:32px">📅</div><p>Nessun evento</p></div>';return}
       list.innerHTML=filtered.map(e=>{
         const color=e.tipo==='partita'?'#e05252':'#5b9bd5';
-        const meta=[e.ora,e.durata?e.durata+'min':'',e.avversario?'vs '+e.avversario:'',e.casaTrasferta].filter(Boolean).join(' · ');
+        const meta=[e.ora,e.ritrovo?'Ritrovo '+e.ritrovo:'',e.avversario?'vs '+e.avversario:'',e.casaTrasferta].filter(Boolean).join(' · ');
         return`<div class="evento-card" onclick="openEventoDetail('${e.id}')" style="cursor:pointer">
           <div class="evento-color-bar" style="background:${color}"></div>
           <div class="evento-info"><div class="evento-tipo" style="color:${color}">${e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento'}</div>
@@ -946,7 +946,7 @@
       document.getElementById('modalEventoTitle').textContent='Nuovo Evento';
       document.getElementById('eId').value='';document.getElementById('eTipo').value='allenamento';
       document.getElementById('eData').value=prefilledDate||new Date().toISOString().split('T')[0];
-      document.getElementById('eOra').value='17:00';document.getElementById('eDurata').value='90';
+      document.getElementById('eOra').value='17:00';document.getElementById('eRitrovo').value='';
       document.getElementById('eTitolo').value='';document.getElementById('eAvversario').value='';document.getElementById('eNote').value='';
       casaTrasferta='casa';setCasaTrasferta('casa');toggleAvversario();openModal('modalEvento');
     }
@@ -958,7 +958,7 @@
       if(!id && isDemoMode() && eventi.length>=DEMO_LIMITS.maxEventi){
         closeModal('modalEvento');openModal('modalLicenza');return;
       }
-      const e={id:id||Date.now().toString(),tipo:document.getElementById('eTipo').value,data,ora:document.getElementById('eOra').value,durata:document.getElementById('eDurata').value,titolo:document.getElementById('eTitolo').value.trim(),avversario:document.getElementById('eAvversario').value.trim(),casaTrasferta,note:document.getElementById('eNote').value.trim()};
+      const e={id:id||Date.now().toString(),tipo:document.getElementById('eTipo').value,data,ora:document.getElementById('eOra').value,ritrovo:document.getElementById('eRitrovo').value,titolo:document.getElementById('eTitolo').value.trim(),avversario:document.getElementById('eAvversario').value.trim(),casaTrasferta,note:document.getElementById('eNote').value.trim()};
       if(id)eventi=eventi.map(ev=>ev.id===id?e:ev);else eventi.push(e);
       DB.set('eventi',eventi);closeModal('modalEvento');calSelectedDate=null;renderCalendario();updateHomeStats();
     }
@@ -976,6 +976,7 @@
       document.getElementById('detailTitle').textContent=e.titolo||(e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento');
       let info=`<div class="detail-info-row">${e.tipo==='partita'?'⚽ Partita':'🏃 Allenamento'}</div>`;
       if(e.data)info+=`<div class="detail-info-row">📅 <strong>${formatDateLabel(e.data)}</strong>${e.ora?' · '+e.ora:''}</div>`;
+      if(e.ritrovo)info+=`<div class="detail-info-row">🕐 Ritrovo ore <strong>${e.ritrovo}</strong></div>`;
       if(e.avversario)info+=`<div class="detail-info-row">vs <strong>${e.avversario}</strong> · ${e.casaTrasferta||''}</div>`;
       if(e.note)info+=`<div class="detail-info-row">📝 ${e.note}</div>`;
       document.getElementById('detailInfo').innerHTML=info;
@@ -1050,13 +1051,13 @@
       if(ev){
         lines.push((ev.tipo==='partita'?'⚽':'🏃')+' *'+(ev.tipo==='partita'?'PARTITA':'ALLENAMENTO')+'*');
         if(ev.data)lines.push('📅 '+new Date(ev.data+'T00:00:00').toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}));
-        if(ev.ora)lines.push('🕐 Ore '+ev.ora);if(ev.titolo)lines.push('📍 '+ev.titolo);
+        if(ev.ora)lines.push('🕐 Inizio ore '+ev.ora);if(ev.titolo)lines.push('📍 '+ev.titolo);
         if(ev.avversario)lines.push('🆚 '+ev.avversario+(ev.casaTrasferta?' ('+ev.casaTrasferta+')':''));
-        if(ev.durata)lines.push('⏱ Durata: '+ev.durata+' min');if(ev.note)lines.push('📝 '+ev.note);
+        if(ev.ritrovo)lines.push('⏱ Ritrovo ore '+ev.ritrovo);if(ev.note)lines.push('📝 '+ev.note);
       }
       lines.push(SEP,'👥 *CONVOCATI ('+conv.length+')*');
       conv.forEach((g,i)=>lines.push((i+1)+'. '+(g.numero?'#'+g.numero+' ':'')+g.cognome+' '+g.nome));
-      lines.push(SEP,'Presentarsi 15 minuti prima 🙏');
+      lines.push(SEP,'A presto! 🙏');
       document.getElementById('convMessaggio').value=lines.join('\n');
     }
 
