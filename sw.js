@@ -1,4 +1,4 @@
-const CACHE_NAME = 'squadra-manager-v2';
+const CACHE_NAME = 'squadra-manager-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',
