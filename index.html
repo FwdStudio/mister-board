@@ -1006,9 +1006,17 @@
     function selectAllPresenze(val){DB.get('giocatori',[]).forEach(g=>currentPresenze[g.id]=val);renderPresenzeList()}
 
     function salvaPresenze(){
-      if(!currentEventoId)return;
-      const all=DB.get('presenze',{});all[currentEventoId]=currentPresenze;DB.set('presenze',all);
-      closeModal('modalEventoDetail');renderEventsList();
+  if(!currentEventoId)return;
+  const all=DB.get('presenze',{});
+  all[currentEventoId]=currentPresenze;
+  DB.set('presenze',all);
+  closeModal('modalEventoDetail');
+  
+  renderEventsList();
+  updatePresenzeBadges();
+  renderRosa();
+  updateHomeStats();
+  if(currentGiocatoreId) openGiocatoreDetail(currentGiocatoreId);
     }
 
     function updatePresenzeBadges(){
